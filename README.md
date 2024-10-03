@@ -33,7 +33,7 @@ of the selection process for a back-end student position at the **Taqtile** inst
 
 Now, you can use the application.
 
-# Autor 
+# Participant 
 
 <p align="center">
   <img width="200px" alt="Edson Araujo" title="Edson Araujo" src="https://avatars.githubusercontent.com/u/137104822?v=4" />
