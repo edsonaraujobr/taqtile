@@ -26,7 +26,7 @@ export const resolvers = {
 
         const { name, email, password, birthDate } = data;
 
-        const alreadyUserWithEmail = await prisma.user.findFirst({
+        const alreadyUserWithEmail = await prisma.user.findUnique({
           where: { email },
         });
 
