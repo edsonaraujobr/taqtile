@@ -1,7 +1,9 @@
 import { prisma } from "./lib/prisma.js";
 import dayjs from "dayjs";
 import z from "zod";
+import bcrypt from "bcrypt";
 
+const SALT_ROUNDS = 10;
 const MAX_AGE = 130;
 
 const userSchema = z.object({
@@ -48,11 +50,13 @@ export const resolvers = {
 
         const birthDateAsDateTime = dayjs(birthDate).toDate();
 
+        const hashPassword = await bcrypt.hash(password, SALT_ROUNDS);
+
         const newUser = await prisma.user.create({
           data: {
             name,
             email,
-            password,
+            password: hashPassword,
             birthDate: birthDateAsDateTime,
           },
         });
