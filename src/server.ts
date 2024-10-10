@@ -4,7 +4,7 @@ import { readFileSync } from "fs";
 
 const typeDefs = gql(readFileSync("./src/schema.graphql", "utf-8"));
 
-const server = new ApolloServer({ typeDefs, resolvers });
+export const server = new ApolloServer({ typeDefs, resolvers });
 
 server.listen().then(async ({ url }) => {
   console.log(`Servidor pronto em ${url}`);

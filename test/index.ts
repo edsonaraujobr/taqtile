@@ -1,12 +1,7 @@
-import { assert } from "chai";
+import { server } from "../src/server.js";
 
-function addition(a: number, b: number): number {
-  return a + b;
-}
-
-describe("Calculator Tests", () => {
-  it("should return 5 when 2 is added to 3", () => {
-    const result = addition(2, 3);
-    assert.equal(result, 5);
+before(() => {
+  server.listen({ port: 4000 }, () => {
+    console.log("Servidor iniciado em http://localhost:4000");
   });
 });

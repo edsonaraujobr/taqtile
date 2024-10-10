@@ -17,7 +17,6 @@ const userSchema = z.object({
   birthDate: z.string().optional(),
 });
 
-
 export const resolvers = {
   Mutation: {
     createUser: async (_, { data }) => {
