@@ -11,8 +11,6 @@ describe("Teste de API", () => {
 
     const response = await axios.post("http://localhost:4000/graphql", query);
 
-    console.log(response.data);
-
     expect(response.data.data.hello).to.equal("Hello world");
   });
 });
