@@ -1,11 +1,12 @@
-import { ApolloServer, gql } from "apollo-server";
-import { resolvers } from "./resolvers.js";
-import { readFileSync } from "fs";
+import { ApolloServer } from "apollo-server";
+import { userSchema } from "./graphql/schemas/userSchema.js";
+import { userResolver } from "./graphql/resolvers/userResolver.js";
 
-const typeDefs = gql(readFileSync("./src/schema.graphql", "utf-8"));
+const server = new ApolloServer({
+  typeDefs: [userSchema],
+  resolvers: [userResolver],
+});
 
-export const server = new ApolloServer({ typeDefs, resolvers });
-
-server.listen().then(async ({ url }) => {
-  console.log(`Servidor pronto em ${url}`);
+server.listen().then(({ url }) => {
+  console.log(`Servidor pronto em: ${url}`);
 });
