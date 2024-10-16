@@ -4,6 +4,7 @@
   "description": "The project is named **Dijkstra**, in tribute to Edsger Wybe Dijkstra, a renowned computer scientist, programmer, software engineer, and mathematician. Dijkstra was a Turing Award winner and made significant contributions to computing, including the creation of the famous Dijkstra's algorithm.",
   "main": "index.js",
   "type": "module",
+  "save-exact": true,
   "scripts": {
     "start": "npx tsx src/server.ts",
     "dev": "npx tsx watch src/server.ts",
