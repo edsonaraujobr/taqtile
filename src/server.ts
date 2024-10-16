@@ -1,8 +1,11 @@
 import { ApolloServer } from "apollo-server";
 import { userSchema } from "./graphql/schemas/userSchema.js";
 import { userResolver } from "./graphql/resolvers/userResolver.js";
+import dotenv from "dotenv";
 
-const server = new ApolloServer({
+dotenv.config();
+
+export const server = new ApolloServer({
   typeDefs: [userSchema],
   resolvers: [userResolver],
 });
