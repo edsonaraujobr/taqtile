@@ -14,15 +14,13 @@ describe("User Mutation - Teste de Integração", () => {
   });
 
   it("Deve criar um novo usuário", async () => {
-    const userInput = {
-      name: "Edson Araujo",
-      email: "edsoasasan@gmail.com",
-      password: "edson1010",
-    };
+    const name = "Edson Araújo";
+    const email = "edsoasasan@gmail.com";
+    const password = "edson1010";
 
     const mutation = `
       mutation {
-        createUser(data: { name: "${userInput.name}", email: "${userInput.email}", password: "${userInput.password}" }) {
+        createUser(data: { name: "${name}", email: "${email}", password: "${password}" }) {
           id
           name
           email
@@ -36,18 +34,18 @@ describe("User Mutation - Teste de Integração", () => {
 
     const createdUser = response.data.data.createUser;
     expect(createdUser).to.have.property("id");
-    expect(createdUser.name).to.equal(userInput.name);
-    expect(createdUser.email).to.equal(userInput.email);
+    expect(createdUser.name).to.equal(name);
+    expect(createdUser.email).to.equal(email);
 
     const userInDb = await prisma.user.findUnique({
-      where: { email: userInput.email },
+      where: { email },
     });
 
     expect(userInDb).to.not.be.null;
-    expect(userInDb.name).to.equal(userInput.name);
-    expect(userInDb.email).to.equal(userInput.email);
+    expect(userInDb.name).to.equal(name);
+    expect(userInDb.email).to.equal(email);
 
-    const passwordMatch = await bcrypt.compare(userInput.password, userInDb.password);
+    const passwordMatch = await bcrypt.compare(password, userInDb.password);
     expect(passwordMatch).to.be.true;
   });
 
