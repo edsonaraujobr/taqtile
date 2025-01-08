@@ -1,7 +1,7 @@
 import { prisma } from "../prisma/prisma.js";
 import bcrypt from "bcrypt";
 import dayjs from "dayjs";
-import { userValidator } from "../validators/useValidator.js";
+import { userValidator } from "../validators/userValidator.js";
 import { SALT_ROUNDS, MAX_AGE } from "../utils/constants.js";
 import { CustomError } from "../errors/customError.js";
 import { ZodError } from "zod";
