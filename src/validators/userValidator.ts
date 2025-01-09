@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 import z from "zod";
 
-export const userValidator = z.object({
+export const userCreateValidator = z.object({
   name: z.string().optional(),
   email: z.string().email("Email inválido! Seu email precisa de um @ e um domínio"),
   password: z
@@ -20,3 +20,8 @@ export const userValidator = z.object({
       "Formato de data inválido. Use o formato DD-MM-YYYY.",
     ),
 });
+
+export const userLoginValidator = z.object({
+  email: z.string().email("Email inválido!"),
+  password: z.string().min(6, "A senha deve ter no mínimo 6 caracteres!"),
+})

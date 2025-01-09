@@ -14,5 +14,23 @@ export const userResolver = {
         });
       }
     },
+
+    loginUser: async (_, { data }) => {
+      try {
+        return await UserService.loginUser(data);
+      } catch (error) {
+        if (error instanceof CustomError) {
+          throw new CustomError(
+            error.code,
+            error.message,
+            error.additionalInfo,
+          );
+        }
+        throw new CustomError(500, "Erro inesperado no servidor.");
+      }
+    },
+  },
+  Query: {
+    hello: () => "Hello world",
   },
 };
