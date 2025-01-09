@@ -36,9 +36,17 @@ export class UserService {
 
     const { name, email, password, birthDate } = data;
 
-    const alreadyUserWithEmail = await prisma.user.findUnique({
-      where: { email },
-    });
+    let alreadyUserWithEmail;
+    try {
+      alreadyUserWithEmail = await prisma.user.findUnique({
+        where: { email },
+      });
+    } catch (error) {
+      throw new CustomError({
+        code: 500,
+        message: "Erro interno no servidor.",
+      });
+    }
 
     if (alreadyUserWithEmail) {
       throw new CustomError({

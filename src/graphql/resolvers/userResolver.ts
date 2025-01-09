@@ -6,17 +6,11 @@ export const userResolver = {
     createUser: async (_, { data }) => {
       try {
         return await UserService.createUser(data);
-      } catch (error) {
-        if (error instanceof CustomError) {
-          throw new CustomError({
-            code: error.code,
-            message: error.message,
-            additionalInfo: error.additionalInfo,
-          });
-        }
+      } catch (error: CustomError) {
         throw new CustomError({
-          code: 500,
-          message: "Erro inesperado no servidor.",
+          code: error.code ?? 500,
+          message: error.message ?? "Erro inesperado no servidor.",
+          additionalInfo: error.additionalInfo,
         });
       }
     },
