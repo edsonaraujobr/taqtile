@@ -5,6 +5,9 @@ import { userValidator } from "../validators/userValidator.js";
 import { SALT_ROUNDS, MAX_AGE } from "../utils/constants.js";
 import { CustomError } from "../errors/customError.js";
 import { ZodError } from "zod";
+import { BadInputError } from "../errors/badInputError.js";
+import { UserAlreadyExists } from "../errors/userAlreadyExistsError.js";
+import { InternalServerError } from "../errors/internalServerError.js";
 
 export class UserService {
   static async createUser(data: any) {
@@ -16,22 +19,16 @@ export class UserService {
           err.path.includes("password"),
         );
         if (passwordError) {
-          throw new CustomError({
-            code: 400,
+          throw new BadInputError({
             message: "A senha fornecida não é segura.",
           });
         }
-        throw new CustomError({
-          code: 400,
+        throw new BadInputError({
           message: error.errors[0].message,
-          additionalInfo: "VALIDATION_ERROR",
         });
       }
 
-      throw new CustomError({
-        code: 500,
-        message: "Erro interno no servidor.",
-      });
+      throw new InternalServerError();
     }
 
     const { name, email, password, birthDate } = data;
@@ -42,38 +39,30 @@ export class UserService {
         where: { email },
       });
     } catch (error) {
-      throw new CustomError({
-        code: 500,
-        message: "Erro interno no servidor.",
-      });
+      throw new InternalServerError();
     }
 
     if (alreadyUserWithEmail) {
-      throw new CustomError({
-        code: 409,
-        message: "Já existe usuário com este email.",
-        additionalInfo: email,
+      throw new UserAlreadyExists({
+        message: "Já existe usuário com este email",
       });
     }
 
     if (dayjs(birthDate).isAfter(new Date())) {
-      throw new CustomError({
-        code: 400,
-        message: "Data de nascimento não pode ser no futuro!"
+      throw new BadInputError({
+        message: "Data de nascimento não pode ser no futuro!",
       });
     }
 
     if (!dayjs(birthDate).isValid()) {
-      throw new CustomError({
-        code: 400,
+      throw new BadInputError({
         message: "Formato de data inválido!",
       });
     }
 
     const age = dayjs().diff(dayjs(birthDate), "year");
     if (age > MAX_AGE) {
-      throw new CustomError({
-        code: 400,
+      throw new BadInputError({
         message: `A idade máxima permitida é de ${MAX_AGE} anos!`,
       });
     }
