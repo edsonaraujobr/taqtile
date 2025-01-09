@@ -16,12 +16,22 @@ export class UserService {
           err.path.includes("password"),
         );
         if (passwordError) {
-          throw new CustomError(400, "A senha fornecida não é segura.");
+          throw new CustomError({
+            code: 400,
+            message: "A senha fornecida não é segura.",
+          });
         }
-        throw new CustomError(400, error.errors[0].message, "VALIDATION_ERROR");
+        throw new CustomError({
+          code: 400,
+          message: error.errors[0].message,
+          additionalInfo: "VALIDATION_ERROR",
+        });
       }
 
-      throw new CustomError(500, "Erro interno no servidor.");
+      throw new CustomError({
+        code: 500,
+        message: "Erro interno no servidor.",
+      });
     }
 
     const { name, email, password, birthDate } = data;
@@ -31,23 +41,33 @@ export class UserService {
     });
 
     if (alreadyUserWithEmail) {
-      throw new CustomError(409, "Já existe usuário com este email.", email);
+      throw new CustomError({
+        code: 409,
+        message: "Já existe usuário com este email.",
+        additionalInfo: email,
+      });
     }
 
     if (dayjs(birthDate).isAfter(new Date())) {
-      throw new CustomError(400, "Data de nascimento não pode ser no futuro!");
+      throw new CustomError({
+        code: 400,
+        message: "Data de nascimento não pode ser no futuro!"
+      });
     }
 
     if (!dayjs(birthDate).isValid()) {
-      throw new CustomError(400, "Formato de data inválido!");
+      throw new CustomError({
+        code: 400,
+        message: "Formato de data inválido!",
+      });
     }
 
     const age = dayjs().diff(dayjs(birthDate), "year");
     if (age > MAX_AGE) {
-      throw new CustomError(
-        400,
-        `A idade máxima permitida é de ${MAX_AGE} anos!`,
-      );
+      throw new CustomError({
+        code: 400,
+        message: `A idade máxima permitida é de ${MAX_AGE} anos!`,
+      });
     }
 
     const birthDateAsDateTime = dayjs(birthDate).toDate();

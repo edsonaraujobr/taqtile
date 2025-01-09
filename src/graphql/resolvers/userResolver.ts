@@ -8,13 +8,16 @@ export const userResolver = {
         return await UserService.createUser(data);
       } catch (error) {
         if (error instanceof CustomError) {
-          throw new CustomError(
-            error.code,
-            error.message,
-            error.additionalInfo,
-          );
+          throw new CustomError({
+            code: error.code,
+            message: error.message,
+            additionalInfo: error.additionalInfo,
+          });
         }
-        throw new CustomError(500, "Erro inesperado no servidor.");
+        throw new CustomError({
+          code: 500,
+          message: "Erro inesperado no servidor.",
+        });
       }
     },
   },
