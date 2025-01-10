@@ -3,7 +3,6 @@ import bcrypt from "bcrypt";
 import dayjs from "dayjs";
 import { userValidator } from "../validators/userValidator.js";
 import { SALT_ROUNDS, MAX_AGE } from "../utils/constants.js";
-import { CustomError } from "../errors/customError.js";
 import { ZodError } from "zod";
 import { BadInputError } from "../errors/badInputError.js";
 import { UserAlreadyExists } from "../errors/userAlreadyExistsError.js";
@@ -20,7 +19,8 @@ export class UserService {
         );
         if (passwordError) {
           throw new BadInputError({
-            message: "A senha fornecida não é segura.",
+            message:
+              "A senha fornecida não é segura. É necessário 06 caracteres, sendo, no mínimo, um digito e um número ",
           });
         }
         throw new BadInputError({
