@@ -8,7 +8,6 @@ import { BadInputError } from "../errors/badInputError.js";
 import { UserAlreadyExistsError } from "../errors/userAlreadyExistsError.js";
 import { InternalServerError } from "../errors/internalServerError.js";
 import { MaximumAgeError } from "../errors/maximumAgeError.js";
-import { InvalidDateFormatError } from "../errors/invalidDateFormatError.js";
 import { DateBirthdayFutureError } from "../errors/dateBirthdayFutureError.js";
 
 export class UserService {

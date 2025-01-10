@@ -1,6 +1,6 @@
 import { CustomError } from "./customError.js";
 
-export class notFoundError extends CustomError {
+export class NotFoundError extends CustomError {
   constructor({
     message,
     additionalInfo,
