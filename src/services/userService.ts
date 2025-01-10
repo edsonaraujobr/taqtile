@@ -12,6 +12,8 @@ import { UserAlreadyExistsError } from "../errors/userAlreadyExistsError.js";
 import { InternalServerError } from "../errors/internalServerError.js";
 import { MaximumAgeError } from "../errors/maximumAgeError.js";
 import { DateBirthdayFutureError } from "../errors/dateBirthdayFutureError.js";
+import { JwtService } from "./jwtService.js";
+import { NotFoundError } from "../errors/notFoundError.js";
 
 export class UserService {
   static async createUser(data: any) {
@@ -25,7 +27,7 @@ export class UserService {
         if (passwordError) {
           throw new BadInputError({
             message:
-              "A senha fornecida não é segura. É necessário 06 caracteres, sendo, no mínimo, um digito e um número ",
+              "A senha fornecida não é segura. É necessário, no mínimo, 06 caracteres, sendo, ao menos, um digito e um número ",
           });
         }
         throw new BadInputError({
@@ -93,28 +95,37 @@ export class UserService {
           err.path.includes("password"),
         );
         if (passwordError) {
-          throw new CustomError(400, "A senha tem no mínimo 6 caracteres");
+          throw new BadInputError({
+            message:
+              "A senha está incorreta. É necessário no mínimo 06 caracteres, sendo, ao menos, um digito e um número ",
+          });
         }
-        throw new CustomError(400, error.errors[0].message, "Email inválido");
+        throw new BadInputError({
+          message: error.errors[0].message,
+        });
       }
 
-      throw new CustomError(500, "Erro interno no servidor.");
+      throw new InternalServerError();
     }
     const { email, password } = data;
 
     const user = await prisma.user.findUnique({ where: { email } });
 
     if (!user) {
-      throw new CustomError(400, "Usuário não encontrado");
+      throw new NotFoundError({
+        message: "Usuário não encontrado. Verifique seu email e senha",
+      });
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
-      throw new CustomError(400, "Usuário não encontrado");
+      throw new NotFoundError({
+        message: "Usuário não encontrado. Verifique seu email e senha",
+      });
     }
 
-    const token = JwtService.generateToken({ id: user.id, email: user.email });
+    const token = JwtService.generateToken({ id: user.id });
 
     return {
       user: {
