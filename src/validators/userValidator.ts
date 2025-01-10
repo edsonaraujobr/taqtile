@@ -22,6 +22,6 @@ export const userCreateValidator = z.object({
 });
 
 export const userLoginValidator = z.object({
-  email: z.string().email("Email inválido!"),
+  email: z.string().email("Email inválido! Seu email precisa de um @ e um domínio"),
   password: z.string().min(6, "A senha deve ter no mínimo 6 caracteres!"),
-})
+});

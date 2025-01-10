@@ -132,7 +132,7 @@ export class UserService {
         id: user.id,
         name: user.name,
         email: user.email,
-        birthDate: user.birthDate,
+        birthDate: dayjs(user.birthDate).format("DD-MM-YYYY"),
       },
       token,
     };
