@@ -63,7 +63,6 @@ describe("User Mutation - Teste de Login", () => {
       query: createUsermutation,
     });
 
-    console.log(response.data)
     const createdUser = response.data.data.createUser;
     expect(createdUser).to.have.property("id");
     expect(createdUser.name).to.equal(name);
@@ -97,11 +96,10 @@ describe("User Mutation - Teste de Login", () => {
       query: loginUsermutation,
     });
 
-    const loginUser = responseLogin.data.data.loginUser;
-
+    const loginUser = responseLogin.data.data.loginUser.user;
     const token = responseLogin.data.data.loginUser.token;
     expect(token).to.be.a("string");
-    expect(token.split(".")).to.have.length(3); 
+    expect(token.split(".")).to.have.length(3);
     expect(loginUser).to.have.property("id");
     expect(createdUser.name).to.equal(name);
     expect(createdUser.email).to.equal(email);
