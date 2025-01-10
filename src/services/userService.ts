@@ -36,6 +36,19 @@ export class UserService {
 
     const { name, email, password, birthDate } = data;
 
+    if (dayjs(birthDate).isAfter(new Date())) {
+      throw new DateBirthdayFutureError({
+        message: "Data de nascimento não pode ser no futuro!",
+      });
+    }
+
+    const age = dayjs().diff(dayjs(birthDate), "year");
+    if (age > MAX_AGE) {
+      throw new MaximumAgeError({
+        message: `A idade máxima permitida é de ${MAX_AGE} anos!`,
+      });
+    }
+
     let alreadyUserWithEmail;
     try {
       alreadyUserWithEmail = await prisma.user.findUnique({
@@ -48,25 +61,6 @@ export class UserService {
     if (alreadyUserWithEmail) {
       throw new UserAlreadyExistsError({
         message: "Já existe usuário com este email",
-      });
-    }
-
-    if (dayjs(birthDate).isAfter(new Date())) {
-      throw new DateBirthdayFutureError({
-        message: "Data de nascimento não pode ser no futuro!",
-      });
-    }
-
-    if (!dayjs(birthDate).isValid()) {
-      throw new InvalidDateFormatError({
-        message: "Formato de data inválido!",
-      });
-    }
-
-    const age = dayjs().diff(dayjs(birthDate), "year");
-    if (age > MAX_AGE) {
-      throw new MaximumAgeError({
-        message: `A idade máxima permitida é de ${MAX_AGE} anos!`,
       });
     }
 

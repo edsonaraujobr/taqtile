@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import z from "zod";
 
 export const userValidator = z.object({
@@ -8,5 +9,13 @@ export const userValidator = z.object({
     .min(6, "A senha deve ter no mínimo 6 caracteres!")
     .regex(/[a-zA-Z]/, "A senha deve conter pelo menos uma letra")
     .regex(/\d/, "A senha deve conter pelo menos um dígito"),
-  birthDate: z.string().optional(),
+  birthDate: z
+    .string()
+    .optional()
+    .refine(
+      (date) =>
+        /^\d{2}-\d{2}-\d{4}$/.test(date) &&
+        dayjs(date, "DD-MM-YYYY", true).isValid(),
+      "Formato de data inválido. Use o formato DD-MM-YYYY.",
+    ),
 });
