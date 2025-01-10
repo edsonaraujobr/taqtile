@@ -2,7 +2,6 @@ import { expect } from "chai";
 import bcrypt from "bcrypt";
 import axios from "axios";
 import { prisma } from "../../../src/prisma/prisma.js";
-<<<<<<< HEAD
 import { connectDB, clearDB } from "../../helpers/dbHelper.js";
 import { MAX_AGE } from "../../../src/utils/constants.js";
 import {
@@ -22,11 +21,6 @@ describe("User Mutation - Teste de Criação de usuário", () => {
     weakPasswordUser,
   } = userData;
 
-=======
-import { connectDB, clearDB } from "../../utils/dbHelper.js";
-
-describe("User Mutation - Teste de Criação de usuário", () => {
->>>>>>> 0982392 (test: login user)
   before(async () => {
     await connectDB();
   });
