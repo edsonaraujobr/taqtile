@@ -6,7 +6,7 @@ import { connectDB, clearDB } from "../../utils/dbHelper.js";
 import { MAX_AGE } from "../../../src/utils/constants.js";
 import dayjs from "dayjs";
 
-describe("User Mutation - Teste de Integração", () => {
+describe("User Mutation - Teste de Criação de usuário", () => {
   before(async () => {
     await connectDB();
   });
