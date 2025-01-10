@@ -5,8 +5,11 @@ import { userValidator } from "../validators/userValidator.js";
 import { SALT_ROUNDS, MAX_AGE } from "../utils/constants.js";
 import { ZodError } from "zod";
 import { BadInputError } from "../errors/badInputError.js";
-import { UserAlreadyExists } from "../errors/userAlreadyExistsError.js";
+import { UserAlreadyExistsError } from "../errors/userAlreadyExistsError.js";
 import { InternalServerError } from "../errors/internalServerError.js";
+import { MaximumAgeError } from "../errors/maximumAgeError.js";
+import { InvalidDateFormatError } from "../errors/invalidDateFormatError.js";
+import { DateBirthdayFutureError } from "../errors/dateBirthdayFutureError.js";
 
 export class UserService {
   static async createUser(data: any) {
@@ -43,26 +46,26 @@ export class UserService {
     }
 
     if (alreadyUserWithEmail) {
-      throw new UserAlreadyExists({
+      throw new UserAlreadyExistsError({
         message: "Já existe usuário com este email",
       });
     }
 
     if (dayjs(birthDate).isAfter(new Date())) {
-      throw new BadInputError({
+      throw new DateBirthdayFutureError({
         message: "Data de nascimento não pode ser no futuro!",
       });
     }
 
     if (!dayjs(birthDate).isValid()) {
-      throw new BadInputError({
+      throw new InvalidDateFormatError({
         message: "Formato de data inválido!",
       });
     }
 
     const age = dayjs().diff(dayjs(birthDate), "year");
     if (age > MAX_AGE) {
-      throw new BadInputError({
+      throw new MaximumAgeError({
         message: `A idade máxima permitida é de ${MAX_AGE} anos!`,
       });
     }

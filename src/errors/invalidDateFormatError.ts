@@ -1,6 +1,6 @@
 import { CustomError } from "./customError.js";
 
-export class notFoundError extends CustomError {
+export class InvalidDateFormatError extends CustomError {
   constructor({
     message,
     additionalInfo,
@@ -9,10 +9,10 @@ export class notFoundError extends CustomError {
     additionalInfo?: string;
   }) {
     super({
-      code: 404,
+      code: 400,
       message,
       additionalInfo,
     });
-    this.name = "notFoundError";
+    this.name = "InvalidDateFormatError";
   }
 }

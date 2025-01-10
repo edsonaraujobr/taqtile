@@ -2,7 +2,7 @@ import z from "zod";
 
 export const userValidator = z.object({
   name: z.string().optional(),
-  email: z.string().email("Email inválido!"),
+  email: z.string().email("Email inválido! Seu email precisa de um @ e um domínio"),
   password: z
     .string()
     .min(6, "A senha deve ter no mínimo 6 caracteres!")

@@ -1,6 +1,6 @@
 import { CustomError } from "./customError.js";
 
-export class UserAlreadyExists extends CustomError {
+export class UserAlreadyExistsError extends CustomError {
   constructor({
     message,
     additionalInfo,
@@ -13,6 +13,6 @@ export class UserAlreadyExists extends CustomError {
       message,
       additionalInfo,
     });
-    this.name = "UserAlreadyExists";
+    this.name = "UserAlreadyExistsError";
   }
 }

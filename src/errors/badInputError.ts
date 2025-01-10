@@ -13,6 +13,6 @@ export class BadInputError extends CustomError {
       message,
       additionalInfo,
     });
-    this.name = "CustomError";
+    this.name = "BadInputError";
   }
 }
