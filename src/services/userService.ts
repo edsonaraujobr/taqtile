@@ -63,7 +63,7 @@ export class UserService {
       });
     }
 
-    const birthDateAsDateTime = dayjs(birthDate).toDate();
+    const formattedBirthDate = dayjs(birthDate, "DD-MM-YYYY").toISOString();
     const hashPassword = await bcrypt.hash(password, SALT_ROUNDS);
 
     const newUser = await prisma.user.create({
@@ -71,10 +71,13 @@ export class UserService {
         name,
         email,
         password: hashPassword,
-        birthDate: birthDateAsDateTime,
+        birthDate: formattedBirthDate,
       },
     });
 
-    return newUser;
+    return {
+      ...newUser,
+      birthDate: dayjs(newUser.birthDate).format("DD-MM-YYYY"),
+    };
   }
 }
