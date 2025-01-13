@@ -11,6 +11,7 @@ export const userSchema = gql`
   input UserLoginInput {
     email: String!
     password: String!
+    rememberMe: Boolean
   }
 
   type User {

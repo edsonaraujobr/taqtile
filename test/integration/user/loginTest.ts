@@ -73,6 +73,57 @@ describe("User Mutation - Teste de Login", () => {
     );
   });
 
+  it("Deve realizar login com remember-me ativado", async () => {
+    const name = "Edson Araújo";
+    const email = "edsoasasan@gmail.com";
+    const password = "edson1010";
+    const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
+
+    await prisma.user.create({
+      data: {
+        name,
+        email,
+        password: passwordHash,
+      },
+    });
+
+    const loginUsermutation = `
+      mutation {
+        loginUser(data: { email: "${email}", password: "${password}", rememberMe: true }) {
+          user {
+            id
+            name
+            email
+            birthDate
+          }
+          token
+        }
+      }
+    `;
+    const responseLogin = await axios.post("http://localhost:4000/graphql", {
+      query: loginUsermutation,
+    });
+
+    const token = responseLogin.data.data.loginUser.token;
+    expect(token).to.be.a("string");
+    expect(token.split(".")).to.have.length(3);
+
+    const decodedToken = JwtService.decodeToken(token);
+    expect(decodedToken).to.have.property("exp");
+
+    const dateNowSeconds = Math.floor(Date.now() / 1000);
+    const SevenDaysSecond = 7 * 24 * 60 * 60;
+    expect(decodedToken.exp).to.be.closeTo(
+      dateNowSeconds + SevenDaysSecond,
+      10,
+    );
+
+    const loginUser = responseLogin.data.data.loginUser.user;
+    expect(loginUser).to.have.property("id");
+    expect(loginUser.name).to.equal(name);
+    expect(loginUser.email).to.equal(email);
+  });
+
   afterEach(async () => {
     await clearDB();
   });
