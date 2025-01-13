@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import axios from "axios";
 import { prisma } from "../../../src/prisma/prisma.js";
 import { connectDB, clearDB } from "../../utils/dbHelper.js";
+import { SALT_ROUNDS } from "../../../src/utils/constants.js";
 
 describe("User Mutation - Teste de Login", () => {
   before(async () => {
@@ -31,9 +32,8 @@ describe("User Mutation - Teste de Login", () => {
     }
   `;
 
-    let responseLogin;
     try {
-      responseLogin = await axios.post("http://localhost:4000/graphql", {
+      await axios.post("http://localhost:4000/graphql", {
         query: loginUsermutation,
       });
     } catch (error: any) {
@@ -44,40 +44,19 @@ describe("User Mutation - Teste de Login", () => {
     }
   });
 
-  it("Deve criar o usuário e realizar login com sucesso", async () => {
+  it("Deve criar o usuário no banco de dados e realizar login com sucesso", async () => {
     const name = "Edson Araújo";
     const email = "edsoasasan@gmail.com";
     const password = "edson1010";
+    const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
 
-    const createUsermutation = `
-      mutation {
-        createUser(data: { name: "${name}", email: "${email}", password: "${password}" }) {
-          id
-          name
-          email
-        }
-      }
-    `;
-
-    const response = await axios.post("http://localhost:4000/graphql", {
-      query: createUsermutation,
+    await prisma.user.create({
+      data: {
+        name,
+        email,
+        password: passwordHash,
+      },
     });
-
-    const createdUser = response.data.data.createUser;
-    expect(createdUser).to.have.property("id");
-    expect(createdUser.name).to.equal(name);
-    expect(createdUser.email).to.equal(email);
-
-    const userInDb = await prisma.user.findUnique({
-      where: { email },
-    });
-
-    expect(userInDb).to.not.be.null;
-    expect(userInDb.name).to.equal(name);
-    expect(userInDb.email).to.equal(email);
-
-    const passwordMatch = await bcrypt.compare(password, userInDb.password);
-    expect(passwordMatch).to.be.true;
 
     const loginUsermutation = `
       mutation {
@@ -96,24 +75,14 @@ describe("User Mutation - Teste de Login", () => {
       query: loginUsermutation,
     });
 
-    const loginUser = responseLogin.data.data.loginUser.user;
     const token = responseLogin.data.data.loginUser.token;
     expect(token).to.be.a("string");
     expect(token.split(".")).to.have.length(3);
+
+    const loginUser = responseLogin.data.data.loginUser.user;
     expect(loginUser).to.have.property("id");
-    expect(createdUser.name).to.equal(name);
-    expect(createdUser.email).to.equal(email);
-
-    const userDB = await prisma.user.findUnique({
-      where: { email },
-    });
-
-    expect(userDB).to.not.be.null;
-    expect(userDB.name).to.equal(name);
-    expect(userDB.email).to.equal(email);
-
-    const passwordValid = await bcrypt.compare(password, userDB.password);
-    expect(passwordValid).to.be.true;
+    expect(loginUser.name).to.equal(name);
+    expect(loginUser.email).to.equal(email);
   });
 
   afterEach(async () => {
