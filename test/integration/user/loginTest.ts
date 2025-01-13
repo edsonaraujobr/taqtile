@@ -4,6 +4,7 @@ import axios from "axios";
 import { prisma } from "../../../src/prisma/prisma.js";
 import { connectDB, clearDB } from "../../utils/dbHelper.js";
 import { SALT_ROUNDS } from "../../../src/utils/constants.js";
+import { BadInputError } from "../../../src/errors/badInputError.js";
 
 describe("User Mutation - Teste de Login", () => {
   before(async () => {
@@ -83,6 +84,42 @@ describe("User Mutation - Teste de Login", () => {
     expect(loginUser).to.have.property("id");
     expect(loginUser.name).to.equal(name);
     expect(loginUser.email).to.equal(email);
+  });
+
+  it("Deve retornar erro de senha incorreta", async () => {
+    const name = "Edson Araújo";
+    const email = "edsoasasan@gmail.com";
+    const password = "edson1010";
+    const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
+
+    await prisma.user.create({
+      data: {
+        name,
+        email,
+        password: passwordHash,
+      },
+    });
+
+    const loginUsermutation = `
+      mutation {
+        loginUser(data: { email: "${email}", password: "edson123" }) {
+          user {
+            id
+            name
+            email
+          }
+          token
+        }
+      }
+    `;
+
+    const response = await axios.post("http://localhost:4000/graphql", {
+      query: loginUsermutation,
+    });
+    expect(response.data.errors[0].code).to.equal(404);
+    expect(response.data.errors[0].message).to.equal(
+      "Usuário não encontrado. Verifique seu email e senha",
+    );
   });
 
   afterEach(async () => {

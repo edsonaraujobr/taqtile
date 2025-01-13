@@ -97,7 +97,7 @@ export class UserService {
         if (passwordError) {
           throw new BadInputError({
             message:
-              "A senha está incorreta. É necessário no mínimo 06 caracteres, sendo, ao menos, um digito e um número ",
+              "A senha está incorreta. É necessário no mínimo 06 caracteres, sendo, ao menos, um digito e um número!",
           });
         }
         throw new BadInputError({
