@@ -32,17 +32,14 @@ describe("User Mutation - Teste de Login", () => {
       }
     }
   `;
+    const response = await axios.post("http://localhost:4000/graphql", {
+      query: loginUsermutation,
+    });
 
-    try {
-      await axios.post("http://localhost:4000/graphql", {
-        query: loginUsermutation,
-      });
-    } catch (error: any) {
-      expect(error.responseLogin.data.errors[0].code).to.equal(404);
-      expect(error.responseLogin.data.errors[0].message).to.equal(
-        "Usuário não encontrado. Verifique seu email e senha",
-      );
-    }
+    expect(response.data.errors[0].code).to.equal(404);
+    expect(response.data.errors[0].message).to.equal(
+      "Usuário não encontrado. Verifique seu email e senha",
+    );
   });
 
   it("Deve criar o usuário no banco de dados e realizar login com sucesso", async () => {

@@ -96,7 +96,7 @@ describe("User Mutation - Teste de Criação de usuário", () => {
       data: {
         name: "Edson Araújo",
         email: "edson@gmail.com",
-        password: "hashedpassword",
+        password: "hashedpassword123",
       },
     });
 
@@ -105,7 +105,7 @@ describe("User Mutation - Teste de Criação de usuário", () => {
         createUser(data: { 
           name: "Edson Araújo", 
           email: "edson@gmail.com", 
-          password: "anotherpassword" 
+          password: "anotherpassword123" 
         }) {
           id
           name
@@ -113,16 +113,13 @@ describe("User Mutation - Teste de Criação de usuário", () => {
         }
       }
     `;
-    try {
-      await axios.post("http://localhost:4000/graphql", {
-        query: mutation,
-      });
-    } catch (error: any) {
-      expect(error.response.data.errors[0].code).to.equal(409);
-      expect(error.response.data.errors[0].message).to.equal(
-        "Usuário já existe com este email.",
-      );
-    }
+    const response = await axios.post("http://localhost:4000/graphql", {
+      query: mutation,
+    });
+    expect(response.data.errors[0].code).to.equal(409);
+    expect(response.data.errors[0].message).to.equal(
+      "Já existe usuário com este email",
+    );
   });
 
   it("Deve retornar erro para senha fraca", async () => {
@@ -139,17 +136,13 @@ describe("User Mutation - Teste de Criação de usuário", () => {
         }
       }
     `;
-
-    try {
-      await axios.post("http://localhost:4000/graphql", {
-        query: mutation,
-      });
-    } catch (error: any) {
-      expect(error.response.data.errors[0].code).to.equal(400);
-      expect(error.response.data.errors[0].message).to.equal(
-        "A senha fornecida não é segura.",
-      );
-    }
+    const response = await axios.post("http://localhost:4000/graphql", {
+      query: mutation,
+    });
+    expect(response.data.errors[0].code).to.equal(400);
+    expect(response.data.errors[0].message).to.equal(
+      "A senha fornecida não é segura. É necessário, no mínimo, 06 caracteres, sendo, ao menos, um digito e um número ",
+    );
   });
 
   it("Deve retornar erro pela data de nascimento no futuro", async () => {
