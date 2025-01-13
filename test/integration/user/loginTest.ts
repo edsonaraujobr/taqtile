@@ -113,8 +113,13 @@ describe("User Mutation - Teste de Login", () => {
 
     const loginUser = responseLogin.data.data.loginUser.user;
     expect(loginUser).to.have.property("id");
+<<<<<<< HEAD
     expect(loginUser.name).to.equal(validUser.name);
     expect(loginUser.email).to.equal(validUser.email);
+=======
+    expect(loginUser.name).to.equal(name);
+    expect(loginUser.email).to.equal(email);
+>>>>>>> f8d8cac (feat: create remember-me to user login)
   });
 
   afterEach(async () => {
