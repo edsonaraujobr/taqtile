@@ -1,5 +1,6 @@
 import dayjs from "dayjs";
 import z from "zod";
+import { FORMAT_DATE_REGEX } from "../utils/constants.js";
 
 export const userCreateValidator = z.object({
   name: z.string().optional(),
@@ -15,8 +16,7 @@ export const userCreateValidator = z.object({
     .refine(
       (date) =>
         !date ||
-        (/^\d{2}-\d{2}-\d{4}$/.test(date) &&
-          dayjs(date, "DD-MM-YYYY", true).isValid()),
+        (FORMAT_DATE_REGEX.test(date) && dayjs(date, "DD-MM-YYYY", true).isValid()),
       "Formato de data inválido. Use o formato DD-MM-YYYY.",
     ),
 });
