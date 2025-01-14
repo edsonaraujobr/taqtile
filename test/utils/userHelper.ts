@@ -2,7 +2,7 @@ import { prisma } from "../../src/prisma/prisma.js";
 import { SALT_ROUNDS } from "../../src/utils/constants.js";
 import bcrypt from "bcrypt";
 
-export function createUserForLoginTest({
+export function createMutationLoginUserTest({
   email,
   password,
 }: {
@@ -26,7 +26,7 @@ export function createUserForLoginTest({
   return loginUser;
 }
 
-export async function createUserInDatabaseForLoginTest({
+export async function createUserInDatabaseTest({
   name,
   email,
   password,
@@ -44,4 +44,26 @@ export async function createUserInDatabaseForLoginTest({
       password: passwordHash,
     },
   });
+}
+
+export function createMutationCreateUserTest({
+  name,
+  email,
+  password,
+}: {
+  name: string;
+  email: string;
+  password: string;
+}) {
+  const mutation = `
+  mutation {
+    createUser(data: { name: "${name}", email: "${email}", password: "${password}" }) {
+      id
+      name
+      email
+    }
+  }
+`;
+
+  return mutation;
 }

@@ -4,7 +4,10 @@ import axios from "axios";
 import { prisma } from "../../../src/prisma/prisma.js";
 import { connectDB, clearDB } from "../../utils/dbHelper.js";
 import { MAX_AGE } from "../../../src/utils/constants.js";
-import dayjs from "dayjs";
+import {
+  createMutationCreateUserTest,
+  createUserInDatabaseTest,
+} from "../../utils/userHelper.js";
 
 describe("User Mutation - Teste de Criação de usuário", () => {
   before(async () => {
@@ -60,15 +63,11 @@ describe("User Mutation - Teste de Criação de usuário", () => {
     const email = "edsoasasan@gmail.com";
     const password = "edson1010";
 
-    const mutation = `
-      mutation {
-        createUser(data: { name: "${name}", email: "${email}", password: "${password}" }) {
-          id
-          name
-          email
-        }
-      }
-    `;
+    const mutation = createMutationCreateUserTest({
+      name,
+      email,
+      password,
+    });
 
     const response = await axios.post("http://localhost:4000/graphql", {
       query: mutation,
@@ -92,27 +91,18 @@ describe("User Mutation - Teste de Criação de usuário", () => {
   });
 
   it("Deve retornar erro se o usuário já existir", async () => {
-    await prisma.user.create({
-      data: {
-        name: "Edson Araújo",
-        email: "edson@gmail.com",
-        password: "hashedpassword123",
-      },
+    await createUserInDatabaseTest({
+      name: "Edson Araújo",
+      email: "edson@gmail.com",
+      password: "hashedpassword123",
     });
 
-    const mutation = `
-      mutation {
-        createUser(data: { 
-          name: "Edson Araújo", 
-          email: "edson@gmail.com", 
-          password: "anotherpassword123" 
-        }) {
-          id
-          name
-          email
-        }
-      }
-    `;
+    const mutation = createMutationCreateUserTest({
+      name: "Cristiano Ronaldo",
+      email: "edson@gmail.com",
+      password: "randowmpassword123",
+    });
+
     const response = await axios.post("http://localhost:4000/graphql", {
       query: mutation,
     });
@@ -123,19 +113,12 @@ describe("User Mutation - Teste de Criação de usuário", () => {
   });
 
   it("Deve retornar erro para senha fraca", async () => {
-    const name = "Edson Araújo";
-    const email = "edsoasasan@gmail.com";
-    const password = "123";
+    const mutation = createMutationCreateUserTest({
+      name: "Cristiano Ronaldo",
+      email: "edson@gmail.com",
+      password: "123",
+    });
 
-    const mutation = `
-      mutation {
-        createUser(data: { name: "${name}", email: "${email}", password: "${password}" }) {
-          id
-          name
-          email
-        }
-      }
-    `;
     const response = await axios.post("http://localhost:4000/graphql", {
       query: mutation,
     });

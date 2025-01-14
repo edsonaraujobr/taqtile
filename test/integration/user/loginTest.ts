@@ -5,8 +5,8 @@ import { prisma } from "../../../src/prisma/prisma.js";
 import { connectDB, clearDB } from "../../utils/dbHelper.js";
 
 import {
-  createUserForLoginTest,
-  createUserInDatabaseForLoginTest,
+  createMutationLoginUserTest,
+  createUserInDatabaseTest,
 } from "../../utils/userHelper.js";
 
 describe("User Mutation - Teste de Login", () => {
@@ -19,7 +19,7 @@ describe("User Mutation - Teste de Login", () => {
   });
 
   it("Deve retornar erro no login pois o usuário não existe", async () => {
-    const mutation = createUserForLoginTest({
+    const mutation = createMutationLoginUserTest({
       email: "edson@gmail.com",
       password: "edson123",
     });
@@ -39,13 +39,13 @@ describe("User Mutation - Teste de Login", () => {
     const email = "edson@gmail.com";
     const password = "edson123";
 
-    await createUserInDatabaseForLoginTest({
+    await createUserInDatabaseTest({
       name,
       email,
       password,
     });
 
-    const mutation = createUserForLoginTest({
+    const mutation = createMutationLoginUserTest({
       email,
       password,
     });
@@ -69,13 +69,13 @@ describe("User Mutation - Teste de Login", () => {
     const email = "edson@gmail.com";
     const password = "edson123";
 
-    await createUserInDatabaseForLoginTest({
+    await createUserInDatabaseTest({
       name,
       email,
       password,
     });
 
-    const mutation = createUserForLoginTest({
+    const mutation = createMutationLoginUserTest({
       email,
       password: "edson1010",
     });
