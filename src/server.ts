@@ -3,6 +3,7 @@ import { userSchema } from "./graphql/schemas/userSchema.js";
 import { userResolver } from "./graphql/resolvers/userResolver.js";
 import { CustomError } from "./errors/customError.js";
 import dotenv from "dotenv";
+import { authenticate } from "./middlewares/authenticateUser.js";
 
 dotenv.config();
 
@@ -24,7 +25,19 @@ export const server = new ApolloServer({
     };
   },
   context: ({ req }) => {
-    return { req };
+    if (req.body.operationName !== "IntrospectionQuery") {
+      const token = req.headers.authorization || "";
+      let user = null;
+      if (token) {
+        try {
+          user = authenticate(token);
+        } catch (error) {
+          console.log("Authentication error:", error.message);
+        }
+      }
+      console.log("Context: ", {user})
+      return { user };
+    }
   },
 });
 

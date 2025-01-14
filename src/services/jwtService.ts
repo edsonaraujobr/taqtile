@@ -17,6 +17,13 @@ export class JwtService {
   }
 
   static verifyToken(token: string) {
-    return jwt.verify(token, SECRET_KEY);
+    if (!SECRET_KEY) {
+      throw new Error("SECRET_KEY não está definido no arquivo .env");
+    }
+    try {
+      return jwt.verify(token, SECRET_KEY);
+    } catch (error) {
+      throw new Error("Token inválido ou expirado");
+    }
   }
 }

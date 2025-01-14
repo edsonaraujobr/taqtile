@@ -14,24 +14,13 @@ import { MaximumAgeError } from "../errors/maximumAgeError.js";
 import { DateBirthdayFutureError } from "../errors/dateBirthdayFutureError.js";
 import { JwtService } from "./jwtService.js";
 import { NotFoundError } from "../errors/notFoundError.js";
-import { authenticate } from "../middlewares/authenticateUser.js";
 import { UnauthorizedUser } from "../errors/unauthorizedUser.js";
-
+import { BadInputError } from "../errors/badInputError.js";
 export class UserService {
-  static async createUser(data: any, context) {
-    let user;
-    try {
-      user = authenticate(context);
-    } catch (error) {
-      throw new UnauthorizedUser({
-        message: error.message,
-      });
-    }
-
-    if (!user) {
-      throw new UnauthorizedUser({
-        message: "Usuário não autorizado",
-      });
+  static async createUser(data: any, context: any) {
+    console.log("userService: ", context)
+    if (!context || !context.user) {
+      throw new UnauthorizedUser({ message: "Usuário não autorizado" });
     }
 
     try {

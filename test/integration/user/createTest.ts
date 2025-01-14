@@ -32,11 +32,31 @@ describe("User Mutation - Teste de Criação de usuário", () => {
   it("Deve criar um novo usuario com todas as informacoes", async () => {
     const mutation = createMutationCreateUserTest(validUser);
 
-    const response = await axios.post("http://localhost:4000/graphql", {
-      query: mutation,
+    const existingUser = await prisma.user.create({
+      data: {
+        name: "Admin",
+        email: "admin@example.com",
+        password: await bcrypt.hash("admin123", SALT_ROUNDS),
+      },
     });
 
-    const createdUser = response.data.data.createUser;
+    const token = JwtService.generateToken({ id: existingUser.id });
+    console.log("token: ", token);
+
+    const response = await axios.post(
+      "http://localhost:4000/graphql",
+      {
+        query: mutation,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+
+    const createdUser = response.data;
+    console.log(createdUser)
     expect(createdUser).to.have.property("id");
     expect(createdUser.name).to.equal(validUser.name);
     expect(createdUser.email).to.equal(validUser.email);
