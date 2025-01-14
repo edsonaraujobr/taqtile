@@ -1,7 +1,10 @@
 import { prisma } from "../prisma/prisma.js";
 import bcrypt from "bcrypt";
 import dayjs from "dayjs";
-import { userValidator } from "../validators/userValidator.js";
+import {
+  userCreateValidator,
+  userLoginValidator,
+} from "../validators/userValidator.js";
 import { SALT_ROUNDS, MAX_AGE } from "../utils/constants.js";
 import { ZodError } from "zod";
 import { BadInputError } from "../errors/badInputError.js";
@@ -9,11 +12,13 @@ import { UserAlreadyExistsError } from "../errors/userAlreadyExistsError.js";
 import { InternalServerError } from "../errors/internalServerError.js";
 import { MaximumAgeError } from "../errors/maximumAgeError.js";
 import { DateBirthdayFutureError } from "../errors/dateBirthdayFutureError.js";
+import { JwtService } from "./jwtService.js";
+import { NotFoundError } from "../errors/notFoundError.js";
 
 export class UserService {
   static async createUser(data: any) {
     try {
-      userValidator.parse(data);
+      userCreateValidator.parse(data);
     } catch (error) {
       if (error instanceof ZodError) {
         const passwordError = error.errors.find((err) =>
@@ -22,7 +27,7 @@ export class UserService {
         if (passwordError) {
           throw new BadInputError({
             message:
-              "A senha fornecida não é segura. É necessário 06 caracteres, sendo, no mínimo, um digito e um número ",
+              "A senha fornecida não é segura. É necessário, no mínimo, 06 caracteres, sendo, ao menos, um digito e um número ",
           });
         }
         throw new BadInputError({
@@ -78,6 +83,58 @@ export class UserService {
     return {
       ...newUser,
       birthDate: dayjs(newUser.birthDate).format("DD-MM-YYYY"),
+    };
+  }
+
+  static async loginUser(data) {
+    try {
+      userLoginValidator.parse(data);
+    } catch (error) {
+      if (error instanceof ZodError) {
+        const passwordError = error.errors.find((err) =>
+          err.path.includes("password"),
+        );
+        if (passwordError) {
+          throw new BadInputError({
+            message:
+              "A senha está incorreta. É necessário no mínimo 06 caracteres, sendo, ao menos, um digito e um número ",
+          });
+        }
+        throw new BadInputError({
+          message: error.errors[0].message,
+        });
+      }
+
+      throw new InternalServerError();
+    }
+    const { email, password } = data;
+
+    const user = await prisma.user.findUnique({ where: { email } });
+
+    if (!user) {
+      throw new NotFoundError({
+        message: "Usuário não encontrado. Verifique seu email e senha",
+      });
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordValid) {
+      throw new NotFoundError({
+        message: "Usuário não encontrado. Verifique seu email e senha",
+      });
+    }
+
+    const token = JwtService.generateToken({ id: user.id });
+
+    return {
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        birthDate: dayjs(user.birthDate).format("DD-MM-YYYY"),
+      },
+      token,
     };
   }
 }
