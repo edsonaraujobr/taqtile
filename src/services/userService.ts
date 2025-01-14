@@ -1,37 +1,69 @@
 import { prisma } from "../prisma/prisma.js";
 import bcrypt from "bcrypt";
 import dayjs from "dayjs";
-import { userValidator } from "../validators/useValidator.js";
+import { userValidator } from "../validators/userValidator.js";
 import { SALT_ROUNDS, MAX_AGE } from "../utils/constants.js";
+import { ZodError } from "zod";
+import { BadInputError } from "../errors/badInputError.js";
+import { UserAlreadyExistsError } from "../errors/userAlreadyExistsError.js";
+import { InternalServerError } from "../errors/internalServerError.js";
+import { MaximumAgeError } from "../errors/maximumAgeError.js";
+import { DateBirthdayFutureError } from "../errors/dateBirthdayFutureError.js";
 
 export class UserService {
   static async createUser(data: any) {
-    userValidator.parse(data);
+    try {
+      userValidator.parse(data);
+    } catch (error) {
+      if (error instanceof ZodError) {
+        const passwordError = error.errors.find((err) =>
+          err.path.includes("password"),
+        );
+        if (passwordError) {
+          throw new BadInputError({
+            message:
+              "A senha fornecida não é segura. É necessário 06 caracteres, sendo, no mínimo, um digito e um número ",
+          });
+        }
+        throw new BadInputError({
+          message: error.errors[0].message,
+        });
+      }
+
+      throw new InternalServerError();
+    }
 
     const { name, email, password, birthDate } = data;
 
-    const alreadyUserWithEmail = await prisma.user.findUnique({
-      where: { email },
-    });
-
-    if (alreadyUserWithEmail) {
-      throw new Error("Já existe um usuário com esse email!");
-    }
-
     if (dayjs(birthDate).isAfter(new Date())) {
-      throw new Error("Data de nascimento não pode ser no futuro!");
-    }
-
-    if (!dayjs(birthDate).isValid()) {
-      throw new Error("Formato de data inválido!");
+      throw new DateBirthdayFutureError({
+        message: "Data de nascimento não pode ser no futuro!",
+      });
     }
 
     const age = dayjs().diff(dayjs(birthDate), "year");
     if (age > MAX_AGE) {
-      throw new Error(`A idade máxima permitida é de ${MAX_AGE} anos!`);
+      throw new MaximumAgeError({
+        message: `A idade máxima permitida é de ${MAX_AGE} anos!`,
+      });
     }
 
-    const birthDateAsDateTime = dayjs(birthDate).toDate();
+    let alreadyUserWithEmail;
+    try {
+      alreadyUserWithEmail = await prisma.user.findUnique({
+        where: { email },
+      });
+    } catch (error) {
+      throw new InternalServerError();
+    }
+
+    if (alreadyUserWithEmail) {
+      throw new UserAlreadyExistsError({
+        message: "Já existe usuário com este email",
+      });
+    }
+
+    const formattedBirthDate = dayjs(birthDate, "DD-MM-YYYY").toISOString();
     const hashPassword = await bcrypt.hash(password, SALT_ROUNDS);
 
     const newUser = await prisma.user.create({
@@ -39,10 +71,13 @@ export class UserService {
         name,
         email,
         password: hashPassword,
-        birthDate: birthDateAsDateTime,
+        birthDate: formattedBirthDate,
       },
     });
 
-    return newUser;
+    return {
+      ...newUser,
+      birthDate: dayjs(newUser.birthDate).format("DD-MM-YYYY"),
+    };
   }
 }
