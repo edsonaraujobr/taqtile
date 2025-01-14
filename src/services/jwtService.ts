@@ -15,4 +15,8 @@ export class JwtService {
   static decodeToken(token: string) {
     return jwt.decode(token);
   }
+
+  static verifyToken(token: string) {
+    return jwt.verify(token, SECRET_KEY);
+  }
 }

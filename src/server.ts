@@ -23,6 +23,9 @@ export const server = new ApolloServer({
       message: err.message,
     };
   },
+  context: ({ req }) => {
+    return { req };
+  },
 });
 
 server.listen().then(({ url }) => {
