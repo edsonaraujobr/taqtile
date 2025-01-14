@@ -50,6 +50,16 @@ describe("User Mutation - Teste de Login", () => {
     expect(token).to.be.a("string");
     expect(token.split(".")).to.have.length(3);
 
+    const decodedToken = JwtService.decodeToken(token);
+    expect(decodedToken).to.have.property("exp");
+
+    const dateNowSeconds = Math.floor(Date.now() / 1000);
+    const OneHourInSeconds = 60 * 60;
+    expect(decodedToken.exp).to.be.closeTo(
+      dateNowSeconds + OneHourInSeconds,
+      10,
+    );
+
     const loginUser = responseLogin.data.data.loginUser.user;
     expect(loginUser).to.have.property("id");
     expect(loginUser.name).to.equal(validUser.name);
