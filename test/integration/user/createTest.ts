@@ -45,7 +45,6 @@ describe("User Mutation - Teste de Criação de usuário", () => {
         },
       },
     );
-    console.log(response.data)
     const createdUser = response.data.data.createUser;
     expect(createdUser).to.have.property("id");
     expect(createdUser.name).to.equal(validUser.name);
