@@ -6,6 +6,7 @@ import {
   createUserInDatabaseTest,
 } from "../../helpers/userHelper.js";
 import { userData } from "../../utils/userDataUtils.js";
+import { JwtService } from "../../../src/services/jwtService.js";
 
 describe("User Mutation - Teste de Login", () => {
   const { validUser } = userData;
@@ -84,34 +85,16 @@ describe("User Mutation - Teste de Login", () => {
   });
 
   it("Deve realizar login com remember-me ativado", async () => {
-    const name = "Edson Araújo";
-    const email = "edsoasasan@gmail.com";
-    const password = "edson1010";
-    const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
+    await createUserInDatabaseTest(validUser);
 
-    await prisma.user.create({
-      data: {
-        name,
-        email,
-        password: passwordHash,
-      },
+    const mutation = createMutationLoginUserTest({
+      email: validUser.email,
+      password: validUser.password,
+      rememberMe: true,
     });
 
-    const loginUsermutation = `
-      mutation {
-        loginUser(data: { email: "${email}", password: "${password}", rememberMe: true }) {
-          user {
-            id
-            name
-            email
-            birthDate
-          }
-          token
-        }
-      }
-    `;
     const responseLogin = await axios.post("http://localhost:4000/graphql", {
-      query: loginUsermutation,
+      query: mutation,
     });
 
     const token = responseLogin.data.data.loginUser.token;
@@ -130,8 +113,8 @@ describe("User Mutation - Teste de Login", () => {
 
     const loginUser = responseLogin.data.data.loginUser.user;
     expect(loginUser).to.have.property("id");
-    expect(loginUser.name).to.equal(name);
-    expect(loginUser.email).to.equal(email);
+    expect(loginUser.name).to.equal(validUser.name);
+    expect(loginUser.email).to.equal(validUser.email);
   });
 
   afterEach(async () => {
