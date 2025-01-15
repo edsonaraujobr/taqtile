@@ -137,47 +137,4 @@ export class UserService {
       token,
     };
   }
-
-  static async loginUser(data) {
-    try {
-      userLoginValidator.parse(data);
-    } catch (error) {
-      if (error instanceof ZodError) {
-        const passwordError = error.errors.find((err) =>
-          err.path.includes("password"),
-        );
-        if (passwordError) {
-          throw new CustomError(400, "A senha tem no mínimo 6 caracteres");
-        }
-        throw new CustomError(400, error.errors[0].message, "Email inválido");
-      }
-
-      throw new CustomError(500, "Erro interno no servidor.");
-    }
-    const { email, password } = data;
-
-    const user = await prisma.user.findUnique({ where: { email } });
-
-    if (!user) {
-      throw new CustomError(400, "Usuário não encontrado");
-    }
-
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-
-    if (!isPasswordValid) {
-      throw new CustomError(400, "Usuário não encontrado");
-    }
-
-    const token = JwtService.generateToken({ id: user.id, email: user.email });
-
-    return {
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        birthDate: user.birthDate,
-      },
-      token,
-    };
-  }
 }

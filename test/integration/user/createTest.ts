@@ -2,14 +2,25 @@ import { expect } from "chai";
 import bcrypt from "bcrypt";
 import axios from "axios";
 import { prisma } from "../../../src/prisma/prisma.js";
-import { connectDB, clearDB } from "../../utils/dbHelper.js";
+import { connectDB, clearDB } from "../../helpers/dbHelper.js";
 import { MAX_AGE } from "../../../src/utils/constants.js";
 import {
   createMutationCreateUserTest,
   createUserInDatabaseTest,
-} from "../../utils/userHelper.js";
+} from "../../helpers/userHelper.js";
+import { userData } from "../../utils/userDataUtils.js";
 
 describe("User Mutation - Teste de Criação de usuário", () => {
+  const {
+    validUser,
+    validUserWithoutBirthDate,
+    duplicateEmailUser,
+    futureBirthDateUser,
+    invalidBirthDateUser,
+    maxAgeExceededUser,
+    weakPasswordUser,
+  } = userData;
+
   before(async () => {
     await connectDB();
   });
@@ -19,89 +30,61 @@ describe("User Mutation - Teste de Criação de usuário", () => {
   });
 
   it("Deve criar um novo usuario com todas as informacoes", async () => {
-    const name = "Edson Araújo";
-    const email = "edsoasasan@gmail.com";
-    const password = "edson1010";
-    const birthDate = "10-10-2000";
-
-    const mutation = `
-      mutation {
-        createUser(data: { name: "${name}", email: "${email}", password: "${password}", birthDate: "${birthDate}" }) {
-          id
-          name
-          email
-          birthDate
-        }
-      }
-    `;
+    const mutation = createMutationCreateUserTest(validUser);
 
     const response = await axios.post("http://localhost:4000/graphql", {
       query: mutation,
     });
 
     const createdUser = response.data.data.createUser;
-    console.log(createdUser)
     expect(createdUser).to.have.property("id");
-    expect(createdUser.name).to.equal(name);
-    expect(createdUser.email).to.equal(email);
-    expect(createdUser.birthDate).to.equal(birthDate);
+    expect(createdUser.name).to.equal(validUser.name);
+    expect(createdUser.email).to.equal(validUser.email);
+    expect(createdUser.birthDate).to.equal(validUser.birthDate);
 
     const userInDb = await prisma.user.findUnique({
-      where: { email },
+      where: { email: validUser.email },
     });
 
     expect(userInDb).to.not.be.null;
-    expect(userInDb.name).to.equal(name);
-    expect(userInDb.email).to.equal(email);
+    expect(userInDb.name).to.equal(validUser.name);
+    expect(userInDb.email).to.equal(validUser.email);
 
-    const passwordMatch = await bcrypt.compare(password, userInDb.password);
+    const passwordMatch = await bcrypt.compare(validUser.password, userInDb.password);
     expect(passwordMatch).to.be.true;
   });
 
   it("Deve criar um novo usuario sem o campo opcional de data de nascimento", async () => {
-    const name = "Edson Araújo";
-    const email = "edsoasasan@gmail.com";
-    const password = "edson1010";
-
-    const mutation = createMutationCreateUserTest({
-      name,
-      email,
-      password,
-    });
+    const mutation = createMutationCreateUserTest(validUserWithoutBirthDate);
 
     const response = await axios.post("http://localhost:4000/graphql", {
       query: mutation,
     });
-
     const createdUser = response.data.data.createUser;
+
     expect(createdUser).to.have.property("id");
-    expect(createdUser.name).to.equal(name);
-    expect(createdUser.email).to.equal(email);
+    expect(createdUser.name).to.equal(validUserWithoutBirthDate.name);
+    expect(createdUser.email).to.equal(validUserWithoutBirthDate.email);
 
     const userInDb = await prisma.user.findUnique({
-      where: { email },
+      where: { email: validUserWithoutBirthDate.email },
     });
 
     expect(userInDb).to.not.be.null;
-    expect(userInDb.name).to.equal(name);
-    expect(userInDb.email).to.equal(email);
+    expect(userInDb.name).to.equal(validUserWithoutBirthDate.name);
+    expect(userInDb.email).to.equal(validUserWithoutBirthDate.email);
 
-    const passwordMatch = await bcrypt.compare(password, userInDb.password);
+    const passwordMatch = await bcrypt.compare(
+      validUserWithoutBirthDate.password,
+      userInDb.password,
+    );
     expect(passwordMatch).to.be.true;
   });
 
   it("Deve retornar erro se o usuário já existir", async () => {
-    await createUserInDatabaseTest({
-      name: "Edson Araújo",
-      email: "edson@gmail.com",
-      password: "hashedpassword123",
-    });
+    await createUserInDatabaseTest(duplicateEmailUser);
 
-    const mutation = createMutationCreateUserTest({
-      name: "Cristiano Ronaldo",
-      email: "edson@gmail.com",
-      password: "randowmpassword123",
-    });
+    const mutation = createMutationCreateUserTest(duplicateEmailUser);
 
     const response = await axios.post("http://localhost:4000/graphql", {
       query: mutation,
@@ -113,37 +96,19 @@ describe("User Mutation - Teste de Criação de usuário", () => {
   });
 
   it("Deve retornar erro para senha fraca", async () => {
-    const mutation = createMutationCreateUserTest({
-      name: "Cristiano Ronaldo",
-      email: "edson@gmail.com",
-      password: "123",
-    });
+    const mutation = createMutationCreateUserTest(weakPasswordUser);
 
     const response = await axios.post("http://localhost:4000/graphql", {
       query: mutation,
     });
     expect(response.data.errors[0].code).to.equal(400);
     expect(response.data.errors[0].message).to.equal(
-      "A senha fornecida não é segura. É necessário, no mínimo, 06 caracteres, sendo, ao menos, um digito e um número ",
+      "A senha fornecida não é segura. É necessário no mínimo 6 caracteres, incluindo pelo menos um dígito e uma letra.",
     );
   });
 
   it("Deve retornar erro pela data de nascimento no futuro", async () => {
-    const name = "Edson Araújo";
-    const email = "edsoasasan@gmail.com";
-    const password = "123";
-    const birthDate = "10-10-2025";
-
-    const mutation = `
-      mutation {
-        createUser(data: { name: "${name}", email: "${email}", password: "${password}", birthDate: "${birthDate}" }) {
-          id
-          name
-          email
-          birthDate
-        }
-      }
-    `;
+    const mutation = createMutationCreateUserTest(futureBirthDateUser);
 
     try {
       await axios.post("http://localhost:4000/graphql", {
@@ -158,21 +123,7 @@ describe("User Mutation - Teste de Criação de usuário", () => {
   });
 
   it("Deve retornar erro pela formato de data errado", async () => {
-    const name = "Edson Araújo";
-    const email = "edsoasasan@gmail.com";
-    const password = "123";
-    const birthDate = "1";
-
-    const mutation = `
-      mutation {
-        createUser(data: { name: "${name}", email: "${email}", password: "${password}", birthDate: "${birthDate}" }) {
-          id
-          name
-          email
-          birthDate
-        }
-      }
-    `;
+    const mutation = createMutationCreateUserTest(invalidBirthDateUser);
 
     try {
       await axios.post("http://localhost:4000/graphql", {
@@ -187,21 +138,7 @@ describe("User Mutation - Teste de Criação de usuário", () => {
   });
 
   it("Deve retornar erro pela idade maxima permitida excedida", async () => {
-    const name = "Edson Araújo";
-    const email = "edsoasasan@gmail.com";
-    const password = "123";
-    const birthDate = "10-10-1800";
-
-    const mutation = `
-      mutation {
-        createUser(data: { name: "${name}", email: "${email}", password: "${password}", birthDate: "${birthDate}" }) {
-          id
-          name
-          email
-          birthDate
-        }
-      }
-    `;
+    const mutation = createMutationCreateUserTest(maxAgeExceededUser);
 
     try {
       await axios.post("http://localhost:4000/graphql", {

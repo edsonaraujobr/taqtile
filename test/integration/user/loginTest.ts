@@ -1,15 +1,15 @@
 import { expect } from "chai";
-
 import axios from "axios";
-import { prisma } from "../../../src/prisma/prisma.js";
-import { connectDB, clearDB } from "../../utils/dbHelper.js";
-
+import { connectDB, clearDB } from "../../helpers/dbHelper.js";
 import {
   createMutationLoginUserTest,
   createUserInDatabaseTest,
-} from "../../utils/userHelper.js";
+} from "../../helpers/userHelper.js";
+import { userData } from "../../utils/userDataUtils.js";
 
 describe("User Mutation - Teste de Login", () => {
+  const { validUser } = userData;
+
   before(async () => {
     await connectDB();
   });
@@ -35,19 +35,11 @@ describe("User Mutation - Teste de Login", () => {
   });
 
   it("Deve criar o usuário no banco de dados e realizar login com sucesso", async () => {
-    const name = "Edson Araújo";
-    const email = "edson@gmail.com";
-    const password = "edson123";
-
-    await createUserInDatabaseTest({
-      name,
-      email,
-      password,
-    });
+    await createUserInDatabaseTest(validUser);
 
     const mutation = createMutationLoginUserTest({
-      email,
-      password,
+      email: validUser.email,
+      password: validUser.password,
     });
 
     const responseLogin = await axios.post("http://localhost:4000/graphql", {
@@ -60,29 +52,22 @@ describe("User Mutation - Teste de Login", () => {
 
     const loginUser = responseLogin.data.data.loginUser.user;
     expect(loginUser).to.have.property("id");
-    expect(loginUser.name).to.equal(name);
-    expect(loginUser.email).to.equal(email);
+    expect(loginUser.name).to.equal(validUser.name);
+    expect(loginUser.email).to.equal(validUser.email);
   });
 
   it("Deve retornar erro de senha incorreta", async () => {
-    const name = "Edson Araújo";
-    const email = "edson@gmail.com";
-    const password = "edson123";
-
-    await createUserInDatabaseTest({
-      name,
-      email,
-      password,
-    });
+    await createUserInDatabaseTest(validUser);
 
     const mutation = createMutationLoginUserTest({
-      email,
-      password: "edson1010",
+      email: validUser.email,
+      password: "edson2025",
     });
 
     const response = await axios.post("http://localhost:4000/graphql", {
       query: mutation,
     });
+    console.log(response.data)
     expect(response.data.errors[0].code).to.equal(404);
     expect(response.data.errors[0].message).to.equal(
       "Usuário não encontrado. Verifique seu email e senha",
