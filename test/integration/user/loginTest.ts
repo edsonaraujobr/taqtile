@@ -67,7 +67,6 @@ describe("User Mutation - Teste de Login", () => {
     const response = await axios.post("http://localhost:4000/graphql", {
       query: mutation,
     });
-    console.log(response.data)
     expect(response.data.errors[0].code).to.equal(404);
     expect(response.data.errors[0].message).to.equal(
       "Usuário não encontrado. Verifique seu email e senha",
