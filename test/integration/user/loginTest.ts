@@ -92,10 +92,11 @@ describe("User Mutation - Teste de Login", () => {
       password: validUser.password,
       rememberMe: true,
     });
-
+    console.log(mutation)
     const responseLogin = await axios.post("http://localhost:4000/graphql", {
       query: mutation,
     });
+    console.log("ok");
 
     const token = responseLogin.data.data.loginUser.token;
     expect(token).to.be.a("string");

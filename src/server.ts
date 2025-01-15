@@ -25,7 +25,7 @@ export const server = new ApolloServer({
     };
   },
   context: ({ req }) => {
-    if (req.body.operationName !== "IntrospectionQuery") {
+    if (req.headers.authorization) {
       const token = req.headers.authorization || "";
       const user = authenticate(token);
       return { user };
