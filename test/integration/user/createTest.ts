@@ -41,7 +41,6 @@ describe("User Mutation - Teste de Criação de usuário", () => {
     });
 
     const token = JwtService.generateToken({ id: existingUser.id });
-    console.log("token: ", token);
 
     const response = await axios.post(
       "http://localhost:4000/graphql",
@@ -55,8 +54,7 @@ describe("User Mutation - Teste de Criação de usuário", () => {
       },
     );
 
-    const createdUser = response.data;
-    console.log(createdUser)
+    const createdUser = response.data.data.createUser;
     expect(createdUser).to.have.property("id");
     expect(createdUser.name).to.equal(validUser.name);
     expect(createdUser.email).to.equal(validUser.email);

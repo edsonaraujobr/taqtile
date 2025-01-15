@@ -15,14 +15,11 @@ import { DateBirthdayFutureError } from "../errors/dateBirthdayFutureError.js";
 import { JwtService } from "./jwtService.js";
 import { NotFoundError } from "../errors/notFoundError.js";
 import { UnauthorizedUser } from "../errors/unauthorizedUser.js";
-import { BadInputError } from "../errors/badInputError.js";
 export class UserService {
   static async createUser(data: any, context: any) {
-    console.log("userService: ", context)
     if (!context || !context.user) {
       throw new UnauthorizedUser({ message: "Usuário não autorizado" });
     }
-
     try {
       userCreateValidator.parse(data);
     } catch (error) {
