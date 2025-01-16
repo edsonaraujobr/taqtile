@@ -70,6 +70,45 @@ describe("Teste de busca de usuário", () => {
     expect(response.data.errors[0].code).to.equal(404);
     expect(response.data.errors[0].message).to.equal("Usuário não encontrado!");
   });
+
+  it("Deve retornar erro por falta autenticação ao tentar buscar um usuário por ID", async () => {
+    const user = await createUserInDatabaseTest(validUser);
+
+    const query = createQueryFindUserByIDTest({
+      id: user.id,
+    });
+
+    const response = await axios.post("http://localhost:4000/graphql", {
+      query,
+    });
+
+    expect(response.data.errors[0].code).to.equal(401);
+    expect(response.data.errors[0].message).to.equal("Usuário não autorizado");
+  });
+
+  it("Deve retornar erro por autenticação errada ao tentar buscar um usuário por ID", async () => {
+    const user = await createUserInDatabaseTest(validUser);
+
+    const query = createQueryFindUserByIDTest({
+      id: user.id,
+    });
+
+    const response = await axios.post(
+      "http://localhost:4000/graphql",
+      {
+        query,
+      },
+      {
+        headers: {
+          Authorization: `Bearer 123456789`,
+        },
+      },
+    );
+
+    expect(response.data.errors[0].code).to.equal(401);
+    expect(response.data.errors[0].message).to.equal("Usuário não autorizado");
+  });
+
   afterEach(async () => {
     await clearDB();
   });

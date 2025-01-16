@@ -5,6 +5,7 @@ import {
   DEFAULT_EXPIRATION,
 } from "../utils/constants.js";
 import { MissingSecretKeyError } from "../errors/missingSecretKeyError.js";
+import { UnauthorizedUser } from "../errors/unauthorizedUser.js";
 
 dotenv.config();
 const SECRET_KEY = process.env.SECRET_KEY;
@@ -31,9 +32,12 @@ export class JwtService {
       throw new MissingSecretKeyError();
     }
     try {
-      return jwt.verify(token, SECRET_KEY);
+      const result = jwt.verify(token, SECRET_KEY);
+      return result;
     } catch (error) {
-      throw new Error("Token inválido ou expirado");
+      throw new UnauthorizedUser({
+        message: "Token de validação expirado ou inválido!",
+      });
     }
   }
 }
