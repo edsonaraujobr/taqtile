@@ -182,6 +182,11 @@ export class UserService {
       });
     }
 
+    const quantityUsers =
+      Number.isInteger(quantity) && quantity > 0
+        ? quantity
+        : QUANTITY_DEFAULT_LIST_USERS;
+
     const users = await prisma.user.findMany({
       orderBy: { name: "asc" },
       skip: skip,

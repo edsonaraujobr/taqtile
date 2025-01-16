@@ -250,6 +250,35 @@ describe("Teste de busca de usuário", () => {
     expect(response.data.errors[0].message).to.equal(
       "O valor de skip excede o número total de usuários disponíveis.",
     );
+
+  it("Deve retornar uma lista de usuario sem parametro de quantidade", async () => {
+    // o codigo limpa o bd... tenho que rodar o seed aqui...
+    const tokenAdmin = await createAdminInDatabaseTest();
+
+    const query = createQueryReturnListUsersTest();
+    const response = await axios.post(
+      "http://localhost:4000/graphql",
+      {
+        query,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${tokenAdmin}`,
+        },
+      },
+    );
+
+
+    expect(response.data.data.listUsers).to.have.lengthOf(
+      QUANTITY_DEFAULT_LIST_USERS,
+    );
+
+    response.data.data.listUsers.forEach((user) => {
+      expect(user).to.have.property("id");
+      expect(user).to.have.property("name");
+      expect(user).to.have.property("email");
+      expect(user).to.have.property("birthDate");
+    });
   });
 
   afterEach(async () => {

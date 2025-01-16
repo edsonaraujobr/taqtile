@@ -191,3 +191,24 @@ export function createQueryReturnListUsersTest({
     },
   };
 }
+
+export function createQueryReturnListUsersTest({
+  quantity,
+}: {
+  quantity?: number;
+} = {}) {
+  const quantityUsers = quantity !== undefined ? `(quantity: ${quantity})` : "";
+
+  const query = `
+    query {
+      listUsers${quantityUsers} {
+        id
+        name
+        email
+        birthDate
+      }
+    }
+  `;
+
+  return query;
+}
