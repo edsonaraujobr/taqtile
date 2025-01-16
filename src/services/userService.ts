@@ -135,6 +135,9 @@ export class UserService {
         message: "Usuário não encontrado!",
       });
     }
-    return user;
+    return {
+      ...user,
+      birthDate: dayjs(user.birthDate).format("DD-MM-YYYY"),
+    };
   }
 }

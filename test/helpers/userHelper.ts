@@ -44,7 +44,7 @@ export async function createUserInDatabaseTest({
   const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
   const formattedBirthDate = dayjs(birthDate, "DD-MM-YYYY").toISOString();
 
-  await prisma.user.create({
+  const user = await prisma.user.create({
     data: {
       name,
       email,
@@ -52,6 +52,11 @@ export async function createUserInDatabaseTest({
       birthDate: formattedBirthDate,
     },
   });
+
+  return {
+    ...user,
+    birthDate: dayjs(user.birthDate).format("DD-MM-YYYY"),
+  };
 }
 
 export function createMutationCreateUserTest({
@@ -105,4 +110,19 @@ export async function createAdminInDatabaseTest({
   });
   const token = JwtService.generateToken({ id: user.id });
   return token;
+}
+
+export function createQueryFindUserByIDTest({ id }: { id: string }) {
+  const query = `
+    query {
+      findUserByID(id: "${id}") {
+        id
+        name
+        email
+        birthDate
+      }
+    }
+  `;
+
+  return query;
 }
