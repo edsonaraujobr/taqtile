@@ -4,8 +4,7 @@ import { UnauthorizedUser } from "../errors/unauthorizedUser.js";
 export const authenticate = (token) => {
   if (!token || !token.startsWith("Bearer ")) {
     throw new UnauthorizedUser({
-      message:
-        "Para continuar, você deve fornecer um token de validação válido no formato 'Bearer <token>'!",
+      message: "Usuário não autorizado!",
     });
   }
 
@@ -14,7 +13,7 @@ export const authenticate = (token) => {
     return decoded;
   } catch (error) {
     throw new UnauthorizedUser({
-      message: "Token de validação expirado ou inválido!",
+      message: "Usuário não autorizado! Realize o login novamente.",
     });
   }
 };
