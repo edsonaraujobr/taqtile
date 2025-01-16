@@ -5,7 +5,11 @@ import {
   userCreateValidator,
   userLoginValidator,
 } from "../validators/userValidator.js";
-import { SALT_ROUNDS, MAX_AGE } from "../utils/constants.js";
+import {
+  SALT_ROUNDS,
+  MAX_AGE,
+  QUANTITY_DEFAULT_LIST_USERS,
+} from "../utils/constants.js";
 import { ZodError } from "zod";
 import { BadInputError } from "../errors/badInputError.js";
 import { UserAlreadyExistsError } from "../errors/userAlreadyExistsError.js";
@@ -141,9 +145,14 @@ export class UserService {
   static async listUsers(quantity, context) {
     checkAuthentication({ context });
 
+    const quantityUsers =
+      Number.isInteger(quantity) && quantity > 0
+        ? quantity
+        : QUANTITY_DEFAULT_LIST_USERS;
+
     const users = await prisma.user.findMany({
       orderBy: { name: "asc" },
-      take: quantity,
+      take: quantityUsers,
     });
 
     if (users.length === 0) {

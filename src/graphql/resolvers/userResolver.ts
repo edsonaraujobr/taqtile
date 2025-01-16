@@ -41,8 +41,7 @@ export const userResolver = {
     },
     listUsers: async (_, { quantity }, context) => {
       try {
-        const quantityUsers = quantity || 10;
-        return await UserService.listUsers(quantityUsers, context);
+        return await UserService.listUsers(quantity, context);
       } catch (error: CustomError) {
         throw new CustomError({
           code: error.code ?? 500,

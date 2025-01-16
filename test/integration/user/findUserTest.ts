@@ -4,9 +4,11 @@ import { connectDB, clearDB } from "../../helpers/dbHelper.js";
 import {
   createUserInDatabaseTest,
   createAdminInDatabaseTest,
-  createQueryFindUserByIDTest
+  createQueryFindUserByIDTest,
+  createQueryReturnListUsersTest
 } from "../../helpers/userHelper.js";
 import { userData } from "../../utils/userDataUtils.js";
+import { QUANTITY_DEFAULT_LIST_USERS } from "../../../src/utils/constants.js";
 
 describe("Teste de busca de usuário", () => {
 
@@ -96,6 +98,11 @@ describe("Teste de busca de usuário", () => {
       id: user.id,
     });
 
+  it("Deve retornar uma lista de usuario sem parametro de quantidade", async () => {
+    // o codigo limpa o bd... tenho que rodar o seed aqui...
+    const tokenAdmin = await createAdminInDatabaseTest();
+
+    const query = createQueryReturnListUsersTest();
     const response = await axios.post(
       "http://localhost:4000/graphql",
       {
