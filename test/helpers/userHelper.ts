@@ -13,9 +13,9 @@ export function createMutationLoginUserTest({
   password: string;
   rememberMe?: boolean;
 }) {
-  const loginUser = `
-     mutation {
-        loginUser(data: { email: "${email}", password: "${password}", rememberMe: ${rememberMe} }) {
+  const mutation = `
+     mutation LoginUser($data: UserLoginInput!) {
+        loginUser(data: $data ) {
           user {
             id
             name
@@ -27,7 +27,16 @@ export function createMutationLoginUserTest({
       }
   `;
 
-  return loginUser;
+  return {
+    mutation,
+    variables: {
+      data: {
+        email,
+        password,
+        rememberMe,
+      },
+    },
+  };
 }
 
 export async function createUserInDatabaseTest({
@@ -70,11 +79,9 @@ export function createMutationCreateUserTest({
   password: string;
   birthDate?: string;
 }) {
-  const birthDateField = birthDate ? `, birthDate: "${birthDate}"` : "";
-
   const mutation = `
-  mutation {
-    createUser(data: { name: "${name}", email: "${email}", password: "${password}" ${birthDateField} }) {
+  mutation CreateUser($data: UserCreateInput!){
+    createUser(data: $data) {
       id
       name
       email
@@ -83,7 +90,17 @@ export function createMutationCreateUserTest({
   }
 `;
 
-  return mutation;
+  return {
+    mutation,
+    variables: {
+      data: {
+        name,
+        email,
+        password,
+        birthDate,
+      },
+    },
+  };
 }
 
 export async function createAdminInDatabaseTest({
@@ -114,8 +131,8 @@ export async function createAdminInDatabaseTest({
 
 export function createQueryFindUserByIDTest({ id }: { id: string }) {
   const query = `
-    query {
-      findUserByID(id: "${id}") {
+    query FindUserByID($id: ID!){
+      findUserByID(id: $id) {
         id
         name
         email
@@ -124,5 +141,10 @@ export function createQueryFindUserByIDTest({ id }: { id: string }) {
     }
   `;
 
-  return query;
+  return {
+    query,
+    variables: {
+      id,
+    },
+  };
 }

@@ -20,13 +20,14 @@ describe("User Mutation - Teste de Login", () => {
   });
 
   it("Deve retornar erro no login pois o usuário não existe", async () => {
-    const mutation = createMutationLoginUserTest({
+    const { mutation, variables } = createMutationLoginUserTest({
       email: "edson@gmail.com",
       password: "edson123",
     });
 
     const response = await axios.post("http://localhost:4000/graphql", {
       query: mutation,
+      variables,
     });
 
     expect(response.data.errors[0].code).to.equal(404);
@@ -38,13 +39,14 @@ describe("User Mutation - Teste de Login", () => {
   it("Deve criar o usuário no banco de dados e realizar login com sucesso", async () => {
     await createUserInDatabaseTest(validUser);
 
-    const mutation = createMutationLoginUserTest({
+    const { mutation, variables } = createMutationLoginUserTest({
       email: validUser.email,
       password: validUser.password,
     });
 
     const responseLogin = await axios.post("http://localhost:4000/graphql", {
       query: mutation,
+      variables,
     });
 
     const token = responseLogin.data.data.loginUser.token;
@@ -70,13 +72,14 @@ describe("User Mutation - Teste de Login", () => {
   it("Deve retornar erro de senha incorreta", async () => {
     await createUserInDatabaseTest(validUser);
 
-    const mutation = createMutationLoginUserTest({
+    const { mutation, variables } = createMutationLoginUserTest({
       email: validUser.email,
       password: "edson2025",
     });
 
     const response = await axios.post("http://localhost:4000/graphql", {
       query: mutation,
+      variables,
     });
     expect(response.data.errors[0].code).to.equal(404);
     expect(response.data.errors[0].message).to.equal(
@@ -87,7 +90,7 @@ describe("User Mutation - Teste de Login", () => {
   it("Deve realizar login com remember-me ativado", async () => {
     await createUserInDatabaseTest(validUser);
 
-    const mutation = createMutationLoginUserTest({
+    const  { mutation, variables }= createMutationLoginUserTest({
       email: validUser.email,
       password: validUser.password,
       rememberMe: true,
@@ -95,6 +98,7 @@ describe("User Mutation - Teste de Login", () => {
 
     const responseLogin = await axios.post("http://localhost:4000/graphql", {
       query: mutation,
+      variables,
     });
 
     const token = responseLogin.data.data.loginUser.token;

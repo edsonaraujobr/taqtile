@@ -31,13 +31,14 @@ describe("User Mutation - Teste de Criação de usuário", () => {
   });
 
   it("Deve criar um novo usuario com todas as informacoes", async () => {
-    const mutation = createMutationCreateUserTest(validUser);
+    const { mutation, variables } = createMutationCreateUserTest(validUser);
     const tokenAdmin = await createAdminInDatabaseTest();
 
     const response = await axios.post(
       "http://localhost:4000/graphql",
       {
         query: mutation,
+        variables,
       },
       {
         headers: {
@@ -64,13 +65,14 @@ describe("User Mutation - Teste de Criação de usuário", () => {
   });
 
   it("Deve criar um novo usuario sem o campo opcional de data de nascimento", async () => {
-    const mutation = createMutationCreateUserTest(validUserWithoutBirthDate);
+    const { mutation, variables } = createMutationCreateUserTest(validUserWithoutBirthDate);
     const tokenAdmin = await createAdminInDatabaseTest();
 
     const response = await axios.post(
       "http://localhost:4000/graphql",
       {
         query: mutation,
+        variables,
       },
       {
         headers: {
@@ -103,13 +105,14 @@ describe("User Mutation - Teste de Criação de usuário", () => {
   it("Deve retornar erro se o usuário já existir", async () => {
     await createUserInDatabaseTest(duplicateEmailUser);
 
-    const mutation = createMutationCreateUserTest(duplicateEmailUser);
+    const { mutation, variables } = createMutationCreateUserTest(duplicateEmailUser);
     const tokenAdmin = await createAdminInDatabaseTest();
 
     const response = await axios.post(
       "http://localhost:4000/graphql",
       {
         query: mutation,
+        variables,
       },
       {
         headers: {
@@ -124,13 +127,14 @@ describe("User Mutation - Teste de Criação de usuário", () => {
   });
 
   it("Deve retornar erro para senha fraca", async () => {
-    const mutation = createMutationCreateUserTest(weakPasswordUser);
+    const { mutation, variables } = createMutationCreateUserTest(weakPasswordUser);
     const tokenAdmin = await createAdminInDatabaseTest();
 
     const response = await axios.post(
       "http://localhost:4000/graphql",
       {
         query: mutation,
+        variables,
       },
       {
         headers: {
@@ -145,7 +149,7 @@ describe("User Mutation - Teste de Criação de usuário", () => {
   });
 
   it("Deve retornar erro pela data de nascimento no futuro", async () => {
-    const mutation = createMutationCreateUserTest(futureBirthDateUser);
+    const { mutation, variables } = createMutationCreateUserTest(futureBirthDateUser);
     const tokenAdmin = await createAdminInDatabaseTest();
 
     try {
@@ -153,6 +157,7 @@ describe("User Mutation - Teste de Criação de usuário", () => {
         "http://localhost:4000/graphql",
         {
           query: mutation,
+          variables,
         },
         {
           headers: {
@@ -169,7 +174,7 @@ describe("User Mutation - Teste de Criação de usuário", () => {
   });
 
   it("Deve retornar erro pela formato de data errado", async () => {
-    const mutation = createMutationCreateUserTest(invalidBirthDateUser);
+    const { mutation, variables } = createMutationCreateUserTest(invalidBirthDateUser);
     const tokenAdmin = await createAdminInDatabaseTest();
 
     try {
@@ -177,6 +182,7 @@ describe("User Mutation - Teste de Criação de usuário", () => {
         "http://localhost:4000/graphql",
         {
           query: mutation,
+          variables,
         },
         {
           headers: {
@@ -193,7 +199,7 @@ describe("User Mutation - Teste de Criação de usuário", () => {
   });
 
   it("Deve retornar erro pela idade maxima permitida excedida", async () => {
-    const mutation = createMutationCreateUserTest(maxAgeExceededUser);
+    const { mutation, variables } = createMutationCreateUserTest(maxAgeExceededUser);
     const tokenAdmin = await createAdminInDatabaseTest();
 
     try {
@@ -201,6 +207,7 @@ describe("User Mutation - Teste de Criação de usuário", () => {
         "http://localhost:4000/graphql",
         {
           query: mutation,
+          variables,
         },
         {
           headers: {

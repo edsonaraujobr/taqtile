@@ -24,7 +24,7 @@ describe("Teste de busca de usuário", () => {
     const user = await createUserInDatabaseTest(validUser);
     const tokenAdmin = await createAdminInDatabaseTest();
 
-    const query = createQueryFindUserByIDTest({
+    const { query, variables } = createQueryFindUserByIDTest({
       id: user.id,
     });
 
@@ -32,6 +32,7 @@ describe("Teste de busca de usuário", () => {
       "http://localhost:4000/graphql",
       {
         query,
+        variables,
       },
       {
         headers: {
@@ -51,14 +52,15 @@ describe("Teste de busca de usuário", () => {
   it("Deve retornar erro ao tentar buscar um usuário inexistente por ID", async () => {
     const tokenAdmin = await createAdminInDatabaseTest();
 
-    const query = createQueryFindUserByIDTest({
-      id: "12121215456456-454544",
+    const { query, variables } = createQueryFindUserByIDTest({
+      id: "1213445454545",
     });
 
     const response = await axios.post(
       "http://localhost:4000/graphql",
       {
         query,
+        variables,
       },
       {
         headers: {
@@ -74,12 +76,13 @@ describe("Teste de busca de usuário", () => {
   it("Deve retornar erro por falta autenticação ao tentar buscar um usuário por ID", async () => {
     const user = await createUserInDatabaseTest(validUser);
 
-    const query = createQueryFindUserByIDTest({
+    const { query, variables } = createQueryFindUserByIDTest({
       id: user.id,
     });
 
     const response = await axios.post("http://localhost:4000/graphql", {
       query,
+      variables,
     });
 
     expect(response.data.errors[0].code).to.equal(401);
@@ -89,7 +92,7 @@ describe("Teste de busca de usuário", () => {
   it("Deve retornar erro por autenticação errada ao tentar buscar um usuário por ID", async () => {
     const user = await createUserInDatabaseTest(validUser);
 
-    const query = createQueryFindUserByIDTest({
+    const { query, variables } = createQueryFindUserByIDTest({
       id: user.id,
     });
 
@@ -97,6 +100,7 @@ describe("Teste de busca de usuário", () => {
       "http://localhost:4000/graphql",
       {
         query,
+        variables,
       },
       {
         headers: {
