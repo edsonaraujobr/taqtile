@@ -120,4 +120,21 @@ export class UserService {
       token,
     };
   }
+
+  static async findUserByID(id, context) {
+    if (!context || !context.user) {
+      throw new UnauthorizedUser({ message: "Usuário não autorizado" });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id },
+    });
+
+    if (!user) {
+      throw new NotFoundError({
+        message: "Usuário não encontrado!",
+      });
+    }
+    return user;
+  }
 }

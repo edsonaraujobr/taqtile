@@ -28,6 +28,16 @@ export const userResolver = {
     },
   },
   Query: {
-    hello: () => "Hello world",
+    findUserByID: async (_, { id }, context) => {
+      try {
+        return await UserService.findUserByID(id, context);
+      } catch (error: CustomError) {
+        throw new CustomError({
+          code: error.code ?? 500,
+          message: error.message ?? "Erro inesperado no servidor.",
+          additionalInfo: error.additionalInfo,
+        });
+      }
+    },
   },
 };
