@@ -14,12 +14,11 @@ import { MaximumAgeError } from "../errors/maximumAgeError.js";
 import { DateBirthdayFutureError } from "../errors/dateBirthdayFutureError.js";
 import { JwtService } from "./jwtService.js";
 import { NotFoundError } from "../errors/notFoundError.js";
-import { UnauthorizedUser } from "../errors/unauthorizedUser.js";
+import { checkAuthentication } from "../utils/checkAuthentication.js";
+
 export class UserService {
   static async createUser(data: any, context: any) {
-    if (!context?.user) {
-      throw new UnauthorizedUser({ message: "Usuário não autorizado" });
-    }
+    checkAuthentication({ context });
     try {
       userCreateValidator.parse(data);
     } catch (error) {
@@ -122,9 +121,7 @@ export class UserService {
   }
 
   static async findUserByID(id, context) {
-    if (!context?.user) {
-      throw new UnauthorizedUser({ message: "Usuário não autorizado" });
-    }
+    checkAuthentication({ context });
 
     const user = await prisma.user.findUnique({
       where: { id },
@@ -139,5 +136,20 @@ export class UserService {
       ...user,
       birthDate: dayjs(user.birthDate).format("DD-MM-YYYY"),
     };
+  }
+
+  static async listUsers(quantity, context) {
+    checkAuthentication({ context });
+
+    const users = await prisma.user.findMany({
+      orderBy: { name: "asc" },
+      take: quantity,
+    });
+
+    if (users.length === 0) {
+      return [];
+    }
+
+    return users;
   }
 }

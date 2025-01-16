@@ -33,5 +33,6 @@ export const userSchema = gql`
 
   type Query {
     findUserByID(id: ID!): User
+    listUsers(quantity: Int): [User!]
   }
 `;

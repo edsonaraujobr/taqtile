@@ -39,5 +39,17 @@ export const userResolver = {
         });
       }
     },
+    listUsers: async (_, { quantity }, context) => {
+      try {
+        const quantityUsers = quantity || 10;
+        return await UserService.listUsers(quantityUsers, context);
+      } catch (error: CustomError) {
+        throw new CustomError({
+          code: error.code ?? 500,
+          message: error.message ?? "Erro inesperado no servidor.",
+          additionalInfo: error.additionalInfo,
+        });
+      }
+    }
   },
 };
