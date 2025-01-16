@@ -17,7 +17,7 @@ import { NotFoundError } from "../errors/notFoundError.js";
 import { UnauthorizedUser } from "../errors/unauthorizedUser.js";
 export class UserService {
   static async createUser(data: any, context: any) {
-    if (!context || !context.user) {
+    if (!context?.user) {
       throw new UnauthorizedUser({ message: "Usuário não autorizado" });
     }
     try {
@@ -122,7 +122,7 @@ export class UserService {
   }
 
   static async findUserByID(id, context) {
-    if (!context || !context.user) {
+    if (!context?.user) {
       throw new UnauthorizedUser({ message: "Usuário não autorizado" });
     }
 
