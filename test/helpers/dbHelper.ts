@@ -11,7 +11,10 @@ export const connectDB = async () => {
 
 export const clearDB = async () => {
   try {
-    await prisma.$transaction([prisma.user.deleteMany()]);
+    await prisma.$transaction([
+      prisma.address.deleteMany(),
+      prisma.user.deleteMany(),
+    ]);
     console.log("Banco de dados limpo com sucesso.");
   } catch (error) {
     console.error("Erro ao limpar o banco de dados");
