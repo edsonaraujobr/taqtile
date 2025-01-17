@@ -156,16 +156,9 @@ export function createQueryReturnListUsersTest({
   quantity?: number;
   skip?: number;
 } = {}) {
-  const paramets = [
-    quantity !== undefined ? `quantity: ${quantity}` : null,
-    skip !== undefined ? `skip: ${skip}` : null,
-  ]
-    .filter(Boolean)
-    .join(", ");
-
   const query = `
-    query {
-      listUsers${paramets ? `(${paramets})` : ""} {
+    query ListUsers($skip: Int, $quantity: Int){
+      listUsers(skip: $skip, quantity: $quantity) {
         users {
           id
           name
@@ -179,5 +172,11 @@ export function createQueryReturnListUsersTest({
     }
   `;
 
-  return query;
+  return {
+    query,
+    variables: {
+      quantity,
+      skip,
+    },
+  };
 }

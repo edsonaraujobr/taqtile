@@ -96,11 +96,12 @@ describe("Teste de busca de usuário", () => {
     await createListUsersInDatabaseSeed();
     const tokenAdmin = await createAdminInDatabaseTest();
 
-    const query = createQueryReturnListUsersTest();
+    const { query, variables } = createQueryReturnListUsersTest();
     const response = await axios.post(
       "http://localhost:4000/graphql",
       {
         query,
+        variables
       },
       {
         headers: {
@@ -125,13 +126,14 @@ describe("Teste de busca de usuário", () => {
     await createListUsersInDatabaseSeed();
     const tokenAdmin = await createAdminInDatabaseTest();
 
-    const query = createQueryReturnListUsersTest({
+    const { query, variables } = createQueryReturnListUsersTest({
       quantity: 5,
     });
     const response = await axios.post(
       "http://localhost:4000/graphql",
       {
         query,
+        variables,
       },
       {
         headers: {
@@ -154,7 +156,7 @@ describe("Teste de busca de usuário", () => {
     await createListUsersInDatabaseSeed();
     const tokenAdmin = await createAdminInDatabaseTest();
 
-    const query = createQueryReturnListUsersTest({
+    const { query, variables } = createQueryReturnListUsersTest({
       quantity: 10,
       skip: 10,
     });
@@ -162,6 +164,7 @@ describe("Teste de busca de usuário", () => {
       "http://localhost:4000/graphql",
       {
         query,
+        variables,
       },
       {
         headers: {
