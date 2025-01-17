@@ -13,6 +13,23 @@ model User {
   password  String
   name      String?
   birthDate DateTime?
+  Address   Address[]
 
   @@map("users")
+}
+
+model Address {
+  id            String  @id @default(uuid())
+  cep           String
+  street        String
+  street_number Int
+  complement    String?
+  neighborhood  String
+  city          String
+  state         String
+
+  user User   @relation(fields: [user_id], references: [id])
+  user_id  String
+
+  @@map("addresses")
 }
