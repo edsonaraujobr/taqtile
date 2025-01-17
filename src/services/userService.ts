@@ -90,7 +90,7 @@ export class UserService {
   }
 
   static async loginUser(data) {
-    const { email, password } = data;
+    const { email, password, rememberMe } = data;
 
     const user = await prisma.user.findUnique({ where: { email } });
 

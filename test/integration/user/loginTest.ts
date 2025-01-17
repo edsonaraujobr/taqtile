@@ -92,6 +92,7 @@ describe("User Mutation - Teste de Login", () => {
       password: validUser.password,
       rememberMe: true,
     });
+
     const responseLogin = await axios.post("http://localhost:4000/graphql", {
       query: mutation,
     });
@@ -112,18 +113,8 @@ describe("User Mutation - Teste de Login", () => {
 
     const loginUser = responseLogin.data.data.loginUser.user;
     expect(loginUser).to.have.property("id");
-<<<<<<< HEAD
-<<<<<<< HEAD
     expect(loginUser.name).to.equal(validUser.name);
     expect(loginUser.email).to.equal(validUser.email);
-=======
-    expect(loginUser.name).to.equal(name);
-    expect(loginUser.email).to.equal(email);
->>>>>>> f8d8cac (feat: create remember-me to user login)
-=======
-    expect(loginUser.name).to.equal(validUser.name);
-    expect(loginUser.email).to.equal(validUser.email);
->>>>>>> 815b0e3 (update test login with authentication)
   });
 
   afterEach(async () => {
