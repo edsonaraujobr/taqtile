@@ -87,26 +87,6 @@ export class UserService {
   }
 
   static async loginUser(data) {
-    try {
-      userLoginValidator.parse(data);
-    } catch (error) {
-      if (error instanceof ZodError) {
-        const passwordError = error.errors.find((err) =>
-          err.path.includes("password"),
-        );
-        if (passwordError) {
-          throw new BadInputError({
-            message:
-              "A senha está incorreta. É necessário no mínimo 06 caracteres, sendo, ao menos, um digito e um número!",
-          });
-        }
-        throw new BadInputError({
-          message: error.errors[0].message,
-        });
-      }
-
-      throw new InternalServerError();
-    }
     const { email, password } = data;
 
     const user = await prisma.user.findUnique({ where: { email } });
