@@ -39,9 +39,9 @@ export const userResolver = {
         });
       }
     },
-    listUsers: async (_, { quantity }, context) => {
+    listUsers: async (_, { skip, quantity }, context) => {
       try {
-        return await UserService.listUsers(quantity, context);
+        return await UserService.listUsers(skip, quantity, context);
       } catch (error: CustomError) {
         throw new CustomError({
           code: error.code ?? 500,

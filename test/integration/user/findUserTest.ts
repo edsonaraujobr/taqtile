@@ -9,6 +9,7 @@ import {
 } from "../../helpers/userHelper.js";
 import { userData } from "../../utils/userDataUtils.js";
 import { QUANTITY_DEFAULT_LIST_USERS } from "../../../src/utils/constants.js";
+import { createListUsersInDatabaseSeed } from "../../../prisma/seed.js";
 
 describe("Teste de busca de usuário", () => {
 
@@ -99,7 +100,7 @@ describe("Teste de busca de usuário", () => {
     });
 
   it("Deve retornar uma lista de usuario sem parametro de quantidade", async () => {
-    // o codigo limpa o bd... tenho que rodar o seed aqui...
+    createListUsersInDatabaseSeed();
     const tokenAdmin = await createAdminInDatabaseTest();
 
     const query = createQueryReturnListUsersTest();
@@ -116,8 +117,71 @@ describe("Teste de busca de usuário", () => {
       },
     );
 
-    expect(response.data.errors[0].code).to.equal(401);
-    expect(response.data.errors[0].message).to.equal("Usuário não autorizado");
+    expect(response.data.data.listUsers.users).to.have.lengthOf(
+      QUANTITY_DEFAULT_LIST_USERS,
+    );
+
+    response.data.data.listUsers.users.forEach((user) => {
+      expect(user).to.have.property("id");
+      expect(user).to.have.property("name");
+      expect(user).to.have.property("email");
+      expect(user).to.have.property("birthDate");
+    });
+  });
+
+  it("Deve retornar uma lista com 5 usuarios", async () => {
+    createListUsersInDatabaseSeed();
+    const tokenAdmin = await createAdminInDatabaseTest();
+
+    const query = createQueryReturnListUsersTest({
+      quantity: 5,
+    });
+    const response = await axios.post(
+      "http://localhost:4000/graphql",
+      {
+        query,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${tokenAdmin}`,
+        },
+      },
+    );
+
+    expect(response.data.data.listUsers.users).to.have.lengthOf(5);
+
+    response.data.data.listUsers.users.forEach((user) => {
+      expect(user).to.have.property("id");
+      expect(user).to.have.property("name");
+      expect(user).to.have.property("email");
+      expect(user).to.have.property("birthDate");
+    });
+  });
+
+
+  it("Deve retornar uma lista com 10 usuarios apos os 10 primeiros usuarios", async () => {
+    createListUsersInDatabaseSeed();
+    const tokenAdmin = await createAdminInDatabaseTest();
+
+    const query = createQueryReturnListUsersTest({
+      quantity: 10,
+      skip: 10,
+    });
+    const response = await axios.post(
+      "http://localhost:4000/graphql",
+      {
+        query,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${tokenAdmin}`,
+        },
+      },
+    );
+
+    expect(response.data.data.listUsers.users).to.have.lengthOf(10);
+    expect(response.data.data.listUsers.hasPreviousPage).to.be.true;
+    expect(response.data.data.listUsers.hasNextPage).to.be.true;
   });
 
   afterEach(async () => {

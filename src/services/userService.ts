@@ -142,8 +142,10 @@ export class UserService {
     };
   }
 
-  static async listUsers(quantity, context) {
+  static async listUsers(skip, quantity, context) {
     checkAuthentication({ context });
+
+    const totalUsers = await prisma.user.count();
 
     const quantityUsers =
       Number.isInteger(quantity) && quantity > 0
@@ -152,6 +154,7 @@ export class UserService {
 
     const users = await prisma.user.findMany({
       orderBy: { name: "asc" },
+      skip: skip,
       take: quantityUsers,
     });
 
@@ -159,6 +162,14 @@ export class UserService {
       return [];
     }
 
-    return users;
+    const hasPreviousPage = skip > 0;
+    const hasNextPage = skip + quantityUsers < totalUsers;
+
+    return {
+      users,
+      totalUsers,
+      hasPreviousPage,
+      hasNextPage,
+    };
   }
 }

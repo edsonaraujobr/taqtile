@@ -151,18 +151,30 @@ export function createQueryFindUserByIDTest({ id }: { id: string }) {
 
 export function createQueryReturnListUsersTest({
   quantity,
+  skip,
 }: {
   quantity?: number;
+  skip?: number;
 } = {}) {
-  const quantityUsers = quantity !== undefined ? `(quantity: ${quantity})` : "";
+  const paramets = [
+    quantity !== undefined ? `quantity: ${quantity}` : null,
+    skip !== undefined ? `skip: ${skip}` : null,
+  ]
+    .filter(Boolean)
+    .join(", ");
 
   const query = `
     query {
-      listUsers${quantityUsers} {
-        id
-        name
-        email
-        birthDate
+      listUsers${paramets ? `(${paramets})` : ""} {
+        users {
+          id
+          name
+          email
+          birthDate
+        }
+        totalUsers
+        hasPreviousPage
+        hasNextPage
       }
     }
   `;

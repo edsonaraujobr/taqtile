@@ -6,10 +6,10 @@ const prisma = new PrismaClient();
 
 async function main() {
   createAdmin();
-  createListUsers();
+  createListUsersInDatabaseSeed();
 }
 
-async function createListUsers() {
+export async function createListUsersInDatabaseSeed() {
   await prisma.user.deleteMany();
 
   const numberUsers = 50;
