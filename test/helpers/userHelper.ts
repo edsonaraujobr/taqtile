@@ -1,8 +1,13 @@
 import dayjs from "dayjs";
 import { prisma } from "../../src/prisma/prisma.js";
-import { SALT_ROUNDS } from "../../src/utils/constants.js";
+import { EMAIL_ADMIN, SALT_ROUNDS } from "../../src/utils/constants.js";
 import bcrypt from "bcrypt";
 import { JwtService } from "../../src/services/jwtService.js";
+import { MissingCredentialsAdminError } from "../../src/errors/missingCredentialsAdminError.js";
+
+const NAME_ADMIN = process.env.NAME_ADMIN;
+const EMAIL_ADMIN = process.env.EMAIL_ADMIN;
+const PASSWORD_ADMIN = process.env.PASSWORD_ADMIN;
 
 export function createMutationLoginUserTest({
   email,
@@ -104,9 +109,9 @@ export function createMutationCreateUserTest({
 }
 
 export async function createAdminInDatabaseTest({
-  name = "Admin",
-  email = "admin@example.com",
-  password = "admin123",
+  name = NAME_ADMIN,
+  email = EMAIL_ADMIN,
+  password = PASSWORD_ADMIN,
   birthDate,
 }: {
   name?: string;
@@ -114,6 +119,10 @@ export async function createAdminInDatabaseTest({
   password?: string;
   birthDate?: string;
 } = {}) {
+  if (!name || !email || !password) {
+    throw new MissingCredentialsAdminError();
+  }
+
   const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
   const formattedBirthDate = dayjs(birthDate, "DD-MM-YYYY").toISOString();
 

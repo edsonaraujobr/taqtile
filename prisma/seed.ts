@@ -1,8 +1,15 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
 import { SALT_ROUNDS } from "../src/utils/constants.js";
-
+import dotenv from "dotenv";
+import { MissingCredentialsAdminError } from "../src/errors/missingCredentialsAdminError.js";
 const prisma = new PrismaClient();
+
+dotenv.config();
+
+const NAME_ADMIN = process.env.NAME_ADMIN;
+const EMAIL_ADMIN = process.env.EMAIL_ADMIN;
+const PASSWORD_ADMIN = process.env.PASSWORD_ADMIN;
 
 async function main() {
   createAdmin();
@@ -13,32 +20,38 @@ export async function createListUsersInDatabaseSeed() {
   await prisma.user.deleteMany();
 
   const numberUsers = 50;
+  const users = [];
   for (let i = 1; i <= numberUsers; i++) {
-    await prisma.user.create({
+    const user = await prisma.user.create({
       data: {
-        name: `user${i}`,
+        name: `user${String(i).padStart(3, "0")}`,
         email: `user${i}@gmail.com`,
         password: `userpassword${i}`,
       },
     });
+    users.push(user);
   }
-  console.log("Usuários criados com sucesso!");
+  return users;
 }
 
 async function createAdmin() {
   const userExists = await prisma.user.findUnique({
     where: {
-      email: "admin@admin.com",
+      email: EMAIL_ADMIN,
     },
   });
 
   if (!userExists) {
-    const hashedPassword = await bcrypt.hash("admin123", SALT_ROUNDS);
+    if (!NAME_ADMIN || !EMAIL_ADMIN || !PASSWORD_ADMIN) {
+      throw new MissingCredentialsAdminError();
+    }
+
+    const hashedPassword = await bcrypt.hash(PASSWORD_ADMIN, SALT_ROUNDS);
 
     await prisma.user.create({
       data: {
-        name: "Admin",
-        email: "admin@admin.com",
+        name: NAME_ADMIN,
+        email: EMAIL_ADMIN,
         password: hashedPassword,
       },
     });

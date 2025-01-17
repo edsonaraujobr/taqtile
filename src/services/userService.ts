@@ -156,6 +156,11 @@ export class UserService {
       orderBy: { name: "asc" },
       skip: skip,
       take: quantityUsers,
+      where: {
+        email: {
+          not: process.env.EMAIL_ADMIN,
+        },
+      },
     });
 
     if (users.length === 0) {
