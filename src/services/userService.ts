@@ -182,6 +182,8 @@ export class UserService {
       });
     }
 
+    const totalUsers = await prisma.user.count();
+
     const quantityUsers =
       Number.isInteger(quantity) && quantity > 0
         ? quantity
