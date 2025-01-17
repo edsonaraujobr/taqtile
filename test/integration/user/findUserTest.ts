@@ -92,15 +92,8 @@ describe("Teste de busca de usuário", () => {
     expect(response.data.errors[0].message).to.equal("Usuário não autorizado");
   });
 
-  it("Deve retornar erro por autenticação errada ao tentar buscar um usuário por ID", async () => {
-    const user = await createUserInDatabaseTest(validUser);
-
-    const { query, variables } = createQueryFindUserByIDTest({
-      id: user.id,
-    });
-
   it("Deve retornar uma lista de usuario sem parametro de quantidade", async () => {
-    createListUsersInDatabaseSeed();
+    await createListUsersInDatabaseSeed();
     const tokenAdmin = await createAdminInDatabaseTest();
 
     const query = createQueryReturnListUsersTest();
@@ -108,11 +101,10 @@ describe("Teste de busca de usuário", () => {
       "http://localhost:4000/graphql",
       {
         query,
-        variables,
       },
       {
         headers: {
-          Authorization: `Bearer 123456789`,
+          Authorization: `Bearer ${tokenAdmin}`,
         },
       },
     );
@@ -130,7 +122,7 @@ describe("Teste de busca de usuário", () => {
   });
 
   it("Deve retornar uma lista com 5 usuarios", async () => {
-    createListUsersInDatabaseSeed();
+    await createListUsersInDatabaseSeed();
     const tokenAdmin = await createAdminInDatabaseTest();
 
     const query = createQueryReturnListUsersTest({
@@ -158,9 +150,8 @@ describe("Teste de busca de usuário", () => {
     });
   });
 
-
   it("Deve retornar uma lista com 10 usuarios apos os 10 primeiros usuarios", async () => {
-    createListUsersInDatabaseSeed();
+    await createListUsersInDatabaseSeed();
     const tokenAdmin = await createAdminInDatabaseTest();
 
     const query = createQueryReturnListUsersTest({
@@ -178,7 +169,6 @@ describe("Teste de busca de usuário", () => {
         },
       },
     );
-
     expect(response.data.data.listUsers.users).to.have.lengthOf(10);
     expect(response.data.data.listUsers.hasPreviousPage).to.be.true;
     expect(response.data.data.listUsers.hasNextPage).to.be.true;
