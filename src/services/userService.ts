@@ -14,9 +14,12 @@ import { MaximumAgeError } from "../errors/maximumAgeError.js";
 import { DateBirthdayFutureError } from "../errors/dateBirthdayFutureError.js";
 import { JwtService } from "./jwtService.js";
 import { NotFoundError } from "../errors/notFoundError.js";
-
+import { UnauthorizedUser } from "../errors/unauthorizedUser.js";
 export class UserService {
-  static async createUser(data: any) {
+  static async createUser(data: any, context: any) {
+    if (!context || !context.user) {
+      throw new UnauthorizedUser({ message: "Usuário não autorizado" });
+    }
     try {
       userCreateValidator.parse(data);
     } catch (error) {
@@ -87,7 +90,7 @@ export class UserService {
   }
 
   static async loginUser(data) {
-    const { email, password } = data;
+    const { email, password, rememberMe } = data;
 
     const user = await prisma.user.findUnique({ where: { email } });
 

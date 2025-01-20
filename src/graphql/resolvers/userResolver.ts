@@ -3,9 +3,9 @@ import { CustomError } from "../../errors/customError.js";
 
 export const userResolver = {
   Mutation: {
-    createUser: async (_, { data }) => {
+    createUser: async (_, { data }, context) => {
       try {
-        return await UserService.createUser(data);
+        return await UserService.createUser(data, context);
       } catch (error: CustomError) {
         throw new CustomError({
           code: error.code ?? 500,

@@ -2,6 +2,7 @@ import dayjs from "dayjs";
 import { prisma } from "../../src/prisma/prisma.js";
 import { SALT_ROUNDS } from "../../src/utils/constants.js";
 import bcrypt from "bcrypt";
+import { JwtService } from "../../src/services/jwtService.js";
 
 export function createMutationLoginUserTest({
   email,
@@ -78,4 +79,30 @@ export function createMutationCreateUserTest({
 `;
 
   return mutation;
+}
+
+export async function createAdminInDatabaseTest({
+  name = "Admin",
+  email = "admin@example.com",
+  password = "admin123",
+  birthDate,
+}: {
+  name?: string;
+  email?: string;
+  password?: string;
+  birthDate?: string;
+} = {}) {
+  const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
+  const formattedBirthDate = dayjs(birthDate, "DD-MM-YYYY").toISOString();
+
+  const user = await prisma.user.create({
+    data: {
+      name,
+      email,
+      password: passwordHash,
+      birthDate: formattedBirthDate,
+    },
+  });
+  const token = JwtService.generateToken({ id: user.id });
+  return token;
 }

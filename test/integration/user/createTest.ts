@@ -5,6 +5,7 @@ import { prisma } from "../../../src/prisma/prisma.js";
 import { connectDB, clearDB } from "../../helpers/dbHelper.js";
 import { MAX_AGE } from "../../../src/utils/constants.js";
 import {
+  createAdminInDatabaseTest,
   createMutationCreateUserTest,
   createUserInDatabaseTest,
 } from "../../helpers/userHelper.js";
@@ -31,11 +32,19 @@ describe("User Mutation - Teste de Criação de usuário", () => {
 
   it("Deve criar um novo usuario com todas as informacoes", async () => {
     const mutation = createMutationCreateUserTest(validUser);
+    const tokenAdmin = await createAdminInDatabaseTest();
 
-    const response = await axios.post("http://localhost:4000/graphql", {
-      query: mutation,
-    });
-
+    const response = await axios.post(
+      "http://localhost:4000/graphql",
+      {
+        query: mutation,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${tokenAdmin}`,
+        },
+      },
+    );
     const createdUser = response.data.data.createUser;
     expect(createdUser).to.have.property("id");
     expect(createdUser.name).to.equal(validUser.name);
@@ -56,10 +65,20 @@ describe("User Mutation - Teste de Criação de usuário", () => {
 
   it("Deve criar um novo usuario sem o campo opcional de data de nascimento", async () => {
     const mutation = createMutationCreateUserTest(validUserWithoutBirthDate);
+    const tokenAdmin = await createAdminInDatabaseTest();
 
-    const response = await axios.post("http://localhost:4000/graphql", {
-      query: mutation,
-    });
+    const response = await axios.post(
+      "http://localhost:4000/graphql",
+      {
+        query: mutation,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${tokenAdmin}`,
+        },
+      },
+    );
+
     const createdUser = response.data.data.createUser;
 
     expect(createdUser).to.have.property("id");
@@ -85,10 +104,19 @@ describe("User Mutation - Teste de Criação de usuário", () => {
     await createUserInDatabaseTest(duplicateEmailUser);
 
     const mutation = createMutationCreateUserTest(duplicateEmailUser);
+    const tokenAdmin = await createAdminInDatabaseTest();
 
-    const response = await axios.post("http://localhost:4000/graphql", {
-      query: mutation,
-    });
+    const response = await axios.post(
+      "http://localhost:4000/graphql",
+      {
+        query: mutation,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${tokenAdmin}`,
+        },
+      },
+    );
     expect(response.data.errors[0].code).to.equal(409);
     expect(response.data.errors[0].message).to.equal(
       "Já existe usuário com este email",
@@ -97,10 +125,19 @@ describe("User Mutation - Teste de Criação de usuário", () => {
 
   it("Deve retornar erro para senha fraca", async () => {
     const mutation = createMutationCreateUserTest(weakPasswordUser);
+    const tokenAdmin = await createAdminInDatabaseTest();
 
-    const response = await axios.post("http://localhost:4000/graphql", {
-      query: mutation,
-    });
+    const response = await axios.post(
+      "http://localhost:4000/graphql",
+      {
+        query: mutation,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${tokenAdmin}`,
+        },
+      },
+    );
     expect(response.data.errors[0].code).to.equal(400);
     expect(response.data.errors[0].message).to.equal(
       "A senha fornecida não é segura. É necessário no mínimo 6 caracteres, incluindo pelo menos um dígito e uma letra.",
@@ -109,11 +146,20 @@ describe("User Mutation - Teste de Criação de usuário", () => {
 
   it("Deve retornar erro pela data de nascimento no futuro", async () => {
     const mutation = createMutationCreateUserTest(futureBirthDateUser);
+    const tokenAdmin = await createAdminInDatabaseTest();
 
     try {
-      await axios.post("http://localhost:4000/graphql", {
-        query: mutation,
-      });
+      await axios.post(
+        "http://localhost:4000/graphql",
+        {
+          query: mutation,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${tokenAdmin}`,
+          },
+        },
+      );
     } catch (error: any) {
       expect(error.response.data.errors[0].code).to.equal(422);
       expect(error.response.data.errors[0].message).to.equal(
@@ -124,11 +170,20 @@ describe("User Mutation - Teste de Criação de usuário", () => {
 
   it("Deve retornar erro pela formato de data errado", async () => {
     const mutation = createMutationCreateUserTest(invalidBirthDateUser);
+    const tokenAdmin = await createAdminInDatabaseTest();
 
     try {
-      await axios.post("http://localhost:4000/graphql", {
-        query: mutation,
-      });
+      await axios.post(
+        "http://localhost:4000/graphql",
+        {
+          query: mutation,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${tokenAdmin}`,
+          },
+        },
+      );
     } catch (error: any) {
       expect(error.response.data.errors[0].code).to.equal(400);
       expect(error.response.data.errors[0].message).to.equal(
@@ -139,11 +194,20 @@ describe("User Mutation - Teste de Criação de usuário", () => {
 
   it("Deve retornar erro pela idade maxima permitida excedida", async () => {
     const mutation = createMutationCreateUserTest(maxAgeExceededUser);
+    const tokenAdmin = await createAdminInDatabaseTest();
 
     try {
-      await axios.post("http://localhost:4000/graphql", {
-        query: mutation,
-      });
+      await axios.post(
+        "http://localhost:4000/graphql",
+        {
+          query: mutation,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${tokenAdmin}`,
+          },
+        },
+      );
     } catch (error: any) {
       expect(error.response.data.errors[0].code).to.equal(400);
       expect(error.response.data.errors[0].message).to.equal(
