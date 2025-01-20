@@ -1,13 +1,15 @@
 import { UserService } from "../../services/userService.js";
 import { CustomError } from "../../errors/customError.js";
+import { checkAuthentication } from "../../utils/checkAuthentication.js";
 
 export const userResolver = {
   Mutation: {
     createUser: async (_, { data }, context) => {
       try {
+        checkAuthentication({ context });
+
         return await UserService.createUser({
           data,
-          context,
         });
       } catch (error: CustomError) {
         throw new CustomError({
@@ -35,9 +37,10 @@ export const userResolver = {
   Query: {
     findUserByID: async (_, { id }, context) => {
       try {
+        checkAuthentication({ context });
+
         return await UserService.findUserByID({
           id,
-          context,
         });
       } catch (error: CustomError) {
         throw new CustomError({
@@ -49,10 +52,11 @@ export const userResolver = {
     },
     listUsers: async (_, { skip, quantity }, context) => {
       try {
+        checkAuthentication({ context });
+
         return await UserService.listUsers({
           skip,
           quantity,
-          context,
         });
       } catch (error: CustomError) {
         throw new CustomError({

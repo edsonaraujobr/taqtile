@@ -18,7 +18,7 @@ import { MaximumAgeError } from "../errors/maximumAgeError.js";
 import { DateBirthdayFutureError } from "../errors/dateBirthdayFutureError.js";
 import { JwtService } from "./jwtService.js";
 import { NotFoundError } from "../errors/notFoundError.js";
-import { checkAuthentication } from "../utils/checkAuthentication.js";
+
 import {
   CreateUser,
   ListUsersResult,
@@ -29,12 +29,9 @@ import {
 export class UserService {
   static async createUser({
     data,
-    context,
   }: {
     data: CreateUser;
-    context: any;
   }): Promise<UserWithFormattedDate> {
-    checkAuthentication({ context });
     try {
       userCreateValidator.parse(data);
     } catch (error) {
@@ -142,12 +139,10 @@ export class UserService {
 
   static async findUserByID({
     id,
-    context,
   }: {
     id: string;
-    context: any
   }): Promise<UserWithFormattedDate> {
-    checkAuthentication({ context });
+
 
     const user = await prisma.user.findUnique({
       where: { id },
@@ -167,13 +162,11 @@ export class UserService {
   static async listUsers({
     skip,
     quantity,
-    context,
   }: {
     skip: number;
     quantity: number;
-    context: any;
   }): Promise<ListUsersResult> {
-    checkAuthentication({ context });
+
 
     const totalUsers = await prisma.user.count();
 
