@@ -1,7 +1,7 @@
 import { JwtService } from "../services/jwtService.js";
 import { UnauthorizedUser } from "../errors/unauthorizedUser.js";
 
-export const authenticate = (token) => {
+export const authenticate = (token: string) => {
   if (!token || !token.startsWith("Bearer ")) {
     throw new UnauthorizedUser({
       message: "Usuário não autorizado!",

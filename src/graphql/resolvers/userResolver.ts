@@ -1,10 +1,19 @@
 import { UserService } from "../../services/userService.js";
 import { CustomError } from "../../errors/customError.js";
 import { checkAuthentication } from "../../utils/checkAuthentication.js";
+import {
+  CreateUser,
+  LoginUser,
+  UserWithFormattedDate,
+} from "../../types/userTypes.js";
+import { Context } from "../../types/contextTypes.js";
 
 export const userResolver = {
   Mutation: {
-    createUser: async (_, { data }, context) => {
+    createUser: async (_,
+      { data }: { data: CreateUser },
+      context: Context,
+    ): Promise<UserWithFormattedDate> => {
       try {
         checkAuthentication({ context });
 
@@ -20,7 +29,7 @@ export const userResolver = {
       }
     },
 
-    loginUser: async (_, { data }) => {
+    loginUser: async (_, { data }: { data: LoginUser }) => {
       try {
         return await UserService.loginUser({
           data,
@@ -35,7 +44,7 @@ export const userResolver = {
     },
   },
   Query: {
-    findUserByID: async (_, { id }, context) => {
+    findUserByID: async (_, { id }: { id: string }, context: Context) => {
       try {
         checkAuthentication({ context });
 
@@ -50,7 +59,16 @@ export const userResolver = {
         });
       }
     },
-    listUsers: async (_, { skip, quantity }, context) => {
+    listUsers: async (_,
+      {
+        skip,
+        quantity,
+      }: {
+        skip: number;
+        quantity: number;
+      },
+      context: Context,
+    ) => {
       try {
         checkAuthentication({ context });
 
