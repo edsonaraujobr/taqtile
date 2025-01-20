@@ -1,0 +1,79 @@
+import dayjs from "dayjs";
+import { prisma } from "../../src/prisma/prisma.js";
+import { SALT_ROUNDS } from "../../src/utils/constants.js";
+import bcrypt from "bcrypt";
+
+export function createMutationLoginUserTest({
+  email,
+  password,
+}: {
+  email: string;
+  password: string;
+}) {
+  const loginUser = `
+     mutation {
+        loginUser(data: { email: "${email}", password: "${password}" }) {
+          user {
+            id
+            name
+            email
+            birthDate
+          }
+          token
+        }
+      }
+  `;
+
+  return loginUser;
+}
+
+export async function createUserInDatabaseTest({
+  name,
+  email,
+  password,
+  birthDate,
+}: {
+  name: string;
+  email: string;
+  password: string;
+  birthDate?: string;
+}) {
+  const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
+  const formattedBirthDate = dayjs(birthDate, "DD-MM-YYYY").toISOString();
+
+  await prisma.user.create({
+    data: {
+      name,
+      email,
+      password: passwordHash,
+      birthDate: formattedBirthDate,
+    },
+  });
+}
+
+export function createMutationCreateUserTest({
+  name,
+  email,
+  password,
+  birthDate,
+}: {
+  name: string;
+  email: string;
+  password: string;
+  birthDate?: string;
+}) {
+  const birthDateField = birthDate ? `, birthDate: "${birthDate}"` : "";
+
+  const mutation = `
+  mutation {
+    createUser(data: { name: "${name}", email: "${email}", password: "${password}" ${birthDateField} }) {
+      id
+      name
+      email
+      birthDate
+    }
+  }
+`;
+
+  return mutation;
+}
