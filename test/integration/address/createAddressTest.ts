@@ -1,9 +1,9 @@
 import { expect } from "chai";
 import axios from "axios";
 import { connectDB, clearDB } from "../../helpers/dbHelper.js";
-import { createAddressInDatabase } from "../../helpers/addressHelper.js";
+import { createAddressInDatabase, createMutationCreateAddressTest } from "../../helpers/addressHelper.js";
 import { addressData } from "../../utils/addressDataUtils.js";
-import { createUserInDatabaseTest } from "../../helpers/userHelper.js";
+import { createAdminInDatabaseTest, createUserInDatabaseTest } from "../../helpers/userHelper.js";
 import { userData } from "../../utils/userDataUtils.js";
 
 describe("Teste de criação de endereço", async () => {
@@ -72,6 +72,147 @@ describe("Teste de criação de endereço", async () => {
     expect(result02.city).to.equal(validAddress02.city);
     expect(result02.state).to.equal(validAddress02.state);
     expect(result02.userId).to.equal(user.id);
+  });
+
+  it("Deve criar um endereco para um usuario atraves da mutation createAddress", async () => {
+    const tokenAdmin = await createAdminInDatabaseTest();
+    const user = await createUserInDatabaseTest(validUser);
+
+    const address = {
+      ...validAddress01,
+      userId: user.id,
+    };
+    const { mutation, variables } = createMutationCreateAddressTest(address);
+
+    const response = await axios.post(
+      "http://localhost:4000/graphql",
+      {
+        query: mutation,
+        variables,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${tokenAdmin}`,
+        },
+      },
+    );
+    const result = response.data.data.createAddress;
+    expect(result).to.have.property("id");
+    expect(result.cep).to.equal(validAddress01.cep);
+    expect(result.street).to.equal(validAddress01.street);
+    expect(result.streetNumber).to.equal(validAddress01.streetNumber);
+    expect(result.complement).to.equal(validAddress01.complement);
+    expect(result.neighborhood).to.equal(validAddress01.neighborhood);
+    expect(result.city).to.equal(validAddress01.city);
+    expect(result.state).to.equal(validAddress01.state);
+    expect(result.userId).to.equal(user.id);
+  });
+
+  it("Deve criar dois enderecos para um usuario atraves da mutation createAddress", async () => {
+    const tokenAdmin = await createAdminInDatabaseTest();
+    const user = await createUserInDatabaseTest(validUser);
+
+    const address01 = {
+      ...validAddress01,
+      userId: user.id,
+    };
+    const { mutation, variables } = createMutationCreateAddressTest(address01);
+
+    const response = await axios.post(
+      "http://localhost:4000/graphql",
+      {
+        query: mutation,
+        variables,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${tokenAdmin}`,
+        },
+      },
+    );
+    const result = response.data.data.createAddress;
+    expect(result).to.have.property("id");
+    expect(result.cep).to.equal(validAddress01.cep);
+    expect(result.street).to.equal(validAddress01.street);
+    expect(result.streetNumber).to.equal(validAddress01.streetNumber);
+    expect(result.complement).to.equal(validAddress01.complement);
+    expect(result.neighborhood).to.equal(validAddress01.neighborhood);
+    expect(result.city).to.equal(validAddress01.city);
+    expect(result.state).to.equal(validAddress01.state);
+    expect(result.userId).to.equal(user.id);
+
+    const address02 = {
+      ...validAddress02,
+      userId: user.id,
+    };
+    const { mutation: mutation02, variables: variables02 } = createMutationCreateAddressTest(address02);
+
+    const response02 = await axios.post(
+      "http://localhost:4000/graphql",
+      {
+        query: mutation02,
+        variables: variables02,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${tokenAdmin}`,
+        },
+      },
+    );
+
+    const result02 = response02.data.data.createAddress;
+    expect(result02).to.have.property("id");
+    expect(result02.cep).to.equal(validAddress02.cep);
+    expect(result02.street).to.equal(validAddress02.street);
+    expect(result02.streetNumber).to.equal(validAddress02.streetNumber);
+    expect(result02.complement).to.equal(validAddress02.complement);
+    expect(result02.neighborhood).to.equal(validAddress02.neighborhood);
+    expect(result02.city).to.equal(validAddress02.city);
+    expect(result02.state).to.equal(validAddress02.state);
+    expect(result02.userId).to.equal(user.id);
+  });
+
+  it("Deve retornar erro de autenticacao ao tentar criar um endereco atraves da mutation createAddress", async () => {
+    const user = await createUserInDatabaseTest(validUser);
+
+    const address = {
+      ...validAddress01,
+      userId: user.id,
+    };
+    const { mutation, variables } = createMutationCreateAddressTest(address);
+
+    const response = await axios.post("http://localhost:4000/graphql", {
+      query: mutation,
+      variables,
+    });
+
+    expect(response.data.errors[0].code).to.equal(401);
+    expect(response.data.errors[0].message).to.equal("Usuário não autorizado");
+  });
+
+  it("Deve retornar erro de usuario nao encontrado ao tentar criar um endereco atraves da mutation createAddress", async () => {
+    const tokenAdmin = await createAdminInDatabaseTest();
+
+    const address = {
+      ...validAddress01,
+      userId: "xxxxxxx-xxxxxxx",
+    };
+    const { mutation, variables } = createMutationCreateAddressTest(address);
+
+    const response = await axios.post(
+      "http://localhost:4000/graphql",
+      {
+        query: mutation,
+        variables,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${tokenAdmin}`,
+        },
+      },
+    );
+    expect(response.data.errors[0].code).to.equal(404);
+    expect(response.data.errors[0].message).to.equal("Usuário não encontrado!");
   });
 
   afterEach(async () => {

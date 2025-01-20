@@ -250,16 +250,18 @@ describe("Teste de busca de usuário", () => {
     expect(response.data.errors[0].message).to.equal(
       "O valor de skip excede o número total de usuários disponíveis.",
     );
+  });
 
   it("Deve retornar uma lista de usuario sem parametro de quantidade", async () => {
-    createListUsersInDatabaseSeed();
+    const users = await createListUsersInDatabaseSeed();
     const tokenAdmin = await createAdminInDatabaseTest();
 
-    const query = createQueryReturnListUsersTest();
+    const { query, variables } = createQueryReturnListUsersTest();
     const response = await axios.post(
       "http://localhost:4000/graphql",
       {
         query,
+        variables,
       },
       {
         headers: {
@@ -268,29 +270,36 @@ describe("Teste de busca de usuário", () => {
       },
     );
 
-    expect(response.data.data.listUsers.users).to.have.lengthOf(
-      QUANTITY_DEFAULT_LIST_USERS,
-    );
+    const resultUsers = response.data.data.listUsers.users;
 
-    response.data.data.listUsers.users.forEach((user) => {
+    expect(resultUsers).to.have.lengthOf(QUANTITY_DEFAULT_LIST_USERS);
+
+    resultUsers.forEach((user, index) => {
       expect(user).to.have.property("id");
       expect(user).to.have.property("name");
       expect(user).to.have.property("email");
       expect(user).to.have.property("birthDate");
+
+      expect(user).to.have.property("id");
+      expect(user.name).to.equal(users[index].name);
+      expect(user.email).to.equal(users[index].email);
     });
   });
 
   it("Deve retornar uma lista com 5 usuarios", async () => {
-    createListUsersInDatabaseSeed();
+    const quantitySearchUsers = 5;
+
+    const users = await createListUsersInDatabaseSeed();
     const tokenAdmin = await createAdminInDatabaseTest();
 
-    const query = createQueryReturnListUsersTest({
-      quantity: 5,
+    const { query, variables } = createQueryReturnListUsersTest({
+      quantity: quantitySearchUsers,
     });
     const response = await axios.post(
       "http://localhost:4000/graphql",
       {
         query,
+        variables,
       },
       {
         headers: {
@@ -299,29 +308,37 @@ describe("Teste de busca de usuário", () => {
       },
     );
 
-    expect(response.data.data.listUsers.users).to.have.lengthOf(5);
+    const resultUsers = response.data.data.listUsers.users;
 
-    response.data.data.listUsers.users.forEach((user) => {
+    expect(resultUsers).to.have.lengthOf(quantitySearchUsers);
+
+    resultUsers.forEach((user, index) => {
       expect(user).to.have.property("id");
       expect(user).to.have.property("name");
       expect(user).to.have.property("email");
       expect(user).to.have.property("birthDate");
+
+      expect(user).to.have.property("id");
+      expect(user.name).to.equal(users[index].name);
+      expect(user.email).to.equal(users[index].email);
     });
   });
 
 
   it("Deve retornar uma lista com 10 usuarios apos os 10 primeiros usuarios", async () => {
-    createListUsersInDatabaseSeed();
+    const quantitySearchUsers = 10;
+    await createListUsersInDatabaseSeed();
     const tokenAdmin = await createAdminInDatabaseTest();
 
-    const query = createQueryReturnListUsersTest({
-      quantity: 10,
+    const { query, variables } = createQueryReturnListUsersTest({
+      quantity: quantitySearchUsers,
       skip: 10,
     });
     const response = await axios.post(
       "http://localhost:4000/graphql",
       {
         query,
+        variables,
       },
       {
         headers: {
@@ -329,8 +346,7 @@ describe("Teste de busca de usuário", () => {
         },
       },
     );
-
-    expect(response.data.data.listUsers.users).to.have.lengthOf(10);
+    expect(response.data.data.listUsers.users).to.have.lengthOf(quantitySearchUsers);
     expect(response.data.data.listUsers.hasPreviousPage).to.be.true;
     expect(response.data.data.listUsers.hasNextPage).to.be.true;
   });

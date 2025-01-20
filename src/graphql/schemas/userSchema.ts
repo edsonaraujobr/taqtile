@@ -1,4 +1,5 @@
 import { gql } from "apollo-server";
+import { addressSchema } from "./addressSchema.js";
 
 export const userSchema = gql`
   input UserCreateInput {
@@ -26,6 +27,7 @@ export const userSchema = gql`
     name: String!
     email: String!
     birthDate: String
+    addresses: [Address!]
   }
 
   type LoginResponse {
@@ -42,4 +44,6 @@ export const userSchema = gql`
     findUserByID(id: ID!): User
     listUsers(skip: Int = 0, quantity: Int = 10): PaginatedUsers!
   }
+
+  ${addressSchema}
 `;

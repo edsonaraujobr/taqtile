@@ -142,10 +142,11 @@ export class UserService {
   }: {
     id: string;
   }): Promise<UserWithFormattedDate> {
-
-
     const user = await prisma.user.findUnique({
       where: { id },
+      include: {
+        Address: true,
+      },
     });
 
     if (!user) {
@@ -166,8 +167,6 @@ export class UserService {
     skip: number;
     quantity: number;
   }): Promise<ListUsersResult> {
-
-
     const totalUsers = await prisma.user.count();
 
     const quantityUsers =
@@ -182,13 +181,6 @@ export class UserService {
       });
     }
 
-    const totalUsers = await prisma.user.count();
-
-    const quantityUsers =
-      Number.isInteger(quantity) && quantity > 0
-        ? quantity
-        : QUANTITY_DEFAULT_LIST_USERS;
-
     const users = await prisma.user.findMany({
       orderBy: { name: "asc" },
       skip: skip,
@@ -197,6 +189,9 @@ export class UserService {
         email: {
           not: "admin@admin.com",
         },
+      },
+      include: {
+        Address: true,
       },
     });
 

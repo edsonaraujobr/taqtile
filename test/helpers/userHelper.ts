@@ -14,15 +14,9 @@ export function createMutationLoginUserTest({
   password: string;
   rememberMe?: boolean;
 }) {
-<<<<<<< HEAD
   const mutation = `
      mutation LoginUser($data: UserLoginInput!) {
         loginUser(data: $data ) {
-=======
-  const loginUser = `
-     mutation {
-        loginUser(data: { email: "${email}", password: "${password}", rememberMe: ${rememberMe} }) {
->>>>>>> 815b0e3 (update test login with authentication)
           user {
             id
             name
@@ -190,37 +184,4 @@ export function createQueryReturnListUsersTest({
       skip,
     },
   };
-}
-
-export function createQueryReturnListUsersTest({
-  quantity,
-  skip,
-}: {
-  quantity?: number;
-  skip?: number;
-} = {}) {
-  const paramets = [
-    quantity !== undefined ? `quantity: ${quantity}` : null,
-    skip !== undefined ? `skip: ${skip}` : null,
-  ]
-    .filter(Boolean)
-    .join(", ");
-
-  const query = `
-    query {
-      listUsers${paramets ? `(${paramets})` : ""} {
-        users {
-          id
-          name
-          email
-          birthDate
-        }
-        totalUsers
-        hasPreviousPage
-        hasNextPage
-      }
-    }
-  `;
-
-  return query;
 }
