@@ -31,7 +31,12 @@ describe("User Mutation - Teste de Criação de usuário", () => {
   });
 
   it("Deve criar um novo usuario com todas as informacoes", async () => {
-    const { mutation, variables } = createMutationCreateUserTest(validUser);
+    const email = "other@email.com";
+
+    const { mutation, variables } = createMutationCreateUserTest({
+      ...validUser,
+      email,
+    });
     const tokenAdmin = await createAdminInDatabaseTest();
 
     const response = await axios.post(
@@ -49,16 +54,16 @@ describe("User Mutation - Teste de Criação de usuário", () => {
     const createdUser = response.data.data.createUser;
     expect(createdUser).to.have.property("id");
     expect(createdUser.name).to.equal(validUser.name);
-    expect(createdUser.email).to.equal(validUser.email);
+    expect(createdUser.email).to.equal(email);
     expect(createdUser.birthDate).to.equal(validUser.birthDate);
 
     const userInDb = await prisma.user.findUnique({
-      where: { email: validUser.email },
+      where: { email },
     });
 
     expect(userInDb).to.not.be.null;
     expect(userInDb.name).to.equal(validUser.name);
-    expect(userInDb.email).to.equal(validUser.email);
+    expect(userInDb.email).to.equal(email);
 
     const passwordMatch = await bcrypt.compare(validUser.password, userInDb.password);
     expect(passwordMatch).to.be.true;

@@ -190,6 +190,19 @@ describe("Teste de busca de usuário", () => {
     expect(response.data.data.listUsers.hasNextPage).to.be.true;
   });
 
+  it("Deve retornar erro de autenticação ao tentar buscar uma lista de usuários", async () => {
+    await createListUsersInDatabaseSeed();
+
+    const { query, variables } = createQueryReturnListUsersTest();
+    const response = await axios.post("http://localhost:4000/graphql", {
+      query,
+      variables,
+    });
+
+    expect(response.data.errors[0].code).to.equal(401);
+    expect(response.data.errors[0].message).to.equal("Usuário não autorizado");
+  });
+
   afterEach(async () => {
     await clearDB();
   });
