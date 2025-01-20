@@ -5,7 +5,10 @@ export const userResolver = {
   Mutation: {
     createUser: async (_, { data }, context) => {
       try {
-        return await UserService.createUser(data, context);
+        return await UserService.createUser({
+          data,
+          context,
+        });
       } catch (error: CustomError) {
         throw new CustomError({
           code: error.code ?? 500,
@@ -17,7 +20,9 @@ export const userResolver = {
 
     loginUser: async (_, { data }) => {
       try {
-        return await UserService.loginUser(data);
+        return await UserService.loginUser({
+          data,
+        });
       } catch (error: CustomError) {
         throw new CustomError({
           code: error.code ?? 500,
@@ -30,7 +35,10 @@ export const userResolver = {
   Query: {
     findUserByID: async (_, { id }, context) => {
       try {
-        return await UserService.findUserByID(id, context);
+        return await UserService.findUserByID({
+          id,
+          context,
+        });
       } catch (error: CustomError) {
         throw new CustomError({
           code: error.code ?? 500,
@@ -41,7 +49,11 @@ export const userResolver = {
     },
     listUsers: async (_, { skip, quantity }, context) => {
       try {
-        return await UserService.listUsers(skip, quantity, context);
+        return await UserService.listUsers({
+          skip,
+          quantity,
+          context,
+        });
       } catch (error: CustomError) {
         throw new CustomError({
           code: error.code ?? 500,

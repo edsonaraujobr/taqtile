@@ -19,9 +19,21 @@ import { DateBirthdayFutureError } from "../errors/dateBirthdayFutureError.js";
 import { JwtService } from "./jwtService.js";
 import { NotFoundError } from "../errors/notFoundError.js";
 import { checkAuthentication } from "../utils/checkAuthentication.js";
-
+import {
+  CreateUser,
+  ListUsersResult,
+  LoginUser,
+  UserWithFormattedDate,
+  UserWithTokenAuthentication
+} from "../types/userTypes.js";
 export class UserService {
-  static async createUser(data: any, context: any) {
+  static async createUser({
+    data,
+    context,
+  }: {
+    data: CreateUser;
+    context: any;
+  }): Promise<UserWithFormattedDate> {
     checkAuthentication({ context });
     try {
       userCreateValidator.parse(data);
@@ -92,7 +104,11 @@ export class UserService {
     };
   }
 
-  static async loginUser(data) {
+  static async loginUser({
+    data,
+  }: {
+    data: LoginUser;
+  }): Promise<UserWithTokenAuthentication> {
     const { email, password, rememberMe } = data;
 
     const user = await prisma.user.findUnique({ where: { email } });
@@ -124,7 +140,13 @@ export class UserService {
     };
   }
 
-  static async findUserByID(id, context) {
+  static async findUserByID({
+    id,
+    context,
+  }: {
+    id: string;
+    context: any
+  }): Promise<UserWithFormattedDate> {
     checkAuthentication({ context });
 
     const user = await prisma.user.findUnique({
@@ -142,7 +164,15 @@ export class UserService {
     };
   }
 
-  static async listUsers(skip, quantity, context) {
+  static async listUsers({
+    skip,
+    quantity,
+    context,
+  }: {
+    skip: number;
+    quantity: number;
+    context: any;
+  }): Promise<ListUsersResult> {
     checkAuthentication({ context });
 
     const totalUsers = await prisma.user.count();
