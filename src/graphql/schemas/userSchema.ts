@@ -18,7 +18,7 @@ export const userSchema = gql`
     id: ID!
     name: String!
     email: String!
-    birthDate: String!
+    birthDate: String
   }
 
   type LoginResponse {
@@ -32,6 +32,6 @@ export const userSchema = gql`
   }
 
   type Query {
-    hello: String
+    findUserByID(id: ID!): User
   }
 `;

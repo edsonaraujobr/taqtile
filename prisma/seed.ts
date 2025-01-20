@@ -5,6 +5,27 @@ import { SALT_ROUNDS } from "../src/utils/constants.js";
 const prisma = new PrismaClient();
 
 async function main() {
+  createAdmin();
+  createListUsers();
+}
+
+async function createListUsers() {
+  await prisma.user.deleteMany();
+
+  const numberUsers = 50;
+  for (let i = 1; i <= numberUsers; i++) {
+    await prisma.user.create({
+      data: {
+        name: `user${i}`,
+        email: `user${i}@gmail.com`,
+        password: `userpassword${i}`,
+      },
+    });
+  }
+  console.log("Usuários criados com sucesso!");
+}
+
+async function createAdmin() {
   const userExists = await prisma.user.findUnique({
     where: {
       email: "admin@admin.com",

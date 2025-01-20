@@ -4,6 +4,7 @@ import { userResolver } from "./graphql/resolvers/userResolver.js";
 import { CustomError } from "./errors/customError.js";
 import dotenv from "dotenv";
 import { authenticate } from "./middlewares/authenticateUser.js";
+import { UnauthorizedUser } from "./errors/unauthorizedUser.js";
 
 dotenv.config();
 
@@ -27,7 +28,22 @@ export const server = new ApolloServer({
   context: ({ req }) => {
     if (req.headers.authorization) {
       const token = req.headers.authorization || "";
-      const user = authenticate(token);
+      let user;
+      try {
+        user = authenticate(token);
+      } catch (err) {
+        if (err.originalError instanceof CustomError) {
+          return {
+            code: err.originalError.code,
+            message: err.originalError.message,
+            additionalInfo: err.originalError.additionalInfo,
+          };
+        }
+        return {
+          code: err.extensions?.code || "INTERNAL_SERVER_ERROR",
+          message: err.message,
+        };
+      }
       return { user };
     }
   },

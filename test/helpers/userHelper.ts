@@ -13,9 +13,9 @@ export function createMutationLoginUserTest({
   password: string;
   rememberMe?: boolean;
 }) {
-  const loginUser = `
-     mutation {
-        loginUser(data: { email: "${email}", password: "${password}", rememberMe: ${rememberMe} }) {
+  const mutation = `
+     mutation LoginUser($data: UserLoginInput!) {
+        loginUser(data: $data ) {
           user {
             id
             name
@@ -27,7 +27,16 @@ export function createMutationLoginUserTest({
       }
   `;
 
-  return loginUser;
+  return {
+    mutation,
+    variables: {
+      data: {
+        email,
+        password,
+        rememberMe,
+      },
+    },
+  };
 }
 
 export async function createUserInDatabaseTest({
@@ -44,7 +53,7 @@ export async function createUserInDatabaseTest({
   const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
   const formattedBirthDate = dayjs(birthDate, "DD-MM-YYYY").toISOString();
 
-  await prisma.user.create({
+  const user = await prisma.user.create({
     data: {
       name,
       email,
@@ -52,6 +61,11 @@ export async function createUserInDatabaseTest({
       birthDate: formattedBirthDate,
     },
   });
+
+  return {
+    ...user,
+    birthDate: dayjs(user.birthDate).format("DD-MM-YYYY"),
+  };
 }
 
 export function createMutationCreateUserTest({
@@ -65,11 +79,9 @@ export function createMutationCreateUserTest({
   password: string;
   birthDate?: string;
 }) {
-  const birthDateField = birthDate ? `, birthDate: "${birthDate}"` : "";
-
   const mutation = `
-  mutation {
-    createUser(data: { name: "${name}", email: "${email}", password: "${password}" ${birthDateField} }) {
+  mutation CreateUser($data: UserCreateInput!){
+    createUser(data: $data) {
       id
       name
       email
@@ -78,7 +90,17 @@ export function createMutationCreateUserTest({
   }
 `;
 
-  return mutation;
+  return {
+    mutation,
+    variables: {
+      data: {
+        name,
+        email,
+        password,
+        birthDate,
+      },
+    },
+  };
 }
 
 export async function createAdminInDatabaseTest({
@@ -105,4 +127,24 @@ export async function createAdminInDatabaseTest({
   });
   const token = JwtService.generateToken({ id: user.id });
   return token;
+}
+
+export function createQueryFindUserByIDTest({ id }: { id: string }) {
+  const query = `
+    query FindUserByID($id: ID!){
+      findUserByID(id: $id) {
+        id
+        name
+        email
+        birthDate
+      }
+    }
+  `;
+
+  return {
+    query,
+    variables: {
+      id,
+    },
+  };
 }
