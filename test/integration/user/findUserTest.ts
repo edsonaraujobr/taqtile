@@ -203,6 +203,55 @@ describe("Teste de busca de usuário", () => {
     expect(response.data.errors[0].message).to.equal("Usuário não autorizado");
   });
 
+  it("Deve retornar erro ao tentar buscar uma lista de usuários pois nao ha usuarios cadastrados", async () => {
+    const tokenAdmin = await createAdminInDatabaseTest();
+
+    const { query } = createQueryReturnListUsersTest();
+    const response = await axios.post(
+      "http://localhost:4000/graphql",
+      {
+        query,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${tokenAdmin}`,
+        },
+      },
+    );
+
+    expect(response.data.errors[0].code).to.equal(404);
+    expect(response.data.errors[0].message).to.equal(
+      "Nenhum usuário encontrado!",
+    );
+  });
+
+  it("Deve retornar erro ao tentar buscar uma lista de usuários pois o skip eh maior que a lista de usuarios", async () => {
+    const skip = 60;
+    await createListUsersInDatabaseSeed();
+    const tokenAdmin = await createAdminInDatabaseTest();
+
+    const { query, variables } = createQueryReturnListUsersTest({
+      skip,
+    });
+    const response = await axios.post(
+      "http://localhost:4000/graphql",
+      {
+        query,
+        variables
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${tokenAdmin}`,
+        },
+      },
+    );
+
+    expect(response.data.errors[0].code).to.equal(400);
+    expect(response.data.errors[0].message).to.equal(
+      "O valor de skip excede o número total de usuários disponíveis.",
+    );
+  });
+
   afterEach(async () => {
     await clearDB();
   });

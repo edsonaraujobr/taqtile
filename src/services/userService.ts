@@ -152,6 +152,13 @@ export class UserService {
         ? quantity
         : QUANTITY_DEFAULT_LIST_USERS;
 
+    if (skip >= totalUsers) {
+      throw new BadInputError({
+        message:
+          "O valor de skip excede o número total de usuários disponíveis.",
+      });
+    }
+
     const users = await prisma.user.findMany({
       orderBy: { name: "asc" },
       skip: skip,
@@ -164,7 +171,9 @@ export class UserService {
     });
 
     if (users.length === 0) {
-      return [];
+      throw new NotFoundError({
+        message: "Nenhum usuário encontrado!",
+      });
     }
 
     const hasPreviousPage = skip > 0;
