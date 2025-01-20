@@ -105,7 +105,7 @@ export class UserService {
       });
     }
 
-    const token = JwtService.generateToken({ id: user.id });
+    const token = JwtService.generateToken({ id: user.id }, rememberMe);
 
     return {
       user: {

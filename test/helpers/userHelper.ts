@@ -6,13 +6,15 @@ import bcrypt from "bcrypt";
 export function createMutationLoginUserTest({
   email,
   password,
+  rememberMe = false,
 }: {
   email: string;
   password: string;
+  rememberMe?: boolean;
 }) {
   const loginUser = `
      mutation {
-        loginUser(data: { email: "${email}", password: "${password}" }) {
+        loginUser(data: { email: "${email}", password: "${password}", rememberMe: ${rememberMe} }) {
           user {
             id
             name
