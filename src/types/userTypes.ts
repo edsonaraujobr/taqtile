@@ -1,5 +1,5 @@
 import { User } from "@prisma/client";
-import { Address } from "@prisma/client";
+import { Address } from "./addressTypes.js";
 export interface ListUsersResult {
   users: User[];
   totalUsers: number;
