@@ -10,10 +10,13 @@ import {
 import { userData } from "../../utils/userDataUtils.js";
 import { QUANTITY_DEFAULT_LIST_USERS } from "../../../src/utils/constants.js";
 import { createListUsersInDatabaseSeed } from "../../../prisma/seed.js";
+import { addressData } from "../../utils/addressDataUtils.js";
+import { createMutationCreateAddressTest } from "../../helpers/addressHelper.js";
 
 describe("Teste de busca de usuário", () => {
 
   const { validUser } = userData;
+  const { validAddress01, validAddress02 } = addressData;
 
   before(async () => {
     await connectDB();
@@ -50,6 +53,7 @@ describe("Teste de busca de usuário", () => {
     expect(userFounded.name).to.equal(user.name);
     expect(userFounded.email).to.equal(user.email);
     expect(userFounded.birthDate).to.equal(user.birthDate);
+    expect(userFounded).to.have.property("addresses");
   });
 
   it("Deve retornar erro ao tentar buscar um usuário inexistente por ID", async () => {
@@ -119,6 +123,7 @@ describe("Teste de busca de usuário", () => {
       expect(user).to.have.property("name");
       expect(user).to.have.property("email");
       expect(user).to.have.property("birthDate");
+      expect(user).to.have.property("addresses");
 
       expect(user.name).to.equal(users[index].name);
       expect(user.email).to.equal(users[index].email);
@@ -158,6 +163,7 @@ describe("Teste de busca de usuário", () => {
       expect(user).to.have.property("email");
       expect(user).to.have.property("birthDate");
 
+      expect(user).to.have.property("addresses");
       expect(user.name).to.equal(users[index].name);
       expect(user.email).to.equal(users[index].email);
       expect(user.birthDate).to.equal(users[index].birthDate);
@@ -280,7 +286,7 @@ describe("Teste de busca de usuário", () => {
       expect(user).to.have.property("email");
       expect(user).to.have.property("birthDate");
 
-      expect(user).to.have.property("id");
+      expect(user).to.have.property("addresses");
       expect(user.name).to.equal(users[index].name);
       expect(user.email).to.equal(users[index].email);
     });
@@ -318,12 +324,11 @@ describe("Teste de busca de usuário", () => {
       expect(user).to.have.property("email");
       expect(user).to.have.property("birthDate");
 
-      expect(user).to.have.property("id");
+      expect(user).to.have.property("addresses");
       expect(user.name).to.equal(users[index].name);
       expect(user.email).to.equal(users[index].email);
     });
   });
-
 
   it("Deve retornar uma lista com 10 usuarios apos os 10 primeiros usuarios", async () => {
     const quantitySearchUsers = 10;
@@ -349,6 +354,78 @@ describe("Teste de busca de usuário", () => {
     expect(response.data.data.listUsers.users).to.have.lengthOf(quantitySearchUsers);
     expect(response.data.data.listUsers.hasPreviousPage).to.be.true;
     expect(response.data.data.listUsers.hasNextPage).to.be.true;
+  });
+
+  it("Deve buscar um usuário por ID e verificar se os enderecos sao retornados corretamente", async () => {
+    const user = await createUserInDatabaseTest(validUser);
+    const tokenAdmin = await createAdminInDatabaseTest();
+
+    const address01 = {
+      ...validAddress01,
+      userId: user.id,
+    };
+
+    const address02 = {
+      ...validAddress02,
+      userId: user.id,
+    };
+
+    const { mutation: mutation01, variables: variables01 } =
+      createMutationCreateAddressTest(address01);
+
+    await axios.post(
+      "http://localhost:4000/graphql",
+      {
+        query: mutation01,
+        variables: variables01,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${tokenAdmin}`,
+        },
+      },
+    );
+
+    const { mutation: mutation02, variables: variables02 } =
+      createMutationCreateAddressTest(address02);
+
+    await axios.post(
+      "http://localhost:4000/graphql",
+      {
+        query: mutation02,
+        variables: variables02,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${tokenAdmin}`,
+        },
+      },
+    );
+
+    const { query, variables } = createQueryFindUserByIDTest({
+      id: user.id,
+    });
+
+    const response = await axios.post(
+      "http://localhost:4000/graphql",
+      {
+        query,
+        variables,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${tokenAdmin}`,
+        },
+      },
+    );
+
+    const userFounded = response.data.data.findUserByID;
+    expect(userFounded).to.have.property("id");
+    expect(userFounded.id).equal(user.id);
+    expect(userFounded.name).to.equal(user.name);
+    expect(userFounded.email).to.equal(user.email);
+    expect(userFounded.birthDate).to.equal(user.birthDate);
+    expect(userFounded).to.have.property("addresses");
   });
 
   afterEach(async () => {

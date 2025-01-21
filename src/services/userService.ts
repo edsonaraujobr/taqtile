@@ -145,7 +145,7 @@ export class UserService {
     const user = await prisma.user.findUnique({
       where: { id },
       include: {
-        Address: true,
+        addresses: true,
       },
     });
 
@@ -191,7 +191,7 @@ export class UserService {
         },
       },
       include: {
-        Address: true,
+        addresses: true,
       },
     });
 

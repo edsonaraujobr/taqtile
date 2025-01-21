@@ -142,6 +142,16 @@ export function createQueryFindUserByIDTest({ id }: { id: string }) {
         name
         email
         birthDate
+        addresses {
+          id
+          cep
+          street
+          streetNumber
+          complement
+          neighborhood
+          city
+          state
+        }
       }
     }
   `;
@@ -169,6 +179,16 @@ export function createQueryReturnListUsersTest({
           name
           email
           birthDate
+          addresses {
+            id
+            cep
+            street
+            streetNumber
+            complement
+            neighborhood
+            city
+            state
+          }
         }
         totalUsers
         hasPreviousPage

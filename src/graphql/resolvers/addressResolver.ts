@@ -31,14 +31,14 @@ export const addressResolver = {
   },
   Query: {
     getAddressesByUserId: async (_,
-      { id }: { id: string },
+      { userId }: { userId: string },
       context: Context,
-    ): Promise<Addresses> => {
+    ): Promise<Address[]> => {
       try {
         checkAuthentication({ context });
 
         return await AddressService.getAddressesByUserId({
-          id,
+          userId,
         });
       } catch (error: CustomError) {
         throw new CustomError({

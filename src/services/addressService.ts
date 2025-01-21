@@ -1,5 +1,5 @@
 import { ZodError } from "zod";
-import { Address, AddressCreated } from "../types/addressTypes.js";
+import { Address, AddressCreated, Addresses } from "../types/addressTypes.js";
 import { addressCreateValidator } from "../validators/addressValidator.js";
 import { BadInputError } from "../errors/badInputError.js";
 import { InternalServerError } from "../errors/internalServerError.js";
@@ -63,5 +63,36 @@ export class AddressService {
     });
 
     return address;
+  }
+
+  static async getAddressesByUserId({
+    userId,
+  }: {
+    userId: string;
+  }): Promise<Address[]> {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      include: {
+        addresses: true,
+      },
+    });
+
+    if (!user) {
+      throw new NotFoundError({
+        message: "Usuário não encontrado!",
+      });
+    }
+
+    const addresses = await prisma.address.findMany({
+      where: { userId },
+    });
+
+    if (addresses.length === 0) {
+      throw new NotFoundError({
+        message: "Nenhum endereço encontrado!",
+      });
+    }
+
+    return addresses;
   }
 }
