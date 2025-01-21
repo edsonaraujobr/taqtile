@@ -87,7 +87,11 @@ export function createMutationCreateAddressTest({
   };
 }
 
-export function createQueryFindAddressesByUserID({ userId }: { userId: string }) {
+export function createQueryFindAddressesByUserID({
+  userId,
+}: {
+  userId: string;
+}) {
   const query = `
     query GetAddressesByUserId($userId: ID!){
       getAddressesByUserId(userId: $userId) {

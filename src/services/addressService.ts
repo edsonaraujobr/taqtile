@@ -1,5 +1,5 @@
 import { ZodError } from "zod";
-import { Address, AddressCreated, Addresses } from "../types/addressTypes.js";
+import { Address, AddressCreated } from "../types/addressTypes.js";
 import { addressCreateValidator } from "../validators/addressValidator.js";
 import { BadInputError } from "../errors/badInputError.js";
 import { InternalServerError } from "../errors/internalServerError.js";

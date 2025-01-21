@@ -4,7 +4,6 @@ import { userResolver } from "./graphql/resolvers/userResolver.js";
 import { CustomError } from "./errors/customError.js";
 import dotenv from "dotenv";
 import { authenticate } from "./middlewares/authenticateUser.js";
-import { UnauthorizedUser } from "./errors/unauthorizedUser.js";
 import { addressSchema } from "./graphql/schemas/addressSchema.js";
 import { addressResolver } from "./graphql/resolvers/addressResolver.js";
 

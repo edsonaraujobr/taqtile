@@ -1,10 +1,7 @@
 import { prisma } from "../prisma/prisma.js";
 import bcrypt from "bcrypt";
 import dayjs from "dayjs";
-import {
-  userCreateValidator,
-  userLoginValidator,
-} from "../validators/userValidator.js";
+import { userCreateValidator } from "../validators/userValidator.js";
 import {
   SALT_ROUNDS,
   MAX_AGE,
@@ -24,7 +21,7 @@ import {
   ListUsersResult,
   LoginUser,
   UserWithFormattedDate,
-  UserWithTokenAuthentication
+  UserWithTokenAuthentication,
 } from "../types/userTypes.js";
 export class UserService {
   static async createUser({

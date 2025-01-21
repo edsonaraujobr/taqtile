@@ -1,11 +1,7 @@
 import { CustomError } from "../../errors/customError.js";
 import { checkAuthentication } from "../../utils/checkAuthentication.js";
 import { Context } from "../../types/contextTypes.js";
-import {
-  Address,
-  AddressCreated,
-  Addresses,
-} from "../../types/addressTypes.js";
+import { Address, AddressCreated } from "../../types/addressTypes.js";
 import { AddressService } from "../../services/addressService.js";
 
 export const addressResolver = {

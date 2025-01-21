@@ -245,7 +245,7 @@ describe("Teste de busca de usuário", () => {
       "http://localhost:4000/graphql",
       {
         query,
-        variables
+        variables,
       },
       {
         headers: {

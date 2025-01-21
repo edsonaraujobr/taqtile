@@ -3,7 +3,6 @@ import axios from "axios";
 import { connectDB, clearDB } from "../../helpers/dbHelper.js";
 import {
   createAddressInDatabase,
-  createMutationCreateAddressTest,
   createQueryFindAddressesByUserID,
 } from "../../helpers/addressHelper.js";
 import {

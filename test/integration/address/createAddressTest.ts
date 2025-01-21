@@ -1,9 +1,15 @@
 import { expect } from "chai";
 import axios from "axios";
 import { connectDB, clearDB } from "../../helpers/dbHelper.js";
-import { createAddressInDatabase, createMutationCreateAddressTest } from "../../helpers/addressHelper.js";
+import {
+  createAddressInDatabase,
+  createMutationCreateAddressTest,
+} from "../../helpers/addressHelper.js";
 import { addressData } from "../../utils/addressDataUtils.js";
-import { createAdminInDatabaseTest, createUserInDatabaseTest } from "../../helpers/userHelper.js";
+import {
+  createAdminInDatabaseTest,
+  createUserInDatabaseTest,
+} from "../../helpers/userHelper.js";
 import { userData } from "../../utils/userDataUtils.js";
 
 describe("Teste de criação de endereço", async () => {
@@ -145,7 +151,8 @@ describe("Teste de criação de endereço", async () => {
       ...validAddress02,
       userId: user.id,
     };
-    const { mutation: mutation02, variables: variables02 } = createMutationCreateAddressTest(address02);
+    const { mutation: mutation02, variables: variables02 } =
+      createMutationCreateAddressTest(address02);
 
     const response02 = await axios.post(
       "http://localhost:4000/graphql",
