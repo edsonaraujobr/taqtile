@@ -8,7 +8,7 @@ import {
   createQueryReturnListUsersTest
 } from "../../helpers/userHelper.js";
 import { userData } from "../../utils/userDataUtils.js";
-import { EMAIL_ADMIN, QUANTITY_DEFAULT_LIST_USERS } from "../../../src/utils/constants.js";
+import { QUANTITY_DEFAULT_LIST_USERS } from "../../../src/utils/constants.js";
 import { createListUsersInDatabaseSeed } from "../../../prisma/seed.js";
 
 describe("Teste de busca de usuário", () => {
@@ -120,9 +120,9 @@ describe("Teste de busca de usuário", () => {
       expect(user).to.have.property("email");
       expect(user).to.have.property("birthDate");
 
-      expect(user).to.have.property("id");
       expect(user.name).to.equal(users[index].name);
       expect(user.email).to.equal(users[index].email);
+      expect(user.birthDate).to.equal(users[index].birthDate);
     });
   });
 
@@ -158,9 +158,9 @@ describe("Teste de busca de usuário", () => {
       expect(user).to.have.property("email");
       expect(user).to.have.property("birthDate");
 
-      expect(user).to.have.property("id");
       expect(user.name).to.equal(users[index].name);
       expect(user.email).to.equal(users[index].email);
+      expect(user.birthDate).to.equal(users[index].birthDate);
     });
   });
 
