@@ -215,6 +215,192 @@ describe("Teste de criação de endereço", async () => {
     expect(response.data.errors[0].message).to.equal("Usuário não encontrado!");
   });
 
+  it("Deve retornar erro de cep invalido na criacao de um endereco", async () => {
+    const tokenAdmin = await createAdminInDatabaseTest();
+    const user = await createUserInDatabaseTest(validUser);
+
+    const address = {
+      ...validAddress01,
+      cep: "1",
+      userId: user.id,
+    };
+    const { mutation, variables } = createMutationCreateAddressTest(address);
+    const response = await axios.post(
+      "http://localhost:4000/graphql",
+      {
+        query: mutation,
+        variables,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${tokenAdmin}`,
+        },
+      },
+    );
+    expect(response.data.errors[0].code).to.equal(400);
+    expect(response.data.errors[0].message).to.equal(
+      "Formato de CEP inválido. O formato correto é xxxxx-xxxx",
+    );
+  });
+
+  it("Deve retornar erro por falta de rua na criacao de um endereco", async () => {
+    const tokenAdmin = await createAdminInDatabaseTest();
+    const user = await createUserInDatabaseTest(validUser);
+
+    const address = {
+      ...validAddress01,
+      street: "",
+      userId: user.id,
+    };
+    const { mutation, variables } = createMutationCreateAddressTest(address);
+    const response = await axios.post(
+      "http://localhost:4000/graphql",
+      {
+        query: mutation,
+        variables,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${tokenAdmin}`,
+        },
+      },
+    );
+    expect(response.data.errors[0].code).to.equal(400);
+    expect(response.data.errors[0].message).to.equal("Rua é obrigatório!");
+  });
+
+  it("Deve retornar erro pois numero da rua deve ser positivo", async () => {
+    const tokenAdmin = await createAdminInDatabaseTest();
+    const user = await createUserInDatabaseTest(validUser);
+
+    const address = {
+      ...validAddress01,
+      streetNumber: -10,
+      userId: user.id,
+    };
+    const { mutation, variables } = createMutationCreateAddressTest(address);
+    const response = await axios.post(
+      "http://localhost:4000/graphql",
+      {
+        query: mutation,
+        variables,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${tokenAdmin}`,
+        },
+      },
+    );
+    expect(response.data.errors[0].code).to.equal(400);
+    expect(response.data.errors[0].message).to.equal(
+      "Número da rua deve ser positivo",
+    );
+  });
+
+  it("Deve retornar erro por falta de bairro na criacao de um endereco", async () => {
+    const tokenAdmin = await createAdminInDatabaseTest();
+    const user = await createUserInDatabaseTest(validUser);
+
+    const address = {
+      ...validAddress01,
+      neighborhood: "",
+      userId: user.id,
+    };
+    const { mutation, variables } = createMutationCreateAddressTest(address);
+    const response = await axios.post(
+      "http://localhost:4000/graphql",
+      {
+        query: mutation,
+        variables,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${tokenAdmin}`,
+        },
+      },
+    );
+    expect(response.data.errors[0].code).to.equal(400);
+    expect(response.data.errors[0].message).to.equal("Bairro é obrigatório!");
+  });
+
+  it("Deve retornar erro por falta de cidade na criacao de um endereco", async () => {
+    const tokenAdmin = await createAdminInDatabaseTest();
+    const user = await createUserInDatabaseTest(validUser);
+
+    const address = {
+      ...validAddress01,
+      city: "",
+      userId: user.id,
+    };
+    const { mutation, variables } = createMutationCreateAddressTest(address);
+    const response = await axios.post(
+      "http://localhost:4000/graphql",
+      {
+        query: mutation,
+        variables,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${tokenAdmin}`,
+        },
+      },
+    );
+    expect(response.data.errors[0].code).to.equal(400);
+    expect(response.data.errors[0].message).to.equal("Cidade é obrigatório!");
+  });
+
+  it("Deve retornar erro por falta de estado na criacao de um endereco", async () => {
+    const tokenAdmin = await createAdminInDatabaseTest();
+    const user = await createUserInDatabaseTest(validUser);
+
+    const address = {
+      ...validAddress01,
+      state: "",
+      userId: user.id,
+    };
+    const { mutation, variables } = createMutationCreateAddressTest(address);
+    const response = await axios.post(
+      "http://localhost:4000/graphql",
+      {
+        query: mutation,
+        variables,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${tokenAdmin}`,
+        },
+      },
+    );
+    expect(response.data.errors[0].code).to.equal(400);
+    expect(response.data.errors[0].message).to.equal("Estado é obrigatório!");
+  });
+
+  it("Deve retornar erro por falta de id na criacao de um endereco", async () => {
+    const tokenAdmin = await createAdminInDatabaseTest();
+
+    const address = {
+      ...validAddress01,
+      userId: "",
+    };
+    const { mutation, variables } = createMutationCreateAddressTest(address);
+    const response = await axios.post(
+      "http://localhost:4000/graphql",
+      {
+        query: mutation,
+        variables,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${tokenAdmin}`,
+        },
+      },
+    );
+    expect(response.data.errors[0].code).to.equal(400);
+    expect(response.data.errors[0].message).to.equal(
+      "ID do usuário é obrigatório!",
+    );
+  });
+
   afterEach(async () => {
     await clearDB();
   });
