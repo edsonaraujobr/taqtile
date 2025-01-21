@@ -53,6 +53,7 @@ describe("Teste de busca de usuário", () => {
     expect(userFounded.email).to.equal(user.email);
     expect(userFounded.birthDate).to.equal(user.birthDate);
     expect(userFounded).to.have.property("addresses");
+    expect(userFounded.addresses).to.have.lengthOf(0);
   });
 
   it("Deve retornar erro ao tentar buscar um usuário inexistente por ID", async () => {
@@ -127,6 +128,7 @@ describe("Teste de busca de usuário", () => {
       expect(user.name).to.equal(users[index].name);
       expect(user.email).to.equal(users[index].email);
       expect(user.birthDate).to.equal(users[index].birthDate);
+      expect(user.addresses).to.have.lengthOf(0);
     });
   });
 
@@ -166,6 +168,7 @@ describe("Teste de busca de usuário", () => {
       expect(user.name).to.equal(users[index].name);
       expect(user.email).to.equal(users[index].email);
       expect(user.birthDate).to.equal(users[index].birthDate);
+      expect(user.addresses).to.have.lengthOf(0);
     });
   });
 
@@ -257,104 +260,6 @@ describe("Teste de busca de usuário", () => {
     );
   });
 
-  it("Deve retornar uma lista de usuario sem parametro de quantidade", async () => {
-    const users = await createListUsersInDatabaseSeed();
-    const tokenAdmin = await createAdminInDatabaseTest();
-
-    const { query, variables } = createQueryReturnListUsersTest();
-    const response = await axios.post(
-      "http://localhost:4000/graphql",
-      {
-        query,
-        variables,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${tokenAdmin}`,
-        },
-      },
-    );
-
-    const resultUsers = response.data.data.listUsers.users;
-
-    expect(resultUsers).to.have.lengthOf(QUANTITY_DEFAULT_LIST_USERS);
-
-    resultUsers.forEach((user, index) => {
-      expect(user).to.have.property("id");
-      expect(user).to.have.property("name");
-      expect(user).to.have.property("email");
-      expect(user).to.have.property("birthDate");
-
-      expect(user).to.have.property("addresses");
-      expect(user.name).to.equal(users[index].name);
-      expect(user.email).to.equal(users[index].email);
-    });
-  });
-
-  it("Deve retornar uma lista com 5 usuarios", async () => {
-    const quantitySearchUsers = 5;
-
-    const users = await createListUsersInDatabaseSeed();
-    const tokenAdmin = await createAdminInDatabaseTest();
-
-    const { query, variables } = createQueryReturnListUsersTest({
-      quantity: quantitySearchUsers,
-    });
-    const response = await axios.post(
-      "http://localhost:4000/graphql",
-      {
-        query,
-        variables,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${tokenAdmin}`,
-        },
-      },
-    );
-
-    const resultUsers = response.data.data.listUsers.users;
-
-    expect(resultUsers).to.have.lengthOf(quantitySearchUsers);
-
-    resultUsers.forEach((user, index) => {
-      expect(user).to.have.property("id");
-      expect(user).to.have.property("name");
-      expect(user).to.have.property("email");
-      expect(user).to.have.property("birthDate");
-
-      expect(user).to.have.property("addresses");
-      expect(user.name).to.equal(users[index].name);
-      expect(user.email).to.equal(users[index].email);
-    });
-  });
-
-  it("Deve retornar uma lista com 10 usuarios apos os 10 primeiros usuarios", async () => {
-    const quantitySearchUsers = 10;
-    await createListUsersInDatabaseSeed();
-    const tokenAdmin = await createAdminInDatabaseTest();
-
-    const { query, variables } = createQueryReturnListUsersTest({
-      quantity: quantitySearchUsers,
-      skip: 10,
-    });
-    const response = await axios.post(
-      "http://localhost:4000/graphql",
-      {
-        query,
-        variables,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${tokenAdmin}`,
-        },
-      },
-    );
-    expect(response.data.data.listUsers.users).to.have.lengthOf(quantitySearchUsers);
-    expect(response.data.data.listUsers.hasPreviousPage).to.be.true;
-    expect(response.data.data.listUsers.hasNextPage).to.be.true;
-  });
-
   it("Deve buscar um usuário por ID e verificar se os enderecos sao retornados corretamente", async () => {
     const user = await createUserInDatabaseTest(validUser);
     const tokenAdmin = await createAdminInDatabaseTest();
@@ -397,6 +302,35 @@ describe("Teste de busca de usuário", () => {
     expect(userFounded.email).to.equal(user.email);
     expect(userFounded.birthDate).to.equal(user.birthDate);
     expect(userFounded).to.have.property("addresses");
+    expect(userFounded.addresses).to.have.lengthOf(2);
+
+    // address01
+    expect(userFounded.addresses[0]).to.have.property("id");
+    expect(userFounded.addresses[0].cep).to.equal(address01.cep);
+    expect(userFounded.addresses[0].street).to.equal(address01.street);
+    expect(userFounded.addresses[0].streetNumber).to.equal(
+      address01.streetNumber,
+    );
+    expect(userFounded.addresses[0].complement).to.equal(address01.complement);
+    expect(userFounded.addresses[0].neighborhood).to.equal(
+      address01.neighborhood,
+    );
+    expect(userFounded.addresses[0].city).to.equal(address01.city);
+    expect(userFounded.addresses[0].state).to.equal(address01.state);
+
+    // address02
+    expect(userFounded.addresses[1]).to.have.property("id");
+    expect(userFounded.addresses[1].cep).to.equal(address02.cep);
+    expect(userFounded.addresses[1].street).to.equal(address02.street);
+    expect(userFounded.addresses[1].streetNumber).to.equal(
+      address02.streetNumber,
+    );
+    expect(userFounded.addresses[1].complement).to.equal(address02.complement);
+    expect(userFounded.addresses[1].neighborhood).to.equal(
+      address02.neighborhood,
+    );
+    expect(userFounded.addresses[1].city).to.equal(address02.city);
+    expect(userFounded.addresses[1].state).to.equal(address02.state);
   });
 
   afterEach(async () => {
