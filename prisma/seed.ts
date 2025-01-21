@@ -1,15 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
 import { SALT_ROUNDS } from "../src/utils/constants.js";
-import dotenv from "dotenv";
-import { MissingCredentialsAdminError } from "../src/errors/missingCredentialsAdminError.js";
 const prisma = new PrismaClient();
-
-dotenv.config();
-
-const NAME_ADMIN = process.env.NAME_ADMIN;
-const EMAIL_ADMIN = process.env.EMAIL_ADMIN;
-const PASSWORD_ADMIN = process.env.PASSWORD_ADMIN;
 
 async function main() {
   createAdmin();
@@ -35,23 +27,25 @@ export async function createListUsersInDatabaseSeed() {
 }
 
 async function createAdmin() {
+  const admin = {
+    name: "admin",
+    email: "admin@admin.com",
+    password: "admin123",
+  };
+
   const userExists = await prisma.user.findUnique({
     where: {
-      email: EMAIL_ADMIN,
+      email: admin.email,
     },
   });
 
   if (!userExists) {
-    if (!NAME_ADMIN || !EMAIL_ADMIN || !PASSWORD_ADMIN) {
-      throw new MissingCredentialsAdminError();
-    }
-
-    const hashedPassword = await bcrypt.hash(PASSWORD_ADMIN, SALT_ROUNDS);
+    const hashedPassword = await bcrypt.hash(admin.password, SALT_ROUNDS);
 
     await prisma.user.create({
       data: {
-        name: NAME_ADMIN,
-        email: EMAIL_ADMIN,
+        name: admin.name,
+        email: admin.email,
         password: hashedPassword,
       },
     });

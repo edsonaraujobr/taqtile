@@ -188,7 +188,7 @@ export class UserService {
       take: quantityUsers,
       where: {
         email: {
-          not: process.env.EMAIL_ADMIN,
+          not: "admin@admin.com",
         },
       },
     });
