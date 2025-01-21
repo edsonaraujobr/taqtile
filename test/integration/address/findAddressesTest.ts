@@ -122,7 +122,7 @@ describe("Teste de busca de endereço", () => {
     expect(response.data.errors[0].message).to.equal("Usuário não encontrado!");
   });
 
-  it("Deve retornar erro a nao encontrar nenhum endereco vinculado ao usuario", async () => {
+  it("Deve retornar um array vazio a nao encontrar nenhum endereco vinculado ao usuario", async () => {
     const user = await createUserInDatabaseTest(validUser);
     const tokenAdmin = await createAdminInDatabaseTest();
 
@@ -143,10 +143,8 @@ describe("Teste de busca de endereço", () => {
       },
     );
 
-    expect(response.data.errors[0].code).to.equal(404);
-    expect(response.data.errors[0].message).to.equal(
-      "Nenhum endereço encontrado!",
-    );
+    const addresses = response.data.data.getAddressesByUserId;
+    expect(addresses).to.have.lengthOf(0);
   });
 
   afterEach(async () => {

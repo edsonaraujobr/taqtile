@@ -88,9 +88,7 @@ export class AddressService {
     });
 
     if (addresses.length === 0) {
-      throw new NotFoundError({
-        message: "Nenhum endereço encontrado!",
-      });
+      return [];
     }
 
     return addresses;
