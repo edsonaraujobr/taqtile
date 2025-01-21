@@ -20,11 +20,13 @@ export const addressResolver = {
         return await AddressService.createAddress({
           data,
         });
-      } catch (error: CustomError) {
+      } catch (error: unknown) {
+        if (error instanceof CustomError) {
+          throw error;
+        }
         throw new CustomError({
-          code: error.code ?? 500,
-          message: error.message ?? "Erro inesperado no servidor.",
-          additionalInfo: error.additionalInfo,
+          code: 500,
+          message: "Erro inesperado no servidor.",
         });
       }
     },
@@ -40,11 +42,13 @@ export const addressResolver = {
         return await AddressService.getAddressesByUserId({
           userId,
         });
-      } catch (error: CustomError) {
+      } catch (error: unknown) {
+        if (error instanceof CustomError) {
+          throw error;
+        }
         throw new CustomError({
-          code: error.code ?? 500,
-          message: error.message ?? "Erro inesperado no servidor.",
-          additionalInfo: error.additionalInfo,
+          code: 500,
+          message: "Erro inesperado no servidor.",
         });
       }
     },

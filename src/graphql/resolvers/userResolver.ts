@@ -20,11 +20,13 @@ export const userResolver = {
         return await UserService.createUser({
           data,
         });
-      } catch (error: CustomError) {
+      } catch (error: unknown) {
+        if (error instanceof CustomError) {
+          throw error;
+        }
         throw new CustomError({
-          code: error.code ?? 500,
-          message: error.message ?? "Erro inesperado no servidor.",
-          additionalInfo: error.additionalInfo,
+          code: 500,
+          message: "Erro inesperado no servidor.",
         });
       }
     },
@@ -34,11 +36,13 @@ export const userResolver = {
         return await UserService.loginUser({
           data,
         });
-      } catch (error: CustomError) {
+      } catch (error: unknown) {
+        if (error instanceof CustomError) {
+          throw error;
+        }
         throw new CustomError({
-          code: error.code ?? 500,
-          message: error.message ?? "Erro inesperado no servidor.",
-          additionalInfo: error.additionalInfo,
+          code: 500,
+          message: "Erro inesperado no servidor.",
         });
       }
     },
@@ -51,11 +55,13 @@ export const userResolver = {
         return await UserService.findUserByID({
           id,
         });
-      } catch (error: CustomError) {
+      } catch (error: unknown) {
+        if (error instanceof CustomError) {
+          throw error;
+        }
         throw new CustomError({
-          code: error.code ?? 500,
-          message: error.message ?? "Erro inesperado no servidor.",
-          additionalInfo: error.additionalInfo,
+          code: 500,
+          message: "Erro inesperado no servidor.",
         });
       }
     },
@@ -76,13 +82,15 @@ export const userResolver = {
           skip,
           quantity,
         });
-      } catch (error: CustomError) {
+      } catch (error: unknown) {
+        if (error instanceof CustomError) {
+          throw error;
+        }
         throw new CustomError({
-          code: error.code ?? 500,
-          message: error.message ?? "Erro inesperado no servidor.",
-          additionalInfo: error.additionalInfo,
+          code: 500,
+          message: "Erro inesperado no servidor.",
         });
       }
-    }
+    },
   },
 };
