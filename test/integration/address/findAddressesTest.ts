@@ -2,6 +2,7 @@ import { expect } from "chai";
 import axios from "axios";
 import { connectDB, clearDB } from "../../helpers/dbHelper.js";
 import {
+  createAddressInDatabase,
   createMutationCreateAddressTest,
   createQueryFindAddressesByUserID,
 } from "../../helpers/addressHelper.js";
@@ -33,42 +34,14 @@ describe("Teste de busca de endereço", () => {
       userId: user.id,
     };
 
+    await createAddressInDatabase(address01);
+
     const address02 = {
       ...validAddress02,
       userId: user.id,
     };
 
-    const { mutation: mutation01, variables: variables01 } =
-      createMutationCreateAddressTest(address01);
-
-    await axios.post(
-      "http://localhost:4000/graphql",
-      {
-        query: mutation01,
-        variables: variables01,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${tokenAdmin}`,
-        },
-      },
-    );
-
-    const { mutation: mutation02, variables: variables02 } =
-      createMutationCreateAddressTest(address02);
-
-    await axios.post(
-      "http://localhost:4000/graphql",
-      {
-        query: mutation02,
-        variables: variables02,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${tokenAdmin}`,
-        },
-      },
-    );
+    await createAddressInDatabase(address02);
 
     const { query, variables } = createQueryFindAddressesByUserID({
       userId: user.id,

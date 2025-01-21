@@ -5,16 +5,15 @@ import {
   createUserInDatabaseTest,
   createAdminInDatabaseTest,
   createQueryFindUserByIDTest,
-  createQueryReturnListUsersTest
+  createQueryReturnListUsersTest,
 } from "../../helpers/userHelper.js";
 import { userData } from "../../utils/userDataUtils.js";
 import { QUANTITY_DEFAULT_LIST_USERS } from "../../../src/utils/constants.js";
 import { createListUsersInDatabaseSeed } from "../../../prisma/seed.js";
 import { addressData } from "../../utils/addressDataUtils.js";
-import { createMutationCreateAddressTest } from "../../helpers/addressHelper.js";
+import { createAddressInDatabase } from "../../helpers/addressHelper.js";
 
 describe("Teste de busca de usuário", () => {
-
   const { validUser } = userData;
   const { validAddress01, validAddress02 } = addressData;
 
@@ -365,42 +364,14 @@ describe("Teste de busca de usuário", () => {
       userId: user.id,
     };
 
+    await createAddressInDatabase(address01);
+
     const address02 = {
       ...validAddress02,
       userId: user.id,
     };
 
-    const { mutation: mutation01, variables: variables01 } =
-      createMutationCreateAddressTest(address01);
-
-    await axios.post(
-      "http://localhost:4000/graphql",
-      {
-        query: mutation01,
-        variables: variables01,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${tokenAdmin}`,
-        },
-      },
-    );
-
-    const { mutation: mutation02, variables: variables02 } =
-      createMutationCreateAddressTest(address02);
-
-    await axios.post(
-      "http://localhost:4000/graphql",
-      {
-        query: mutation02,
-        variables: variables02,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${tokenAdmin}`,
-        },
-      },
-    );
+    await createAddressInDatabase(address02);
 
     const { query, variables } = createQueryFindUserByIDTest({
       id: user.id,
