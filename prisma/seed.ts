@@ -1,44 +1,51 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
 import { SALT_ROUNDS } from "../src/utils/constants.js";
-
 const prisma = new PrismaClient();
 
 async function main() {
   createAdmin();
-  createListUsers();
+  createListUsersInDatabaseSeed();
 }
 
-async function createListUsers() {
+export async function createListUsersInDatabaseSeed() {
   await prisma.user.deleteMany();
 
   const numberUsers = 50;
+  const users = [];
   for (let i = 1; i <= numberUsers; i++) {
-    await prisma.user.create({
+    const user = await prisma.user.create({
       data: {
-        name: `user${i}`,
+        name: `user${String(i).padStart(3, "0")}`,
         email: `user${i}@gmail.com`,
         password: `userpassword${i}`,
       },
     });
+    users.push(user);
   }
-  console.log("Usuários criados com sucesso!");
+  return users;
 }
 
 async function createAdmin() {
+  const admin = {
+    name: "admin",
+    email: "admin@admin.com",
+    password: "admin123",
+  };
+
   const userExists = await prisma.user.findUnique({
     where: {
-      email: "admin@admin.com",
+      email: admin.email,
     },
   });
 
   if (!userExists) {
-    const hashedPassword = await bcrypt.hash("admin123", SALT_ROUNDS);
+    const hashedPassword = await bcrypt.hash(admin.password, SALT_ROUNDS);
 
     await prisma.user.create({
       data: {
-        name: "Admin",
-        email: "admin@admin.com",
+        name: admin.name,
+        email: admin.email,
         password: hashedPassword,
       },
     });

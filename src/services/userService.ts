@@ -5,7 +5,11 @@ import {
   userCreateValidator,
   userLoginValidator,
 } from "../validators/userValidator.js";
-import { SALT_ROUNDS, MAX_AGE } from "../utils/constants.js";
+import {
+  SALT_ROUNDS,
+  MAX_AGE,
+  QUANTITY_DEFAULT_LIST_USERS,
+} from "../utils/constants.js";
 import { ZodError } from "zod";
 import { BadInputError } from "../errors/badInputError.js";
 import { UserAlreadyExistsError } from "../errors/userAlreadyExistsError.js";
@@ -14,12 +18,20 @@ import { MaximumAgeError } from "../errors/maximumAgeError.js";
 import { DateBirthdayFutureError } from "../errors/dateBirthdayFutureError.js";
 import { JwtService } from "./jwtService.js";
 import { NotFoundError } from "../errors/notFoundError.js";
-import { UnauthorizedUser } from "../errors/unauthorizedUser.js";
+
+import {
+  CreateUser,
+  ListUsersResult,
+  LoginUser,
+  UserWithFormattedDate,
+  UserWithTokenAuthentication
+} from "../types/userTypes.js";
 export class UserService {
-  static async createUser(data: any, context: any) {
-    if (!context?.user) {
-      throw new UnauthorizedUser({ message: "Usuário não autorizado" });
-    }
+  static async createUser({
+    data,
+  }: {
+    data: CreateUser;
+  }): Promise<UserWithFormattedDate> {
     try {
       userCreateValidator.parse(data);
     } catch (error) {
@@ -89,7 +101,11 @@ export class UserService {
     };
   }
 
-  static async loginUser(data) {
+  static async loginUser({
+    data,
+  }: {
+    data: LoginUser;
+  }): Promise<UserWithTokenAuthentication> {
     const { email, password, rememberMe } = data;
 
     const user = await prisma.user.findUnique({ where: { email } });
@@ -121,10 +137,12 @@ export class UserService {
     };
   }
 
-  static async findUserByID(id, context) {
-    if (!context?.user) {
-      throw new UnauthorizedUser({ message: "Usuário não autorizado" });
-    }
+  static async findUserByID({
+    id,
+  }: {
+    id: string;
+  }): Promise<UserWithFormattedDate> {
+
 
     const user = await prisma.user.findUnique({
       where: { id },
@@ -138,6 +156,57 @@ export class UserService {
     return {
       ...user,
       birthDate: dayjs(user.birthDate).format("DD-MM-YYYY"),
+    };
+  }
+
+  static async listUsers({
+    skip,
+    quantity,
+  }: {
+    skip: number;
+    quantity: number;
+  }): Promise<ListUsersResult> {
+
+
+    const totalUsers = await prisma.user.count();
+
+    const quantityUsers =
+      Number.isInteger(quantity) && quantity > 0
+        ? quantity
+        : QUANTITY_DEFAULT_LIST_USERS;
+
+    if (skip >= totalUsers) {
+      throw new BadInputError({
+        message:
+          "O valor de skip excede o número total de usuários disponíveis.",
+      });
+    }
+
+    const users = await prisma.user.findMany({
+      orderBy: { name: "asc" },
+      skip: skip,
+      take: quantityUsers,
+      where: {
+        email: {
+          not: "admin@admin.com",
+        },
+      },
+    });
+
+    if (users.length === 0) {
+      throw new NotFoundError({
+        message: "Nenhum usuário encontrado!",
+      });
+    }
+
+    const hasPreviousPage = skip > 0;
+    const hasNextPage = skip + quantityUsers < totalUsers;
+
+    return {
+      users,
+      totalUsers,
+      hasPreviousPage,
+      hasNextPage,
     };
   }
 }

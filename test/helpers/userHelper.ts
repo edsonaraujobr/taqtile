@@ -3,6 +3,7 @@ import { prisma } from "../../src/prisma/prisma.js";
 import { SALT_ROUNDS } from "../../src/utils/constants.js";
 import bcrypt from "bcrypt";
 import { JwtService } from "../../src/services/jwtService.js";
+import { MissingCredentialsAdminError } from "../../src/errors/missingCredentialsAdminError.js";
 
 export function createMutationLoginUserTest({
   email,
@@ -104,8 +105,8 @@ export function createMutationCreateUserTest({
 }
 
 export async function createAdminInDatabaseTest({
-  name = "Admin",
-  email = "admin@example.com",
+  name = "admin",
+  email = "admin@admin.com",
   password = "admin123",
   birthDate,
 }: {
@@ -114,6 +115,10 @@ export async function createAdminInDatabaseTest({
   password?: string;
   birthDate?: string;
 } = {}) {
+  if (!name || !email || !password) {
+    throw new MissingCredentialsAdminError();
+  }
+
   const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
   const formattedBirthDate = dayjs(birthDate, "DD-MM-YYYY").toISOString();
 
@@ -145,6 +150,38 @@ export function createQueryFindUserByIDTest({ id }: { id: string }) {
     query,
     variables: {
       id,
+    },
+  };
+}
+
+export function createQueryReturnListUsersTest({
+  quantity,
+  skip,
+}: {
+  quantity?: number;
+  skip?: number;
+} = {}) {
+  const query = `
+    query ListUsers($skip: Int, $quantity: Int){
+      listUsers(skip: $skip, quantity: $quantity) {
+        users {
+          id
+          name
+          email
+          birthDate
+        }
+        totalUsers
+        hasPreviousPage
+        hasNextPage
+      }
+    }
+  `;
+
+  return {
+    query,
+    variables: {
+      quantity,
+      skip,
     },
   };
 }

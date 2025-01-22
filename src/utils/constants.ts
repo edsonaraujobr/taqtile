@@ -3,3 +3,4 @@ export const MAX_AGE = 130;
 export const FORMAT_DATE_REGEX = /^\d{2}-\d{2}-\d{4}$/;
 export const DEFAULT_EXPIRATION = "1h";
 export const REMEMBER_ME_EXPIRATION = "7d";
+export const QUANTITY_DEFAULT_LIST_USERS = 10;

@@ -14,6 +14,13 @@ export const userSchema = gql`
     rememberMe: Boolean
   }
 
+  type PaginatedUsers {
+    users: [User!]!
+    totalUsers: Int!
+    hasPreviousPage: Boolean!
+    hasNextPage: Boolean!
+  }
+
   type User {
     id: ID!
     name: String!
@@ -33,5 +40,6 @@ export const userSchema = gql`
 
   type Query {
     findUserByID(id: ID!): User
+    listUsers(skip: Int = 0, quantity: Int = 10): PaginatedUsers!
   }
 `;
