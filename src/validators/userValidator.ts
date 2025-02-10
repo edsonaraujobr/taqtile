@@ -4,7 +4,9 @@ import { FORMAT_DATE_REGEX } from "../utils/constants.js";
 
 export const userCreateValidator = z.object({
   name: z.string().optional(),
-  email: z.string().email("Email inválido! Seu email precisa de um @ e um domínio"),
+  email: z
+    .string()
+    .email("Email inválido! Seu email precisa de um @ e um domínio"),
   password: z
     .string()
     .min(6, "A senha deve ter no mínimo 6 caracteres!")
@@ -20,4 +22,3 @@ export const userCreateValidator = z.object({
       "Formato de data inválido. Use o formato DD-MM-YYYY.",
     ),
 });
-

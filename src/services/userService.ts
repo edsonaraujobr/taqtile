@@ -1,10 +1,7 @@
 import { prisma } from "../prisma/prisma.js";
 import bcrypt from "bcrypt";
 import dayjs from "dayjs";
-import {
-  userCreateValidator,
-  userLoginValidator,
-} from "../validators/userValidator.js";
+import { userCreateValidator } from "../validators/userValidator.js";
 import {
   SALT_ROUNDS,
   MAX_AGE,
@@ -24,7 +21,7 @@ import {
   ListUsersResult,
   LoginUser,
   UserWithFormattedDate,
-  UserWithTokenAuthentication
+  UserWithTokenAuthentication,
 } from "../types/userTypes.js";
 export class UserService {
   static async createUser({
@@ -142,10 +139,11 @@ export class UserService {
   }: {
     id: string;
   }): Promise<UserWithFormattedDate> {
-
-
     const user = await prisma.user.findUnique({
       where: { id },
+      include: {
+        addresses: true,
+      },
     });
 
     if (!user) {
@@ -166,8 +164,6 @@ export class UserService {
     skip: number;
     quantity: number;
   }): Promise<ListUsersResult> {
-
-
     const totalUsers = await prisma.user.count();
 
     const quantityUsers =
@@ -190,6 +186,9 @@ export class UserService {
         email: {
           not: "admin@admin.com",
         },
+      },
+      include: {
+        addresses: true,
       },
     });
 

@@ -90,7 +90,7 @@ describe("User Mutation - Teste de Login", () => {
   it("Deve realizar login com remember-me ativado", async () => {
     await createUserInDatabaseTest(validUser);
 
-    const  { mutation, variables }= createMutationLoginUserTest({
+    const { mutation, variables } = createMutationLoginUserTest({
       email: validUser.email,
       password: validUser.password,
       rememberMe: true,

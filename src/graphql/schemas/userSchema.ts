@@ -26,6 +26,7 @@ export const userSchema = gql`
     name: String!
     email: String!
     birthDate: String
+    addresses: [Address!]
   }
 
   type LoginResponse {

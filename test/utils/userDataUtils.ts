@@ -38,4 +38,4 @@ export const userData = {
     password: "edson1010",
     birthDate: "10-10-1800",
   },
-}
+};

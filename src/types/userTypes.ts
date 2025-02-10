@@ -1,5 +1,5 @@
 import { User } from "@prisma/client";
-
+import { Address } from "./addressTypes.js";
 export interface ListUsersResult {
   users: User[];
   totalUsers: number;
@@ -12,6 +12,7 @@ export interface UserWithFormattedDate {
   id: string;
   email: string;
   birthDate: string | null;
+  addresses: Address[];
 }
 
 export interface UserWithTokenAuthentication {

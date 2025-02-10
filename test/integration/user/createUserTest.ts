@@ -65,12 +65,17 @@ describe("User Mutation - Teste de Criação de usuário", () => {
     expect(userInDb.name).to.equal(validUser.name);
     expect(userInDb.email).to.equal(email);
 
-    const passwordMatch = await bcrypt.compare(validUser.password, userInDb.password);
+    const passwordMatch = await bcrypt.compare(
+      validUser.password,
+      userInDb.password,
+    );
     expect(passwordMatch).to.be.true;
   });
 
   it("Deve criar um novo usuario sem o campo opcional de data de nascimento", async () => {
-    const { mutation, variables } = createMutationCreateUserTest(validUserWithoutBirthDate);
+    const { mutation, variables } = createMutationCreateUserTest(
+      validUserWithoutBirthDate,
+    );
     const tokenAdmin = await createAdminInDatabaseTest();
 
     const response = await axios.post(
@@ -132,7 +137,8 @@ describe("User Mutation - Teste de Criação de usuário", () => {
   });
 
   it("Deve retornar erro para senha fraca", async () => {
-    const { mutation, variables } = createMutationCreateUserTest(weakPasswordUser);
+    const { mutation, variables } =
+      createMutationCreateUserTest(weakPasswordUser);
     const tokenAdmin = await createAdminInDatabaseTest();
 
     const response = await axios.post(
@@ -154,7 +160,8 @@ describe("User Mutation - Teste de Criação de usuário", () => {
   });
 
   it("Deve retornar erro pela data de nascimento no futuro", async () => {
-    const { mutation, variables } = createMutationCreateUserTest(futureBirthDateUser);
+    const { mutation, variables } =
+      createMutationCreateUserTest(futureBirthDateUser);
     const tokenAdmin = await createAdminInDatabaseTest();
 
     try {
@@ -179,7 +186,8 @@ describe("User Mutation - Teste de Criação de usuário", () => {
   });
 
   it("Deve retornar erro pela formato de data errado", async () => {
-    const { mutation, variables } = createMutationCreateUserTest(invalidBirthDateUser);
+    const { mutation, variables } =
+      createMutationCreateUserTest(invalidBirthDateUser);
     const tokenAdmin = await createAdminInDatabaseTest();
 
     try {

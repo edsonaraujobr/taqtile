@@ -5,15 +5,17 @@ import {
   createUserInDatabaseTest,
   createAdminInDatabaseTest,
   createQueryFindUserByIDTest,
-  createQueryReturnListUsersTest
+  createQueryReturnListUsersTest,
 } from "../../helpers/userHelper.js";
 import { userData } from "../../utils/userDataUtils.js";
 import { QUANTITY_DEFAULT_LIST_USERS } from "../../../src/utils/constants.js";
 import { createListUsersInDatabaseSeed } from "../../../prisma/seed.js";
+import { addressData } from "../../utils/addressDataUtils.js";
+import { createAddressInDatabase } from "../../helpers/addressHelper.js";
 
 describe("Teste de busca de usuário", () => {
-
   const { validUser } = userData;
+  const { validAddress01, validAddress02 } = addressData;
 
   before(async () => {
     await connectDB();
@@ -50,6 +52,8 @@ describe("Teste de busca de usuário", () => {
     expect(userFounded.name).to.equal(user.name);
     expect(userFounded.email).to.equal(user.email);
     expect(userFounded.birthDate).to.equal(user.birthDate);
+    expect(userFounded).to.have.property("addresses");
+    expect(userFounded.addresses).to.have.lengthOf(0);
   });
 
   it("Deve retornar erro ao tentar buscar um usuário inexistente por ID", async () => {
@@ -119,10 +123,12 @@ describe("Teste de busca de usuário", () => {
       expect(user).to.have.property("name");
       expect(user).to.have.property("email");
       expect(user).to.have.property("birthDate");
+      expect(user).to.have.property("addresses");
 
       expect(user.name).to.equal(users[index].name);
       expect(user.email).to.equal(users[index].email);
       expect(user.birthDate).to.equal(users[index].birthDate);
+      expect(user.addresses).to.have.lengthOf(0);
     });
   });
 
@@ -158,9 +164,11 @@ describe("Teste de busca de usuário", () => {
       expect(user).to.have.property("email");
       expect(user).to.have.property("birthDate");
 
+      expect(user).to.have.property("addresses");
       expect(user.name).to.equal(users[index].name);
       expect(user.email).to.equal(users[index].email);
       expect(user.birthDate).to.equal(users[index].birthDate);
+      expect(user.addresses).to.have.lengthOf(0);
     });
   });
 
@@ -237,7 +245,7 @@ describe("Teste de busca de usuário", () => {
       "http://localhost:4000/graphql",
       {
         query,
-        variables
+        variables,
       },
       {
         headers: {
@@ -250,6 +258,79 @@ describe("Teste de busca de usuário", () => {
     expect(response.data.errors[0].message).to.equal(
       "O valor de skip excede o número total de usuários disponíveis.",
     );
+  });
+
+  it("Deve buscar um usuário por ID e verificar se os enderecos sao retornados corretamente", async () => {
+    const user = await createUserInDatabaseTest(validUser);
+    const tokenAdmin = await createAdminInDatabaseTest();
+
+    const address01 = {
+      ...validAddress01,
+      userId: user.id,
+    };
+
+    await createAddressInDatabase(address01);
+
+    const address02 = {
+      ...validAddress02,
+      userId: user.id,
+    };
+
+    await createAddressInDatabase(address02);
+
+    const { query, variables } = createQueryFindUserByIDTest({
+      id: user.id,
+    });
+
+    const response = await axios.post(
+      "http://localhost:4000/graphql",
+      {
+        query,
+        variables,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${tokenAdmin}`,
+        },
+      },
+    );
+
+    const userFounded = response.data.data.findUserByID;
+    expect(userFounded).to.have.property("id");
+    expect(userFounded.id).equal(user.id);
+    expect(userFounded.name).to.equal(user.name);
+    expect(userFounded.email).to.equal(user.email);
+    expect(userFounded.birthDate).to.equal(user.birthDate);
+    expect(userFounded).to.have.property("addresses");
+    expect(userFounded.addresses).to.have.lengthOf(2);
+
+    // address01
+    expect(userFounded.addresses[0]).to.have.property("id");
+    expect(userFounded.addresses[0].cep).to.equal(address01.cep);
+    expect(userFounded.addresses[0].street).to.equal(address01.street);
+    expect(userFounded.addresses[0].streetNumber).to.equal(
+      address01.streetNumber,
+    );
+    expect(userFounded.addresses[0].complement).to.equal(address01.complement);
+    expect(userFounded.addresses[0].neighborhood).to.equal(
+      address01.neighborhood,
+    );
+    expect(userFounded.addresses[0].city).to.equal(address01.city);
+    expect(userFounded.addresses[0].state).to.equal(address01.state);
+
+    // address02
+    expect(userFounded.addresses[1]).to.have.property("id");
+    expect(userFounded.addresses[1].cep).to.equal(address02.cep);
+    expect(userFounded.addresses[1].street).to.equal(address02.street);
+    expect(userFounded.addresses[1].streetNumber).to.equal(
+      address02.streetNumber,
+    );
+    expect(userFounded.addresses[1].complement).to.equal(address02.complement);
+    expect(userFounded.addresses[1].neighborhood).to.equal(
+      address02.neighborhood,
+    );
+    expect(userFounded.addresses[1].city).to.equal(address02.city);
+    expect(userFounded.addresses[1].state).to.equal(address02.state);
   });
 
   afterEach(async () => {
