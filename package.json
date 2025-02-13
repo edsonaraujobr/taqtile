@@ -8,9 +8,12 @@
   "scripts": {
     "start": "npx tsx src/server.ts",
     "dev": "npx tsx watch src/server.ts",
-    "test": "NODE_ENV=test mocha --require tsx 'test/**/*.ts'",
+    "test": "NODE_ENV=test mocha --require tsx 'src/test/**/*.ts'",
     "lint": "eslint . ",
-    "seed": "npx tsx prisma/seed.ts"
+    "seed": "npx tsx src/data/database/seed.ts"
+  },
+  "prisma": {
+    "schema": "src/data/database/schema.prisma"
   },
   "author": "",
   "license": "ISC",
