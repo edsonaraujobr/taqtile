@@ -1,5 +1,5 @@
-import { CustomError } from "../../../core/errors/importAllErrors.js";
-import { checkAuthentication } from "../../../core/utils/checkAuthentication.js";
+import { CustomError } from "../../../core/errors/import-all-errors.js";
+import { checkAuthentication } from "../../../core/utils/check-authentication.js";
 import { CreateUser, LoginUser, UserWithFormattedDate } from "./user.types.js";
 import { Context } from "../context.types.js";
 import { CreateUserUseCase } from "../../../domain/user/create-user.use-case.js";

@@ -1,5 +1,5 @@
 import { Address } from "../../api/modules/address/address.types.js";
-import { NotFoundError } from "../../core/errors/importAllErrors.js";
+import { NotFoundError } from "../../core/errors/import-all-errors.js";
 import { AddressDBDataSource } from "../../data/address/address.db.datasource.js";
 import { UserDBDataSource } from "../../data/user/user.db.datasource.js";
 

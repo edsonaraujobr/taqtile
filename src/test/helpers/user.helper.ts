@@ -1,9 +1,9 @@
 import dayjs from "dayjs";
 import { database } from "../../data/database/database.js";
 import bcrypt from "bcrypt";
-import { JwtService } from "../../core/jwt/jwtService.js";
+import { JwtService } from "../../core/jwt/jwt-service.js";
 import { SALT_ROUNDS } from "../../core/utils/constants.js";
-import { MissingCredentialsAdminError } from "../../core/errors/importAllErrors.js";
+import { MissingCredentialsAdminError } from "../../core/errors/import-all-errors.js";
 
 export function createMutationLoginUserTest({
   email,

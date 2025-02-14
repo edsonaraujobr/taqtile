@@ -1,6 +1,6 @@
-import { CustomError } from "./customError.js";
+import { CustomError } from "./custom.error.js";
 
-export class MaximumAgeError extends CustomError {
+export class BadInputError extends CustomError {
   constructor({
     message,
     additionalInfo,
@@ -13,6 +13,6 @@ export class MaximumAgeError extends CustomError {
       message,
       additionalInfo,
     });
-    this.name = "MaximumAgeError";
+    this.name = "BadInputError";
   }
 }

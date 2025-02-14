@@ -1,4 +1,4 @@
-import { CustomError } from "./customError.js";
+import { CustomError } from "./custom.error.js";
 
 export class MissingSecretKeyError extends CustomError {
   constructor({

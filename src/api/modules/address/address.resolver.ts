@@ -1,9 +1,9 @@
-import { checkAuthentication } from "../../../core/utils/checkAuthentication.js";
+import { checkAuthentication } from "../../../core/utils/check-authentication.js";
 import { Context } from "../context.types.js";
 import { Address, AddressCreated } from "./address.types.js";
 import { CreateAddressUseCase } from "../../../domain/address/create-address.use-case.js";
 import { GetAddressesByUserIDUseCase } from "../../../domain/address/get-addresses-by-user-id.use-case.js";
-import { CustomError } from "../../../core/errors/importAllErrors.js";
+import { CustomError } from "../../../core/errors/import-all-errors.js";
 
 export const addressResolver = {
   Mutation: {

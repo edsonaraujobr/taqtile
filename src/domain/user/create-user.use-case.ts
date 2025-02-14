@@ -7,7 +7,7 @@ import {
   MaximumAgeError,
   DateBirthdayFutureError,
   UserAlreadyExistsError,
-} from "../../core/errors/importAllErrors.js";
+} from "../../core/errors/import-all-errors.js";
 import { SALT_ROUNDS, MAX_AGE } from "../../core/utils/constants.js";
 import { ZodError } from "zod";
 import { userCreateValidator } from "../../api/modules/user/user.validator.js";

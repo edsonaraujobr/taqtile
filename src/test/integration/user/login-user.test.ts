@@ -6,7 +6,7 @@ import {
   createUserInDatabaseTest,
 } from "../../helpers/user.helper.js";
 import { userData } from "../../utils/user.data-utils.js";
-import { JwtService } from "../../../core/jwt/jwtService.js";
+import { JwtService } from "../../../core/jwt/jwt-service.js";
 
 describe("User Mutation - Teste de Login", () => {
   const { validUser } = userData;

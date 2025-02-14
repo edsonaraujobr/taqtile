@@ -4,7 +4,7 @@ import { QUANTITY_DEFAULT_LIST_USERS } from "../../core/utils/constants.js";
 import {
   BadInputError,
   NotFoundError,
-} from "../../core/errors/importAllErrors.js";
+} from "../../core/errors/import-all-errors.js";
 
 export class SearchListUsersUseCase {
   static async run({

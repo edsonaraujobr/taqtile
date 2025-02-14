@@ -1,6 +1,6 @@
-import { CustomError } from "./customError.js";
+import { CustomError } from "./custom.error.js";
 
-export class BadInputError extends CustomError {
+export class InvalidDateFormatError extends CustomError {
   constructor({
     message,
     additionalInfo,
@@ -13,6 +13,6 @@ export class BadInputError extends CustomError {
       message,
       additionalInfo,
     });
-    this.name = "BadInputError";
+    this.name = "InvalidDateFormatError";
   }
 }

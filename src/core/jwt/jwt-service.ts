@@ -7,7 +7,7 @@ import {
 import {
   MissingSecretKeyError,
   UnauthorizedUser,
-} from "../errors/importAllErrors.js";
+} from "../errors/import-all-errors.js";
 
 dotenv.config();
 const SECRET_KEY = process.env.SECRET_KEY;

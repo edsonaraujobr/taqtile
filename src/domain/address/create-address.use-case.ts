@@ -2,7 +2,7 @@ import {
   BadInputError,
   InternalServerError,
   NotFoundError,
-} from "../../core/errors/importAllErrors.js";
+} from "../../core/errors/import-all-errors.js";
 import { AddressDBDataSource } from "../../data/address/address.db.datasource.js";
 import {
   Address,

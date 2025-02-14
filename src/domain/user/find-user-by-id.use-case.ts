@@ -1,7 +1,7 @@
 import { UserWithFormattedDate } from "../../api/modules/user/user.types.js";
 import { UserDBDataSource } from "../../data/user/user.db.datasource.js";
 import dayjs from "dayjs";
-import { NotFoundError } from "../../core/errors/importAllErrors.js";
+import { NotFoundError } from "../../core/errors/import-all-errors.js";
 
 export class FindUserByIDUseCase {
   static async run({ id }: { id: string }): Promise<UserWithFormattedDate> {

@@ -1,9 +1,9 @@
 import { ApolloServer } from "apollo-server";
 import { userSchema } from "./api/modules/user/user.schema.js";
 import { userResolver } from "./api/modules/user/user.resolver.js";
-import { CustomError } from "./core/errors/importAllErrors.js";
+import { CustomError } from "./core/errors/import-all-errors.js";
 import dotenv from "dotenv";
-import { authenticate } from "./core/jwt/authenticateUser.js";
+import { authenticate } from "./core/jwt/authenticate-user.js";
 import { addressSchema } from "./api/modules/address/address.schema.js";
 import { addressResolver } from "./api/modules/address/address.resolver.js";
 

@@ -3,8 +3,8 @@ import {
   LoginUser,
   UserWithTokenAuthentication,
 } from "../../api/modules/user/user.types.js";
-import { NotFoundError } from "../../core/errors/importAllErrors.js";
-import { JwtService } from "../../core/jwt/jwtService.js";
+import { NotFoundError } from "../../core/errors/import-all-errors.js";
+import { JwtService } from "../../core/jwt/jwt-service.js";
 import bcrypt from "bcrypt";
 import dayjs from "dayjs";
 

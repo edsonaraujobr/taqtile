@@ -1,6 +1,6 @@
-import { CustomError } from "./customError.js";
+import { CustomError } from "./custom.error.js";
 
-export class InvalidDateFormatError extends CustomError {
+export class UserAlreadyExistsError extends CustomError {
   constructor({
     message,
     additionalInfo,
@@ -9,10 +9,10 @@ export class InvalidDateFormatError extends CustomError {
     additionalInfo?: string;
   }) {
     super({
-      code: 400,
+      code: 409,
       message,
       additionalInfo,
     });
-    this.name = "InvalidDateFormatError";
+    this.name = "UserAlreadyExistsError";
   }
 }

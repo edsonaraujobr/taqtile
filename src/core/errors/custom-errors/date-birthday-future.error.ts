@@ -1,6 +1,6 @@
-import { CustomError } from "./customError.js";
+import { CustomError } from "./custom.error.js";
 
-export class UnauthorizedUser extends CustomError {
+export class DateBirthdayFutureError extends CustomError {
   constructor({
     message,
     additionalInfo,
@@ -9,10 +9,10 @@ export class UnauthorizedUser extends CustomError {
     additionalInfo?: string;
   }) {
     super({
-      code: 401,
+      code: 422,
       message,
       additionalInfo,
     });
-    this.name = "UnauthorizedUser";
+    this.name = "DateBirthdayFutureError";
   }
 }

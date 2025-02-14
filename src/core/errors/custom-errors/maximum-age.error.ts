@@ -1,6 +1,6 @@
-import { CustomError } from "./customError.js";
+import { CustomError } from "./custom.error.js";
 
-export class UserAlreadyExistsError extends CustomError {
+export class MaximumAgeError extends CustomError {
   constructor({
     message,
     additionalInfo,
@@ -9,10 +9,10 @@ export class UserAlreadyExistsError extends CustomError {
     additionalInfo?: string;
   }) {
     super({
-      code: 409,
+      code: 400,
       message,
       additionalInfo,
     });
-    this.name = "UserAlreadyExistsError";
+    this.name = "MaximumAgeError";
   }
 }
