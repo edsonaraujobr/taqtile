@@ -11,7 +11,7 @@ export class UserDBDataSource {
   }
 
   static async findByEmail({ email }: { email: string }): Promise<User | null> {
-    return database.user.findUnique({
+    return await database.user.findUnique({
       where: { email },
       include: {
         addresses: true,
@@ -20,7 +20,7 @@ export class UserDBDataSource {
   }
 
   static async findByID({ id }: { id: string }): Promise<User | null> {
-    return database.user.findUnique({
+    return await database.user.findUnique({
       where: { id },
       include: {
         addresses: true,
@@ -29,11 +29,11 @@ export class UserDBDataSource {
   }
 
   static async count(): Promise<number> {
-    return database.user.count();
+    return await database.user.count();
   }
 
   static async findMany({ skip, take }: { skip: number; take: number }) {
-    return database.user.findMany({
+    return await database.user.findMany({
       orderBy: { name: "asc" },
       skip,
       take,
