@@ -1,8 +1,8 @@
 import { checkAuthentication } from "../../../core/utils/check-authentication.js";
 import { Context } from "../../context.interface.js";
-import { CreateAddressUseCase } from "../../../domain/address/create-address.use-case.js";
-import { GetAddressesByUserIDUseCase } from "../../../domain/address/get-addresses-by-user-id.use-case.js";
-import { CustomError } from "../../../core/errors/index.js";
+import { CreateAddressUseCase } from "../../../domain/use-cases/address/create-address.use-case.js";
+import { GetAddressesByUserIDUseCase } from "../../../domain/use-cases/address/get-addresses-by-user-id.use-case.js";
+import { CustomError } from "../../../domain/errors/index.js";
 import { AddressInput } from "./inputs/index.js";
 import { Address } from "./types/index.js";
 import { Arg, Resolver, Mutation, Ctx, Query } from "type-graphql";

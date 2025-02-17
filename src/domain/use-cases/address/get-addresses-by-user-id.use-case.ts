@@ -1,10 +1,10 @@
-import { Address } from "../../api/modules/address/types/index.js";
-import { NotFoundError } from "../../core/errors/index.js";
-import { AddressDBDataSource } from "../../data/address/address.db.datasource.js";
-import { UserDBDataSource } from "../../data/user/user.db.datasource.js";
+import { NotFoundError } from "../../errors/index.js";
+import { AddressDBDataSource } from "../../../data/address/address.db.datasource.js";
+import { UserDBDataSource } from "../../../data/user/user.db.datasource.js";
+import { AddressModel } from "../../models/index.js";
 
 export class GetAddressesByUserIDUseCase {
-  static async run({ userId }: { userId: string }): Promise<Address[]> {
+  static async run({ userId }: { userId: string }): Promise<AddressModel[]> {
     const user = await UserDBDataSource.findByID({ id: userId });
 
     if (!user) {

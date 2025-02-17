@@ -3,7 +3,7 @@ import { database } from "../../data/database/database.js";
 import bcrypt from "bcrypt";
 import { JwtService } from "../../core/jwt/jwt-service.js";
 import { SALT_ROUNDS } from "../../core/utils/constants.js";
-import { MissingCredentialsAdminError } from "../../core/errors/index.js";
+import { MissingCredentialsAdminError } from "../../domain/errors/index.js";
 
 export function createMutationLoginUserTest({
   email,

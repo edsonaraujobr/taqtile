@@ -4,7 +4,7 @@ import { UserResolver } from "./modules/user/user.resolver.js";
 import { AddressResolver } from "./modules/address/address.resolver.js";
 import { ApolloServer } from "apollo-server";
 import { authenticate } from "../core/jwt/authenticate-user.js";
-import { CustomError } from "../core/errors/index.js";
+import { CustomError } from "../domain/errors/index.js";
 import dotenv from "dotenv";
 
 dotenv.config();

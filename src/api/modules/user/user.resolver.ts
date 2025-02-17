@@ -1,11 +1,11 @@
-import { CustomError } from "../../../core/errors/index.js";
+import { CustomError } from "../../../domain/errors/index.js";
 import { checkAuthentication } from "../../../core/utils/check-authentication.js";
 import {
   CreateUserUseCase,
   LoginUserUseCase,
   FindUserByIDUseCase,
   SearchListUsersUseCase,
-} from "../../../domain/user/index.js";
+} from "../../../domain/use-cases/user/index.js";
 import { Mutation, Query, Resolver, Arg, Ctx, Int } from "type-graphql";
 import { CreateUserInput, LoginUserInput } from "./inputs/index.js";
 import { ListUsers, UserToken, User } from "./types/index.js";

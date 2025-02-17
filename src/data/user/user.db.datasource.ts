@@ -1,16 +1,19 @@
 import { database } from "../database/database.js";
-import { CreateUserInput } from "../../api/modules/user/inputs/index.js";
-import { User } from "../../api/modules/user/types/index.js";
+import { CreateUserModel, UserModel } from "../../domain/models/index.js";
 
 export class UserDBDataSource {
-  static async create({ data }: { data: CreateUserInput }): Promise<User> {
+  static async create({ data }: { data: CreateUserModel }): Promise<UserModel> {
     return await database.user.create({
       data,
       include: { addresses: true },
     });
   }
 
-  static async findByEmail({ email }: { email: string }): Promise<User | null> {
+  static async findByEmail({
+    email,
+  }: {
+    email: string;
+  }): Promise<UserModel | null> {
     return await database.user.findUnique({
       where: { email },
       include: {
@@ -19,7 +22,7 @@ export class UserDBDataSource {
     });
   }
 
-  static async findByID({ id }: { id: string }): Promise<User | null> {
+  static async findByID({ id }: { id: string }): Promise<UserModel | null> {
     return await database.user.findUnique({
       where: { id },
       include: {
@@ -38,7 +41,7 @@ export class UserDBDataSource {
   }: {
     skip: number;
     take: number;
-  }): Promise<User[]> {
+  }): Promise<UserModel[]> {
     return await database.user.findMany({
       orderBy: { name: "asc" },
       skip,

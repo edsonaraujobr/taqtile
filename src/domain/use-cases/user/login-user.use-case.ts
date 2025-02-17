@@ -1,13 +1,16 @@
-import { UserDBDataSource } from "../../data/user/user.db.datasource.js";
-import { NotFoundError } from "../../core/errors/index.js";
-import { JwtService } from "../../core/jwt/jwt-service.js";
+import { UserDBDataSource } from "../../../data/user/user.db.datasource.js";
+import { NotFoundError } from "../../errors/index.js";
+import { JwtService } from "../../../core/jwt/jwt-service.js";
 import bcrypt from "bcrypt";
 import dayjs from "dayjs";
-import { UserToken } from "../../api/modules/user/types/index.js";
-import { LoginUserInput } from "../../api/modules/user/inputs/index.js";
+import { LoginUserModel, LoginUserInputModel } from "../../models/index.js";
 
 export class LoginUserUseCase {
-  static async run({ data }: { data: LoginUserInput }): Promise<UserToken> {
+  static async run({
+    data,
+  }: {
+    data: LoginUserInputModel;
+  }): Promise<LoginUserModel> {
     const user = await UserDBDataSource.findByEmail({
       email: data.email,
     });
