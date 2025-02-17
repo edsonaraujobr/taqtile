@@ -6,7 +6,7 @@ import {
   FindUserByIDUseCase,
   SearchListUsersUseCase,
 } from "../../../domain/user/index.js";
-import { Mutation, Query, Resolver, Arg, Ctx } from "type-graphql";
+import { Mutation, Query, Resolver, Arg, Ctx, Int } from "type-graphql";
 import { CreateUserInput, LoginUserInput } from "./inputs/index.js";
 import { ListUsers, UserToken, User } from "./types/index.js";
 import { number } from "zod";
@@ -76,8 +76,8 @@ export class UserResolver {
 
   @Query(() => ListUsers)
   async listUsers(
-    @Arg("skip", () => Number, { defaultValue: 0 }) skip: number,
-    @Arg("quantity", () => Number, { defaultValue: 10 }) quantity: number,
+    @Arg("skip", () => Int, { defaultValue: 0 }) skip: number,
+    @Arg("quantity", () => Int, { defaultValue: 10 }) quantity: number,
     @Ctx() context: ContextInput,
   ): Promise<ListUsers> {
     try {

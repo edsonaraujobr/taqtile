@@ -56,14 +56,15 @@ export async function createServer() {
   return server;
 }
 
-async function startServer() {
-  const server = await createServer();
+if (import.meta.url === `file://${process.argv[1]}`) {
+  async function startServer() {
+    const server = await createServer();
+    server.listen().then(({ url }) => {
+      console.log(`Servidor pronto em: ${url}`);
+    });
+  }
 
-  server.listen().then(({ url }) => {
-    console.log(`Servidor pronto em: ${url}`);
+  startServer().catch((error) => {
+    console.error("Erro ao iniciar o servidor:", error);
   });
 }
-
-startServer().catch((error) => {
-  console.error("Error starting server:", error);
-});
