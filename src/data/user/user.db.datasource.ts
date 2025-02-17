@@ -32,7 +32,13 @@ export class UserDBDataSource {
     return await database.user.count();
   }
 
-  static async findMany({ skip, take }: { skip: number; take: number }) {
+  static async findMany({
+    skip,
+    take,
+  }: {
+    skip: number;
+    take: number;
+  }): Promise<User[]> {
     return await database.user.findMany({
       orderBy: { name: "asc" },
       skip,
