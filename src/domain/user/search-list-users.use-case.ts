@@ -1,10 +1,7 @@
 import { UserDBDataSource } from "../../data/user/user.db.datasource.js";
-import { ListUsersResult } from "../../api/modules/user/user.types.js";
 import { QUANTITY_DEFAULT_LIST_USERS } from "../../core/utils/constants.js";
-import {
-  BadInputError,
-  NotFoundError,
-} from "../../core/errors/import-all-errors.js";
+import { BadInputError, NotFoundError } from "../../core/errors/index.js";
+import { ListUsers } from "../../api/modules/user/types/index.js";
 
 export class SearchListUsersUseCase {
   static async run({
@@ -13,7 +10,7 @@ export class SearchListUsersUseCase {
   }: {
     skip: number;
     quantity: number;
-  }): Promise<ListUsersResult> {
+  }): Promise<ListUsers> {
     const totalUsers = await UserDBDataSource.count();
 
     const quantityUsers =

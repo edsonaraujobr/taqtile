@@ -7,14 +7,15 @@ import {
   MaximumAgeError,
   DateBirthdayFutureError,
   UserAlreadyExistsError,
-} from "../../core/errors/import-all-errors.js";
+} from "../../core/errors/index.js";
 import { SALT_ROUNDS, MAX_AGE } from "../../core/utils/constants.js";
 import { ZodError } from "zod";
 import { userCreateValidator } from "../../api/modules/user/user.validator.js";
-import { CreateUser, UserCreated } from "../../api/modules/user/user.types.js";
+import { User } from "../../api/modules/user/types/user.type.js";
+import { CreateUserInput } from "../../api/modules/user/inputs/index.js";
 
 export class CreateUserUseCase {
-  static async run({ data }: { data: CreateUser }): Promise<UserCreated> {
+  static async run({ data }: { data: CreateUserInput }): Promise<User> {
     try {
       userCreateValidator.parse(data);
     } catch (error) {

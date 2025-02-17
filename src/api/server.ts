@@ -1,11 +1,17 @@
+import "reflect-metadata";
 import { buildSchema } from "type-graphql";
-import { userResolver } from "./modules/user/user.resolver.js";
-import { addressResolver } from "./modules/address/address.resolver.js";
+import { UserResolver } from "./modules/user/user.resolver.js";
+import { AddressResolver } from "./modules/address/address.resolver.js";
 import { ApolloServer } from "apollo-server";
+import { authenticate } from "../core/jwt/authenticate-user.js";
+import { CustomError } from "../core/errors/index.js";
+import dotenv from "dotenv";
 
-async function startServer() {
+dotenv.config();
+
+export async function createServer() {
   const schema = await buildSchema({
-    resolvers: [userResolver, addressResolver],
+    resolvers: [UserResolver, AddressResolver],
   });
 
   const server = new ApolloServer({
@@ -47,9 +53,17 @@ async function startServer() {
     },
   });
 
+  return server;
+}
+
+async function startServer() {
+  const server = await createServer();
+
   server.listen().then(({ url }) => {
     console.log(`Servidor pronto em: ${url}`);
   });
 }
 
-startServer();
+startServer().catch((error) => {
+  console.error("Error starting server:", error);
+});

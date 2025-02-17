@@ -1,7 +1,7 @@
-import { UnauthorizedUser } from "../errors/import-all-errors.js";
-import { Context } from "../../api/modules/context.types.js";
+import { UnauthorizedUser } from "../errors/index.js";
+import { ContextInput } from "../../api/context.input.js";
 
-export function checkAuthentication({ context }: { context: Context }) {
+export function checkAuthentication({ context }: { context: ContextInput }) {
   if (!context?.user) {
     throw new UnauthorizedUser({ message: "Usuário não autorizado" });
   }

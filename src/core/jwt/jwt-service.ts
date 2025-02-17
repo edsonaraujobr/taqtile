@@ -4,10 +4,7 @@ import {
   REMEMBER_ME_EXPIRATION,
   DEFAULT_EXPIRATION,
 } from "../utils/constants.js";
-import {
-  MissingSecretKeyError,
-  UnauthorizedUser,
-} from "../errors/import-all-errors.js";
+import { MissingSecretKeyError, UnauthorizedUser } from "../errors/index.js";
 
 dotenv.config();
 const SECRET_KEY = process.env.SECRET_KEY;

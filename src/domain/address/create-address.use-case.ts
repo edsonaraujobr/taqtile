@@ -2,18 +2,16 @@ import {
   BadInputError,
   InternalServerError,
   NotFoundError,
-} from "../../core/errors/import-all-errors.js";
+} from "../../core/errors/index.js";
 import { AddressDBDataSource } from "../../data/address/address.db.datasource.js";
-import {
-  Address,
-  AddressCreated,
-} from "../../api/modules/address/address.types.js";
+import { Address } from "../../api/modules/address/types/index.js";
+import { AddressInput } from "../../api/modules/address/inputs/index.js";
 import { addressCreateValidator } from "../../api/modules/address/address.validator.js";
 import { UserDBDataSource } from "../../data/user/user.db.datasource.js";
 import { ZodError } from "zod";
 
 export class CreateAddressUseCase {
-  static async run({ data }: { data: Address }): Promise<AddressCreated> {
+  static async run({ data }: { data: AddressInput }): Promise<Address> {
     try {
       addressCreateValidator.parse(data);
     } catch (error) {

@@ -1,5 +1,5 @@
-import { Address } from "../../api/modules/address/address.types.js";
-import { NotFoundError } from "../../core/errors/import-all-errors.js";
+import { Address } from "../../api/modules/address/types/index.js";
+import { NotFoundError } from "../../core/errors/index.js";
 import { AddressDBDataSource } from "../../data/address/address.db.datasource.js";
 import { UserDBDataSource } from "../../data/user/user.db.datasource.js";
 
@@ -16,7 +16,8 @@ export class GetAddressesByUserIDUseCase {
 
     if (addresses.length === 0) {
       return [];
-    };
+    }
+
     return addresses;
   }
 }

@@ -1,13 +1,13 @@
-import { User } from "@prisma/client";
 import { database } from "../database/database.js";
-import {
-  CreateUser,
-  UserWithFormattedDate,
-} from "../../api/modules/user/user.types.js";
+import { CreateUserInput } from "../../api/modules/user/inputs/index.js";
+import { User } from "../../api/modules/user/types/index.js";
 
 export class UserDBDataSource {
-  static async create({ data }: { data: CreateUser }): Promise<User> {
-    return database.user.create({ data });
+  static async create({ data }: { data: CreateUserInput }): Promise<User> {
+    return await database.user.create({
+      data,
+      include: { addresses: true },
+    });
   }
 
   static async findByEmail({ email }: { email: string }): Promise<User | null> {
@@ -19,11 +19,7 @@ export class UserDBDataSource {
     });
   }
 
-  static async findByID({
-    id,
-  }: {
-    id: string;
-  }): Promise<UserWithFormattedDate | null> {
+  static async findByID({ id }: { id: string }): Promise<User | null> {
     return database.user.findUnique({
       where: { id },
       include: {

@@ -1,13 +1,13 @@
 import { Field, InputType } from "type-graphql";
 
-@InputType
+@InputType()
 export class LoginUserInput {
-  @Field()
-  email: String!
+  @Field(() => String)
+  email: string;
 
-  @Field()
-  password: String!
+  @Field(() => String)
+  password: string;
 
-  @Field()
-  rememberMe: Boolean
+  @Field(() => Boolean, { nullable: true })
+  rememberMe?: boolean;
 }

@@ -1,4 +1,4 @@
-import { Address } from "@prisma/client";
+import { Address } from "../../api/modules/address/types/index.js";
 import { database } from "../database/database.js";
 
 export class AddressDBDataSource {

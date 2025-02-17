@@ -1,21 +1,24 @@
-import { CustomError } from "../../../core/errors/import-all-errors.js";
+import { CustomError } from "../../../core/errors/index.js";
 import { checkAuthentication } from "../../../core/utils/check-authentication.js";
-import { CreateUser, LoginUser, UserWithFormattedDate } from "./user.types.js";
-import { Context } from "../context.types.js";
-import { CreateUserUseCase } from "../../../domain/user/create-user.use-case.js";
-import { LoginUserUseCase } from "../../../domain/user/login-user.use-case.js";
-import { FindUserByIDUseCase } from "../../../domain/user/find-user-by-id.use-case.js";
-import { SearchListUsersUseCase } from "../../../domain/user/search-list-users.use-case.js";
-import { Mutation, Query, Resolver } from "type-graphql";
+import {
+  CreateUserUseCase,
+  LoginUserUseCase,
+  FindUserByIDUseCase,
+  SearchListUsersUseCase,
+} from "../../../domain/user/index.js";
+import { Mutation, Query, Resolver, Arg, Ctx } from "type-graphql";
+import { CreateUserInput, LoginUserInput } from "./inputs/index.js";
+import { ListUsers, UserToken, User } from "./types/index.js";
+import { number } from "zod";
+import { ContextInput } from "../../context.input.js";
 
 @Resolver()
-export class userResolver {
-  @Mutation(() => UserWithFormattedDate)
+export class UserResolver {
+  @Mutation(() => User)
   async createUser(
-    _,
-    { data }: { data: CreateUser },
-    context: Context,
-  ): Promise<UserWithFormattedDate> {
+    @Arg("data", () => CreateUserInput) data: CreateUserInput,
+    @Ctx() context: ContextInput,
+  ): Promise<User> {
     try {
       checkAuthentication({ context });
       return await CreateUserUseCase.run({ data });
@@ -30,7 +33,10 @@ export class userResolver {
     }
   }
 
-  async loginUser (_, { data }: { data: LoginUser }) {
+  @Mutation(() => UserToken)
+  async loginUser(
+    @Arg("data", () => LoginUserInput) data: LoginUserInput,
+  ): Promise<UserToken> {
     try {
       return await LoginUserUseCase.run({
         data,
@@ -46,8 +52,11 @@ export class userResolver {
     }
   }
 
-  @Query()
-  async findUserByID (_, { id }: { id: string }, context: Context) {
+  @Query(() => User)
+  async findUserByID(
+    @Arg("id", () => String) id: string,
+    @Ctx() context: ContextInput,
+  ): Promise<User> {
     try {
       checkAuthentication({ context });
 
@@ -65,18 +74,12 @@ export class userResolver {
     }
   }
 
-  @Query()
+  @Query(() => ListUsers)
   async listUsers(
-    _,
-    {
-      skip,
-      quantity,
-    }: {
-      skip: number;
-      quantity: number;
-    },
-    context: Context,
-  ) {
+    @Arg("skip", () => Number, { defaultValue: 0 }) skip: number,
+    @Arg("quantity", () => Number, { defaultValue: 10 }) quantity: number,
+    @Ctx() context: ContextInput,
+  ): Promise<ListUsers> {
     try {
       checkAuthentication({ context });
 
