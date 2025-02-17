@@ -1,5 +1,5 @@
 import { UnauthorizedUser } from "../errors/index.js";
-import { ContextInput } from "../../api/context.input.js";
+import { ContextInput } from "../../api/context.interface.js";
 
 export function checkAuthentication({ context }: { context: ContextInput }) {
   if (!context?.user) {

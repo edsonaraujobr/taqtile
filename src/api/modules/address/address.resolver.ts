@@ -1,5 +1,5 @@
 import { checkAuthentication } from "../../../core/utils/check-authentication.js";
-import { ContextInput } from "../../context.input.js";
+import { Context } from "../../context.interface.js";
 import { CreateAddressUseCase } from "../../../domain/address/create-address.use-case.js";
 import { GetAddressesByUserIDUseCase } from "../../../domain/address/get-addresses-by-user-id.use-case.js";
 import { CustomError } from "../../../core/errors/index.js";
@@ -12,7 +12,7 @@ export class AddressResolver {
   @Mutation(() => Address)
   async createAddress(
     @Arg("data", () => AddressInput) data: AddressInput,
-    @Ctx() context: ContextInput,
+    @Ctx() context: Context,
   ): Promise<Address> {
     try {
       checkAuthentication({ context });
@@ -33,7 +33,7 @@ export class AddressResolver {
   @Query(() => [Address])
   async getAddressesByUserId(
     @Arg("userId", () => String) userId: string,
-    @Ctx() context: ContextInput,
+    @Ctx() context: Context,
   ): Promise<Address[]> {
     try {
       checkAuthentication({ context });

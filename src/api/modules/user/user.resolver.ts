@@ -9,15 +9,14 @@ import {
 import { Mutation, Query, Resolver, Arg, Ctx, Int } from "type-graphql";
 import { CreateUserInput, LoginUserInput } from "./inputs/index.js";
 import { ListUsers, UserToken, User } from "./types/index.js";
-import { number } from "zod";
-import { ContextInput } from "../../context.input.js";
+import { Context } from "../../context.interface.js";
 
 @Resolver()
 export class UserResolver {
   @Mutation(() => User)
   async createUser(
     @Arg("data", () => CreateUserInput) data: CreateUserInput,
-    @Ctx() context: ContextInput,
+    @Ctx() context: Context,
   ): Promise<User> {
     try {
       checkAuthentication({ context });
@@ -55,7 +54,7 @@ export class UserResolver {
   @Query(() => User)
   async findUserByID(
     @Arg("id", () => String) id: string,
-    @Ctx() context: ContextInput,
+    @Ctx() context: Context,
   ): Promise<User> {
     try {
       checkAuthentication({ context });
@@ -78,7 +77,7 @@ export class UserResolver {
   async listUsers(
     @Arg("skip", () => Int, { defaultValue: 0 }) skip: number,
     @Arg("quantity", () => Int, { defaultValue: 10 }) quantity: number,
-    @Ctx() context: ContextInput,
+    @Ctx() context: Context,
   ): Promise<ListUsers> {
     try {
       checkAuthentication({ context });
