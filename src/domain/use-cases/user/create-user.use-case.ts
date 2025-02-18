@@ -11,21 +11,16 @@ import {
 import { SALT_ROUNDS, MAX_AGE } from "../../../core/utils/constants.js";
 import { ZodError } from "zod";
 import { userCreateValidator } from "../../../api/modules/user/user.validator.js";
-import {
-  CreateUserModel,
-  UserDataSourceModel,
-  UserModel,
-} from "../../models/index.js";
+import { CreateUserModel, UserModel } from "../../models/index.js";
+import { Service } from "typedi";
 
+@Service()
 export class CreateUserUseCase {
-  private userDataSource: UserDataSourceModel;
-
-  constructor(userDataSource: UserDataSourceModel) {
-    this.userDataSource = userDataSource;
-  }
+  constructor(private readonly userDataSource: UserDBDataSource) {}
 
   async run({ data }: { data: CreateUserModel }): Promise<UserModel> {
     try {
+      console.log("chamou aqui!#");
       userCreateValidator.parse(data);
     } catch (error) {
       if (error instanceof ZodError) {
@@ -46,6 +41,7 @@ export class CreateUserUseCase {
       throw new InternalServerError();
     }
 
+    console.log("chamou aqui!################################");
     if (dayjs(data.birthDate).isAfter(new Date())) {
       throw new DateBirthdayFutureError({
         message: "Data de nascimento não pode ser no futuro!",

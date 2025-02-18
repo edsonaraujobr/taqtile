@@ -6,24 +6,15 @@ import { CustomError } from "../../../domain/errors/index.js";
 import { AddressInput } from "./inputs/index.js";
 import { Address } from "./types/index.js";
 import { Arg, Resolver, Mutation, Ctx, Query } from "type-graphql";
-import { UserDBDataSource } from "../../../data/user/user.db.datasource.js";
-import { AddressDBDataSource } from "../../../data/address/address.db.datasource.js";
+import { Service } from "typedi";
 
+@Service()
 @Resolver()
 export class AddressResolver {
-  private getAddressesByUserIDUseCase: GetAddressesByUserIDUseCase;
-  private createAddressUseCase: CreateAddressUseCase;
-
-  constructor() {
-    this.getAddressesByUserIDUseCase = new GetAddressesByUserIDUseCase(
-      UserDBDataSource.getInstance(),
-      AddressDBDataSource.getInstance(),
-    );
-    this.createAddressUseCase = new CreateAddressUseCase(
-      UserDBDataSource.getInstance(),
-      AddressDBDataSource.getInstance(),
-    );
-  }
+  constructor(
+    private readonly getAddressesByUserIDUseCase: GetAddressesByUserIDUseCase,
+    private readonly createAddressUseCase: CreateAddressUseCase,
+  ) {}
 
   @Mutation(() => Address)
   async createAddress(

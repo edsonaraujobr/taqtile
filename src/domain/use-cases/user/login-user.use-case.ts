@@ -4,13 +4,11 @@ import { JwtService } from "../../../core/jwt/jwt-service.js";
 import bcrypt from "bcrypt";
 import dayjs from "dayjs";
 import { LoginUserModel, LoginUserInputModel } from "../../models/index.js";
+import { Service } from "typedi";
 
+@Service()
 export class LoginUserUseCase {
-  private userDBDataSource: UserDBDataSource;
-
-  constructor(userDBDataSource: UserDBDataSource) {
-    this.userDBDataSource = userDBDataSource;
-  }
+  constructor(private readonly userDBDataSource: UserDBDataSource) {}
 
   async run({ data }: { data: LoginUserInputModel }): Promise<LoginUserModel> {
     const user = await this.userDBDataSource.findByEmail({

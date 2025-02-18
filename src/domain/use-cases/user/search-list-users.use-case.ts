@@ -1,13 +1,12 @@
+import { Service } from "typedi";
 import { QUANTITY_DEFAULT_LIST_USERS } from "../../../core/utils/constants.js";
 import { BadInputError, NotFoundError } from "../../errors/index.js";
-import { ListUsersModel, UserDataSourceModel } from "../../models/index.js";
+import { ListUsersModel } from "../../models/index.js";
+import { UserDBDataSource } from "../../../data/user/user.db.datasource.js";
 
+@Service()
 export class SearchListUsersUseCase {
-  private userDBDataSource: UserDataSourceModel;
-
-  constructor(userDBDataSource: UserDataSourceModel) {
-    this.userDBDataSource = userDBDataSource;
-  }
+  constructor(private readonly userDBDataSource: UserDBDataSource) {}
 
   async run({
     skip,

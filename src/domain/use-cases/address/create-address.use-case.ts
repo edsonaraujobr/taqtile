@@ -5,24 +5,17 @@ import {
 } from "../../errors/index.js";
 import { addressCreateValidator } from "../../../api/modules/address/address.validator.js";
 import { ZodError } from "zod";
-import {
-  AddressDataSourceModel,
-  AddressModel,
-  CreateAddressModel,
-  UserDataSourceModel,
-} from "../../models/index.js";
+import { AddressModel, CreateAddressModel } from "../../models/index.js";
+import { Service } from "typedi";
+import { UserDBDataSource } from "../../../data/user/user.db.datasource.js";
+import { AddressDBDataSource } from "../../../data/address/address.db.datasource.js";
 
+@Service()
 export class CreateAddressUseCase {
-  private addressDataSource: AddressDataSourceModel;
-  private userDataSource: UserDataSourceModel;
-
   constructor(
-    userDataSource: UserDataSourceModel,
-    addressDataSource: AddressDataSourceModel,
-  ) {
-    this.addressDataSource = addressDataSource;
-    this.userDataSource = userDataSource;
-  }
+    private readonly userDataSource: UserDBDataSource,
+    private readonly addressDataSource: AddressDBDataSource,
+  ) {}
 
   async run({ data }: { data: CreateAddressModel }): Promise<AddressModel> {
     try {

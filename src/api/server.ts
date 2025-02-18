@@ -1,4 +1,5 @@
 import "reflect-metadata";
+import { Container } from "typedi";
 import { buildSchema } from "type-graphql";
 import { UserResolver } from "./modules/user/user.resolver.js";
 import { AddressResolver } from "./modules/address/address.resolver.js";
@@ -6,12 +7,22 @@ import { ApolloServer } from "apollo-server";
 import { authenticate } from "../core/jwt/authenticate-user.js";
 import { CustomError } from "../domain/errors/index.js";
 import dotenv from "dotenv";
+import { FindUserByIDUseCase } from "../domain/use-cases/user/find-user-by-id.use-case.js";
 
 dotenv.config();
 
 export async function createServer() {
+  console.log("Container registrado:", Container.has(UserResolver));
+  console.log("Container registrado:", Container.has(AddressResolver));
+  const userResolverInstance = Container.get(UserResolver);
+  console.log("UserResolver instance:", userResolverInstance);
+
+  const useCaseInstance = Container.get(FindUserByIDUseCase);
+  console.log("FindUserByIDUseCase Instance:", useCaseInstance);
+
   const schema = await buildSchema({
     resolvers: [UserResolver, AddressResolver],
+    container: Container,
   });
 
   const server = new ApolloServer({
@@ -30,6 +41,10 @@ export async function createServer() {
       };
     },
     context: ({ req }) => {
+      const context = {
+        container: Container,
+      };
+
       if (req.headers.authorization) {
         const token = req.headers.authorization || "";
         let user;
@@ -48,8 +63,10 @@ export async function createServer() {
             message: err.message,
           };
         }
-        return { user };
+        context.user = user;
       }
+
+      return context;
     },
   });
 
