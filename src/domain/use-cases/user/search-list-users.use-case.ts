@@ -1,17 +1,22 @@
-import { UserDBDataSource } from "../../../data/user/user.db.datasource.js";
 import { QUANTITY_DEFAULT_LIST_USERS } from "../../../core/utils/constants.js";
 import { BadInputError, NotFoundError } from "../../errors/index.js";
-import { ListUsersModel } from "../../models/index.js";
+import { ListUsersModel, UserDataSourceModel } from "../../models/index.js";
 
 export class SearchListUsersUseCase {
-  static async run({
+  private userDBDataSource: UserDataSourceModel;
+
+  constructor(userDBDataSource: UserDataSourceModel) {
+    this.userDBDataSource = userDBDataSource;
+  }
+
+  async run({
     skip,
     quantity,
   }: {
     skip: number;
     quantity: number;
   }): Promise<ListUsersModel> {
-    const totalUsers = await UserDBDataSource.count();
+    const totalUsers = await this.userDBDataSource.count();
 
     const quantityUsers =
       Number.isInteger(quantity) && quantity > 0
@@ -25,7 +30,7 @@ export class SearchListUsersUseCase {
       });
     }
 
-    const users = await UserDBDataSource.findMany({
+    const users = await this.userDBDataSource.findMany({
       skip,
       take: quantityUsers,
     });

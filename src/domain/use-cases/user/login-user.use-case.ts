@@ -6,12 +6,14 @@ import dayjs from "dayjs";
 import { LoginUserModel, LoginUserInputModel } from "../../models/index.js";
 
 export class LoginUserUseCase {
-  static async run({
-    data,
-  }: {
-    data: LoginUserInputModel;
-  }): Promise<LoginUserModel> {
-    const user = await UserDBDataSource.findByEmail({
+  private userDBDataSource: UserDBDataSource;
+
+  constructor(userDBDataSource: UserDBDataSource) {
+    this.userDBDataSource = userDBDataSource;
+  }
+
+  async run({ data }: { data: LoginUserInputModel }): Promise<LoginUserModel> {
+    const user = await this.userDBDataSource.findByEmail({
       email: data.email,
     });
 
