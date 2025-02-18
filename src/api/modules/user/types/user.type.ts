@@ -1,8 +1,9 @@
 import { Field, ID, ObjectType } from "type-graphql";
 import { Address } from "../../address/types/address.type.js";
+import { UserModel } from "../../../../domain/models/user.model.js";
 
 @ObjectType()
-export class User {
+export class User implements UserModel {
   @Field(() => ID)
   id: string;
 

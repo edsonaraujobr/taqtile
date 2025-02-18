@@ -1,7 +1,8 @@
 import { Field, InputType } from "type-graphql";
+import { CreateUserModel } from "../../../../domain/models/user.model.js";
 
 @InputType()
-export class CreateUserInput {
+export class CreateUserInput implements CreateUserModel {
   @Field(() => String, { nullable: true })
   name?: string;
 

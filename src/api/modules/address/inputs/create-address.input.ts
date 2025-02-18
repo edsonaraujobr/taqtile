@@ -1,7 +1,8 @@
 import { Field, InputType } from "type-graphql";
+import { CreateAddressModel } from "../../../../domain/models/address.model.js";
 
 @InputType()
-export class AddressInput {
+export class AddressInput implements CreateAddressModel {
   @Field(() => String)
   cep: string;
 
