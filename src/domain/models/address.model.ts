@@ -20,3 +20,8 @@ export interface CreateAddressModel {
   state: string;
   userId: string;
 }
+
+export interface AddressDataSourceModel {
+  findManyByID(params: { id: string }): Promise<AddressModel[]>;
+  create(params: { data: CreateAddressModel }): Promise<AddressModel>;
+}

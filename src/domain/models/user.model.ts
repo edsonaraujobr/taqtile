@@ -32,3 +32,7 @@ export interface CreateUserModel {
   password: string;
   birthDate?: string;
 }
+
+export interface UserDataSourceModel {
+  findByID(params: { id: string }): Promise<UserModel | null>;
+}

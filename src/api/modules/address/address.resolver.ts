@@ -6,9 +6,25 @@ import { CustomError } from "../../../domain/errors/index.js";
 import { AddressInput } from "./inputs/index.js";
 import { Address } from "./types/index.js";
 import { Arg, Resolver, Mutation, Ctx, Query } from "type-graphql";
+import { UserDBDataSource } from "../../../data/user/user.db.datasource.js";
+import { AddressDBDataSource } from "../../../data/address/address.db.datasource.js";
 
 @Resolver()
 export class AddressResolver {
+  private getAddressesByUserIDUseCase: GetAddressesByUserIDUseCase;
+  private createAddressUseCase: CreateAddressUseCase;
+
+  constructor() {
+    this.getAddressesByUserIDUseCase = new GetAddressesByUserIDUseCase(
+      UserDBDataSource.getInstance(),
+      AddressDBDataSource.getInstance(),
+    );
+    this.createAddressUseCase = new CreateAddressUseCase(
+      UserDBDataSource.getInstance(),
+      AddressDBDataSource.getInstance(),
+    );
+  }
+
   @Mutation(() => Address)
   async createAddress(
     @Arg("data", () => AddressInput) data: AddressInput,
@@ -17,7 +33,7 @@ export class AddressResolver {
     try {
       checkAuthentication({ context });
 
-      return await CreateAddressUseCase.run({
+      return await this.createAddressUseCase.run({
         data,
       });
     } catch (error: unknown) {
@@ -38,7 +54,7 @@ export class AddressResolver {
     try {
       checkAuthentication({ context });
 
-      return await GetAddressesByUserIDUseCase.run({
+      return await this.getAddressesByUserIDUseCase.run({
         userId,
       });
     } catch (error: unknown) {
