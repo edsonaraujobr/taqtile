@@ -11,10 +11,20 @@ import {
 import { SALT_ROUNDS, MAX_AGE } from "../../../core/utils/constants.js";
 import { ZodError } from "zod";
 import { userCreateValidator } from "../../../api/modules/user/user.validator.js";
-import { CreateUserModel, UserModel } from "../../models/index.js";
+import {
+  CreateUserModel,
+  UserDataSourceModel,
+  UserModel,
+} from "../../models/index.js";
 
 export class CreateUserUseCase {
-  static async run({ data }: { data: CreateUserModel }): Promise<UserModel> {
+  private userDataSource: UserDataSourceModel;
+
+  constructor(userDataSource: UserDataSourceModel) {
+    this.userDataSource = userDataSource;
+  }
+
+  async run({ data }: { data: CreateUserModel }): Promise<UserModel> {
     try {
       userCreateValidator.parse(data);
     } catch (error) {
@@ -51,7 +61,7 @@ export class CreateUserUseCase {
 
     let alreadyUserWithEmail;
     try {
-      alreadyUserWithEmail = await UserDBDataSource.findByEmail({
+      alreadyUserWithEmail = await this.userDataSource.findByEmail({
         email: data.email,
       });
     } catch (error: unknown) {
@@ -77,7 +87,7 @@ export class CreateUserUseCase {
       birthDate: formattedBirthDate,
     };
 
-    const newUser = await UserDBDataSource.create({
+    const newUser = await this.userDataSource.create({
       data: user,
     });
 

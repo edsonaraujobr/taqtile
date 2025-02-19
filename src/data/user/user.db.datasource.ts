@@ -2,18 +2,25 @@ import { database } from "../database/database.js";
 import { CreateUserModel, UserModel } from "../../domain/models/index.js";
 
 export class UserDBDataSource {
-  static async create({ data }: { data: CreateUserModel }): Promise<UserModel> {
+  private static instance: UserDBDataSource;
+
+  private constructor() {}
+
+  static getInstance(): UserDBDataSource {
+    if (!UserDBDataSource.instance) {
+      UserDBDataSource.instance = new UserDBDataSource();
+    }
+    return UserDBDataSource.instance;
+  }
+
+  async create({ data }: { data: CreateUserModel }): Promise<UserModel> {
     return await database.user.create({
       data,
       include: { addresses: true },
     });
   }
 
-  static async findByEmail({
-    email,
-  }: {
-    email: string;
-  }): Promise<UserModel | null> {
+  async findByEmail({ email }: { email: string }): Promise<UserModel | null> {
     return await database.user.findUnique({
       where: { email },
       include: {
@@ -22,7 +29,7 @@ export class UserDBDataSource {
     });
   }
 
-  static async findByID({ id }: { id: string }): Promise<UserModel | null> {
+  async findByID({ id }: { id: string }): Promise<UserModel | null> {
     return await database.user.findUnique({
       where: { id },
       include: {
@@ -31,11 +38,11 @@ export class UserDBDataSource {
     });
   }
 
-  static async count(): Promise<number> {
+  async count(): Promise<number> {
     return await database.user.count();
   }
 
-  static async findMany({
+  async findMany({
     skip,
     take,
   }: {

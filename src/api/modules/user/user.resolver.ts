@@ -10,9 +10,30 @@ import { Mutation, Query, Resolver, Arg, Ctx, Int } from "type-graphql";
 import { CreateUserInput, LoginUserInput } from "./inputs/index.js";
 import { ListUsers, UserToken, User } from "./types/index.js";
 import { Context } from "../../context.interface.js";
+import { UserDBDataSource } from "../../../data/user/user.db.datasource.js";
 
 @Resolver()
 export class UserResolver {
+  private findUserByIDUseCase: FindUserByIDUseCase;
+  private createUserUseCase: CreateUserUseCase;
+  private loginUserUseCase: LoginUserUseCase;
+  private searchListUsersUseCase: SearchListUsersUseCase;
+
+  constructor() {
+    this.findUserByIDUseCase = new FindUserByIDUseCase(
+      UserDBDataSource.getInstance(),
+    );
+    this.createUserUseCase = new CreateUserUseCase(
+      UserDBDataSource.getInstance(),
+    );
+    this.loginUserUseCase = new LoginUserUseCase(
+      UserDBDataSource.getInstance(),
+    );
+    this.searchListUsersUseCase = new SearchListUsersUseCase(
+      UserDBDataSource.getInstance(),
+    );
+  }
+
   @Mutation(() => User)
   async createUser(
     @Arg("data", () => CreateUserInput) data: CreateUserInput,
@@ -20,7 +41,7 @@ export class UserResolver {
   ): Promise<User> {
     try {
       checkAuthentication({ context });
-      return await CreateUserUseCase.run({ data });
+      return await this.createUserUseCase.run({ data });
     } catch (error: unknown) {
       if (error instanceof CustomError) {
         throw error;
@@ -37,7 +58,7 @@ export class UserResolver {
     @Arg("data", () => LoginUserInput) data: LoginUserInput,
   ): Promise<UserToken> {
     try {
-      return await LoginUserUseCase.run({
+      return await this.loginUserUseCase.run({
         data,
       });
     } catch (error: unknown) {
@@ -59,7 +80,7 @@ export class UserResolver {
     try {
       checkAuthentication({ context });
 
-      return await FindUserByIDUseCase.run({
+      return await this.findUserByIDUseCase.run({
         id,
       });
     } catch (error: unknown) {
@@ -82,7 +103,7 @@ export class UserResolver {
     try {
       checkAuthentication({ context });
 
-      return await SearchListUsersUseCase.run({
+      return await this.searchListUsersUseCase.run({
         skip,
         quantity,
       });

@@ -3,18 +3,28 @@ import {
   InternalServerError,
   NotFoundError,
 } from "../../errors/index.js";
-import { AddressDBDataSource } from "../../../data/address/address.db.datasource.js";
 import { addressCreateValidator } from "../../../api/modules/address/address.validator.js";
-import { UserDBDataSource } from "../../../data/user/user.db.datasource.js";
 import { ZodError } from "zod";
-import { AddressModel, CreateAddressModel } from "../../models/index.js";
+import {
+  AddressDataSourceModel,
+  AddressModel,
+  CreateAddressModel,
+  UserDataSourceModel,
+} from "../../models/index.js";
 
 export class CreateAddressUseCase {
-  static async run({
-    data,
-  }: {
-    data: CreateAddressModel;
-  }): Promise<AddressModel> {
+  private addressDataSource: AddressDataSourceModel;
+  private userDataSource: UserDataSourceModel;
+
+  constructor(
+    userDataSource: UserDataSourceModel,
+    addressDataSource: AddressDataSourceModel,
+  ) {
+    this.addressDataSource = addressDataSource;
+    this.userDataSource = userDataSource;
+  }
+
+  async run({ data }: { data: CreateAddressModel }): Promise<AddressModel> {
     try {
       addressCreateValidator.parse(data);
     } catch (error) {
@@ -28,7 +38,7 @@ export class CreateAddressUseCase {
 
     let userExists;
     try {
-      userExists = await UserDBDataSource.findByID({ id: data.userId });
+      userExists = await this.userDataSource.findByID({ id: data.userId });
     } catch (error) {
       throw new InternalServerError();
     }
@@ -39,6 +49,6 @@ export class CreateAddressUseCase {
       });
     }
 
-    return AddressDBDataSource.create({ data });
+    return this.addressDataSource.create({ data });
   }
 }

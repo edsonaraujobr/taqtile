@@ -32,3 +32,11 @@ export interface CreateUserModel {
   password: string;
   birthDate?: string;
 }
+
+export interface UserDataSourceModel {
+  findByID(params: { id: string }): Promise<UserModel | null>;
+  findByEmail(params: { email: string }): Promise<UserModel | null>;
+  create(params: { data: CreateUserModel }): Promise<UserModel>;
+  findMany(params: { skip: number; take: number }): Promise<UserModel[]>;
+  count(): Promise<number>;
+}
