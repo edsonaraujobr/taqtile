@@ -1,5 +1,5 @@
-import { UnauthorizedUser } from "../errors/import-all-errors.js";
-import { Context } from "../../api/modules/context.types.js";
+import { UnauthorizedUser } from "../../domain/errors/index.js";
+import { Context } from "../../api/context.interface.js";
 
 export function checkAuthentication({ context }: { context: Context }) {
   if (!context?.user) {

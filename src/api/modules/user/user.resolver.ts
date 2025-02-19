@@ -1,94 +1,99 @@
-import { CustomError } from "../../../core/errors/import-all-errors.js";
+import { CustomError } from "../../../domain/errors/index.js";
 import { checkAuthentication } from "../../../core/utils/check-authentication.js";
-import { CreateUser, LoginUser, UserWithFormattedDate } from "./user.types.js";
-import { Context } from "../context.types.js";
-import { CreateUserUseCase } from "../../../domain/user/create-user.use-case.js";
-import { LoginUserUseCase } from "../../../domain/user/login-user.use-case.js";
-import { FindUserByIDUseCase } from "../../../domain/user/find-user-by-id.use-case.js";
-import { SearchListUsersUseCase } from "../../../domain/user/search-list-users.use-case.js";
+import {
+  CreateUserUseCase,
+  LoginUserUseCase,
+  FindUserByIDUseCase,
+  SearchListUsersUseCase,
+} from "../../../domain/use-cases/user/index.js";
+import { Mutation, Query, Resolver, Arg, Ctx, Int } from "type-graphql";
+import { CreateUserInput, LoginUserInput } from "./inputs/index.js";
+import { ListUsers, UserToken, User } from "./types/index.js";
+import { Context } from "../../context.interface.js";
 
-export const userResolver = {
-  Mutation: {
-    createUser: async (
-      _,
-      { data }: { data: CreateUser },
-      context: Context,
-    ): Promise<UserWithFormattedDate> => {
-      try {
-        checkAuthentication({ context });
-        return await CreateUserUseCase.run({ data });
-      } catch (error: unknown) {
-        if (error instanceof CustomError) {
-          throw error;
-        }
-        throw new CustomError({
-          code: 500,
-          message: "Erro inesperado no servidor.",
-        });
+@Resolver()
+export class UserResolver {
+  @Mutation(() => User)
+  async createUser(
+    @Arg("data", () => CreateUserInput) data: CreateUserInput,
+    @Ctx() context: Context,
+  ): Promise<User> {
+    try {
+      checkAuthentication({ context });
+      return await CreateUserUseCase.run({ data });
+    } catch (error: unknown) {
+      if (error instanceof CustomError) {
+        throw error;
       }
-    },
+      throw new CustomError({
+        code: 500,
+        message: "Erro inesperado no servidor.",
+      });
+    }
+  }
 
-    loginUser: async (_, { data }: { data: LoginUser }) => {
-      try {
-        return await LoginUserUseCase.run({
-          data,
-        });
-      } catch (error: unknown) {
-        if (error instanceof CustomError) {
-          throw error;
-        }
-        throw new CustomError({
-          code: 500,
-          message: "Erro inesperado no servidor.",
-        });
+  @Mutation(() => UserToken)
+  async loginUser(
+    @Arg("data", () => LoginUserInput) data: LoginUserInput,
+  ): Promise<UserToken> {
+    try {
+      return await LoginUserUseCase.run({
+        data,
+      });
+    } catch (error: unknown) {
+      if (error instanceof CustomError) {
+        throw error;
       }
-    },
-  },
-  Query: {
-    findUserByID: async (_, { id }: { id: string }, context: Context) => {
-      try {
-        checkAuthentication({ context });
+      throw new CustomError({
+        code: 500,
+        message: "Erro inesperado no servidor.",
+      });
+    }
+  }
 
-        return await FindUserByIDUseCase.run({
-          id,
-        });
-      } catch (error: unknown) {
-        if (error instanceof CustomError) {
-          throw error;
-        }
-        throw new CustomError({
-          code: 500,
-          message: "Erro inesperado no servidor.",
-        });
+  @Query(() => User)
+  async findUserByID(
+    @Arg("id", () => String) id: string,
+    @Ctx() context: Context,
+  ): Promise<User> {
+    try {
+      checkAuthentication({ context });
+
+      return await FindUserByIDUseCase.run({
+        id,
+      });
+    } catch (error: unknown) {
+      if (error instanceof CustomError) {
+        throw error;
       }
-    },
-    listUsers: async (
-      _,
-      {
+      throw new CustomError({
+        code: 500,
+        message: "Erro inesperado no servidor.",
+      });
+    }
+  }
+
+  @Query(() => ListUsers)
+  async listUsers(
+    @Arg("skip", () => Int, { defaultValue: 0 }) skip: number,
+    @Arg("quantity", () => Int, { defaultValue: 10 }) quantity: number,
+    @Ctx() context: Context,
+  ): Promise<ListUsers> {
+    try {
+      checkAuthentication({ context });
+
+      return await SearchListUsersUseCase.run({
         skip,
         quantity,
-      }: {
-        skip: number;
-        quantity: number;
-      },
-      context: Context,
-    ) => {
-      try {
-        checkAuthentication({ context });
-
-        return await SearchListUsersUseCase.run({
-          skip,
-          quantity,
-        });
-      } catch (error: unknown) {
-        if (error instanceof CustomError) {
-          throw error;
-        }
-        throw new CustomError({
-          code: 500,
-          message: "Erro inesperado no servidor.",
-        });
+      });
+    } catch (error: unknown) {
+      if (error instanceof CustomError) {
+        throw error;
       }
-    },
-  },
-};
+      throw new CustomError({
+        code: 500,
+        message: "Erro inesperado no servidor.",
+      });
+    }
+  }
+}

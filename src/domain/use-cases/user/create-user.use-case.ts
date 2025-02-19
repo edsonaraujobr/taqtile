@@ -1,4 +1,4 @@
-import { UserDBDataSource } from "../../data/user/user.db.datasource.js";
+import { UserDBDataSource } from "../../../data/user/user.db.datasource.js";
 import dayjs from "dayjs";
 import bcrypt from "bcrypt";
 import {
@@ -7,14 +7,14 @@ import {
   MaximumAgeError,
   DateBirthdayFutureError,
   UserAlreadyExistsError,
-} from "../../core/errors/import-all-errors.js";
-import { SALT_ROUNDS, MAX_AGE } from "../../core/utils/constants.js";
+} from "../../errors/index.js";
+import { SALT_ROUNDS, MAX_AGE } from "../../../core/utils/constants.js";
 import { ZodError } from "zod";
-import { userCreateValidator } from "../../api/modules/user/user.validator.js";
-import { CreateUser, UserCreated } from "../../api/modules/user/user.types.js";
+import { userCreateValidator } from "../../../api/modules/user/user.validator.js";
+import { CreateUserModel, UserModel } from "../../models/index.js";
 
 export class CreateUserUseCase {
-  static async run({ data }: { data: CreateUser }): Promise<UserCreated> {
+  static async run({ data }: { data: CreateUserModel }): Promise<UserModel> {
     try {
       userCreateValidator.parse(data);
     } catch (error) {

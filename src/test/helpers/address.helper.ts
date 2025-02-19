@@ -55,7 +55,7 @@ export function createMutationCreateAddressTest({
   userId: string;
 }) {
   const mutation = `
-  mutation CreateAddress($data: createAddressInput!){
+  mutation CreateAddress($data: AddressInput!){
     createAddress(data: $data) {
       id
       cep
@@ -93,7 +93,7 @@ export function createQueryFindAddressesByUserID({
   userId: string;
 }) {
   const query = `
-    query GetAddressesByUserId($userId: ID!){
+    query GetAddressesByUserId($userId: String!){
       getAddressesByUserId(userId: $userId) {
         id
         cep

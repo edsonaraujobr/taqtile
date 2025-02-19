@@ -1,10 +1,10 @@
-import { UserWithFormattedDate } from "../../api/modules/user/user.types.js";
-import { UserDBDataSource } from "../../data/user/user.db.datasource.js";
+import { UserDBDataSource } from "../../../data/user/user.db.datasource.js";
 import dayjs from "dayjs";
-import { NotFoundError } from "../../core/errors/import-all-errors.js";
+import { NotFoundError } from "../../errors/index.js";
+import { UserModel } from "../../models/index.js";
 
 export class FindUserByIDUseCase {
-  static async run({ id }: { id: string }): Promise<UserWithFormattedDate> {
+  static async run({ id }: { id: string }): Promise<UserModel> {
     const user = await UserDBDataSource.findByID({ id });
 
     if (!user) {

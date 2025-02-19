@@ -3,7 +3,7 @@ import { database } from "../../data/database/database.js";
 import bcrypt from "bcrypt";
 import { JwtService } from "../../core/jwt/jwt-service.js";
 import { SALT_ROUNDS } from "../../core/utils/constants.js";
-import { MissingCredentialsAdminError } from "../../core/errors/import-all-errors.js";
+import { MissingCredentialsAdminError } from "../../domain/errors/index.js";
 
 export function createMutationLoginUserTest({
   email,
@@ -15,7 +15,7 @@ export function createMutationLoginUserTest({
   rememberMe?: boolean;
 }) {
   const mutation = `
-     mutation LoginUser($data: UserLoginInput!) {
+     mutation LoginUser($data: LoginUserInput!) {
         loginUser(data: $data ) {
           user {
             id
@@ -81,7 +81,7 @@ export function createMutationCreateUserTest({
   birthDate?: string;
 }) {
   const mutation = `
-  mutation CreateUser($data: UserCreateInput!){
+  mutation CreateUser($data: CreateUserInput!){
     createUser(data: $data) {
       id
       name
@@ -136,7 +136,7 @@ export async function createAdminInDatabaseTest({
 
 export function createQueryFindUserByIDTest({ id }: { id: string }) {
   const query = `
-    query FindUserByID($id: ID!){
+    query FindUserByID($id: String!){
       findUserByID(id: $id) {
         id
         name

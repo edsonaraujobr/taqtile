@@ -1,8 +1,4 @@
-interface DecodedToken {
-  id: string;
-  iat: number;
-  export: number;
-}
+import { DecodedToken } from "./modules/user/types/decoded-token.types.js";
 
 export interface Context {
   user?: DecodedToken;
