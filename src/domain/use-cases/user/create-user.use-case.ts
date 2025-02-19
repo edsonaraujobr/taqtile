@@ -1,17 +1,17 @@
-import { UserDBDataSource } from "../../../data/user/user.db.datasource.js";
+import { UserDBDataSource } from "../../../data/user/user.db.datasource";
 import dayjs from "dayjs";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import {
   InternalServerError,
   BadInputError,
   MaximumAgeError,
   DateBirthdayFutureError,
   UserAlreadyExistsError,
-} from "../../errors/index.js";
-import { SALT_ROUNDS, MAX_AGE } from "../../../core/utils/constants.js";
+} from "../../errors/index";
+import { SALT_ROUNDS, MAX_AGE } from "../../../core/utils/constants";
 import { ZodError } from "zod";
-import { userCreateValidator } from "../../../api/modules/user/user.validator.js";
-import { CreateUserModel, UserModel } from "../../models/index.js";
+import { userCreateValidator } from "../../../api/modules/user/user.validator";
+import { CreateUserModel, UserModel } from "../../models/index";
 import { Service } from "typedi";
 
 @Service()
@@ -20,7 +20,6 @@ export class CreateUserUseCase {
 
   async run({ data }: { data: CreateUserModel }): Promise<UserModel> {
     try {
-      console.log("chamou aqui!#");
       userCreateValidator.parse(data);
     } catch (error) {
       if (error instanceof ZodError) {
@@ -41,7 +40,6 @@ export class CreateUserUseCase {
       throw new InternalServerError();
     }
 
-    console.log("chamou aqui!################################");
     if (dayjs(data.birthDate).isAfter(new Date())) {
       throw new DateBirthdayFutureError({
         message: "Data de nascimento não pode ser no futuro!",

@@ -1,10 +1,10 @@
-import { checkAuthentication } from "../../../core/utils/check-authentication.js";
-import { Context } from "../../context.interface.js";
-import { CreateAddressUseCase } from "../../../domain/use-cases/address/create-address.use-case.js";
-import { GetAddressesByUserIDUseCase } from "../../../domain/use-cases/address/get-addresses-by-user-id.use-case.js";
-import { CustomError } from "../../../domain/errors/index.js";
-import { AddressInput } from "./inputs/index.js";
-import { Address } from "./types/index.js";
+import { checkAuthentication } from "../../../core/utils/check-authentication";
+import { Context } from "../../context.interface";
+import { CreateAddressUseCase } from "../../../domain/use-cases/address/create-address.use-case";
+import { GetAddressesByUserIDUseCase } from "../../../domain/use-cases/address/get-addresses-by-user-id.use-case";
+import { CustomError } from "../../../domain/errors/index";
+import { AddressInput } from "./inputs/index";
+import { Address } from "./types/index";
 import { Arg, Resolver, Mutation, Ctx, Query } from "type-graphql";
 import { Service } from "typedi";
 

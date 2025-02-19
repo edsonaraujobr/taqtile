@@ -1,8 +1,8 @@
 import { Service } from "typedi";
-import { NotFoundError } from "../../errors/index.js";
-import { AddressModel } from "../../models/index.js";
-import { UserDBDataSource } from "../../../data/user/user.db.datasource.js";
-import { AddressDBDataSource } from "../../../data/address/address.db.datasource.js";
+import { NotFoundError } from "../../errors/index";
+import { AddressModel } from "../../models/index";
+import { UserDBDataSource } from "../../../data/user/user.db.datasource";
+import { AddressDBDataSource } from "../../../data/address/address.db.datasource";
 
 @Service()
 export class GetAddressesByUserIDUseCase {

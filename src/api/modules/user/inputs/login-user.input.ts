@@ -1,13 +1,13 @@
 import { Field, InputType } from "type-graphql";
-import { LoginUserInputModel } from "../../../../domain/models/user.model.js";
+import { LoginUserInputModel } from "../../../../domain/models/user.model";
 
 @InputType()
 export class LoginUserInput implements LoginUserInputModel {
   @Field(() => String)
-  email: string;
+  email!: string;
 
   @Field(() => String)
-  password: string;
+  password!: string;
 
   @Field(() => Boolean, { nullable: true })
   rememberMe?: boolean;

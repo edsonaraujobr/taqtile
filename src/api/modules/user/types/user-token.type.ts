@@ -1,12 +1,12 @@
 import { Field, ObjectType } from "type-graphql";
-import { User } from "./user.type.js";
-import { LoginUserModel } from "../../../../domain/models/user.model.js";
+import { User } from "./user.type";
+import { LoginUserModel } from "../../../../domain/models/user.model";
 
 @ObjectType()
 export class UserToken implements LoginUserModel {
   @Field(() => User)
-  user: User;
+  user!: User;
 
   @Field(() => String)
-  token: string;
+  token!: string;
 }

@@ -2,13 +2,13 @@ import {
   BadInputError,
   InternalServerError,
   NotFoundError,
-} from "../../errors/index.js";
-import { addressCreateValidator } from "../../../api/modules/address/address.validator.js";
+} from "../../errors/index";
+import { addressCreateValidator } from "../../../api/modules/address/address.validator";
 import { ZodError } from "zod";
-import { AddressModel, CreateAddressModel } from "../../models/index.js";
+import { AddressModel, CreateAddressModel } from "../../models/index";
 import { Service } from "typedi";
-import { UserDBDataSource } from "../../../data/user/user.db.datasource.js";
-import { AddressDBDataSource } from "../../../data/address/address.db.datasource.js";
+import { UserDBDataSource } from "../../../data/user/user.db.datasource";
+import { AddressDBDataSource } from "../../../data/address/address.db.datasource";
 
 @Service()
 export class CreateAddressUseCase {

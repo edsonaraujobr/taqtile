@@ -1,1 +1,1 @@
-export * from "./create-address.input.js";
+export * from "./create-address.input";

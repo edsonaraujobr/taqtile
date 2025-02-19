@@ -1,25 +1,22 @@
 import "reflect-metadata";
 import { Container } from "typedi";
 import { buildSchema } from "type-graphql";
-import { UserResolver } from "./modules/user/user.resolver.js";
-import { AddressResolver } from "./modules/address/address.resolver.js";
+import { UserResolver } from "./modules/user/user.resolver";
+import { AddressResolver } from "./modules/address/address.resolver";
 import { ApolloServer } from "apollo-server";
-import { authenticate } from "../core/jwt/authenticate-user.js";
-import { CustomError } from "../domain/errors/index.js";
+import { authenticate } from "../core/jwt/authenticate-user";
+import { CustomError } from "../domain/errors/index";
 import dotenv from "dotenv";
-import { FindUserByIDUseCase } from "../domain/use-cases/user/find-user-by-id.use-case.js";
+const JwtPayload = require("jsonwebtoken");
 
 dotenv.config();
 
+interface Context {
+  container: typeof Container;
+  user?: string | typeof JwtPayload;
+}
+
 export async function createServer() {
-  console.log("Container registrado:", Container.has(UserResolver));
-  console.log("Container registrado:", Container.has(AddressResolver));
-  const userResolverInstance = Container.get(UserResolver);
-  console.log("UserResolver instance:", userResolverInstance);
-
-  const useCaseInstance = Container.get(FindUserByIDUseCase);
-  console.log("FindUserByIDUseCase Instance:", useCaseInstance);
-
   const schema = await buildSchema({
     resolvers: [UserResolver, AddressResolver],
     container: Container,
@@ -41,7 +38,7 @@ export async function createServer() {
       };
     },
     context: ({ req }) => {
-      const context = {
+      const context: Context = {
         container: Container,
       };
 
@@ -51,7 +48,12 @@ export async function createServer() {
         try {
           user = authenticate(token);
         } catch (err: unknown) {
-          if (err.originalError instanceof CustomError) {
+          if (
+            err &&
+            typeof err === "object" &&
+            "originalError" in err &&
+            err.originalError instanceof CustomError
+          ) {
             return {
               code: err.originalError.code,
               message: err.originalError.message,
@@ -59,8 +61,8 @@ export async function createServer() {
             };
           }
           return {
-            code: err.extensions?.code || "INTERNAL_SERVER_ERROR",
-            message: err.message,
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Erro desconhecido",
           };
         }
         context.user = user;
@@ -73,7 +75,7 @@ export async function createServer() {
   return server;
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (require.main === module) {
   async function startServer() {
     const server = await createServer();
     server.listen().then(({ url }) => {

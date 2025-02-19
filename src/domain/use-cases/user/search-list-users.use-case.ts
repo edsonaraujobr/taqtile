@@ -1,8 +1,8 @@
 import { Service } from "typedi";
-import { QUANTITY_DEFAULT_LIST_USERS } from "../../../core/utils/constants.js";
-import { BadInputError, NotFoundError } from "../../errors/index.js";
-import { ListUsersModel } from "../../models/index.js";
-import { UserDBDataSource } from "../../../data/user/user.db.datasource.js";
+import { QUANTITY_DEFAULT_LIST_USERS } from "../../../core/utils/constants";
+import { BadInputError, NotFoundError } from "../../errors/index";
+import { ListUsersModel } from "../../models/index";
+import { UserDBDataSource } from "../../../data/user/user.db.datasource";
 
 @Service()
 export class SearchListUsersUseCase {

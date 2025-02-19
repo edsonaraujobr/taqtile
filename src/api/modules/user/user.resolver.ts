@@ -1,15 +1,15 @@
-import { CustomError } from "../../../domain/errors/index.js";
-import { checkAuthentication } from "../../../core/utils/check-authentication.js";
+import { CustomError } from "../../../domain/errors/index";
+import { checkAuthentication } from "../../../core/utils/check-authentication";
 import {
   CreateUserUseCase,
   LoginUserUseCase,
   FindUserByIDUseCase,
   SearchListUsersUseCase,
-} from "../../../domain/use-cases/user/index.js";
+} from "../../../domain/use-cases/user/index";
 import { Mutation, Query, Resolver, Arg, Ctx, Int } from "type-graphql";
-import { CreateUserInput, LoginUserInput } from "./inputs/index.js";
-import { ListUsers, UserToken, User } from "./types/index.js";
-import { Context } from "../../context.interface.js";
+import { CreateUserInput, LoginUserInput } from "./inputs/index";
+import { ListUsers, UserToken, User } from "./types/index";
+import { Context } from "../../context.interface";
 import { Service } from "typedi";
 
 @Service()
@@ -28,9 +28,7 @@ export class UserResolver {
     @Ctx() context: Context,
   ): Promise<User> {
     try {
-      console.log("chamou!")
       checkAuthentication({ context });
-      console.log("passou!")
       return await this.createUserUseCase.run({ data });
     } catch (error: unknown) {
       if (error instanceof CustomError) {

@@ -1,5 +1,5 @@
-import { database } from "../database/database.js";
-import { CreateUserModel, UserModel } from "../../domain/models/index.js";
+import { database } from "../database/database";
+import { CreateUserModel, UserLoginReturnModel, UserModel } from "../../domain/models/index";
 import { Service } from "typedi";
 
 @Service()
@@ -13,7 +13,11 @@ export class UserDBDataSource {
     });
   }
 
-  async findByEmail({ email }: { email: string }): Promise<UserModel | null> {
+  async findByEmail({
+    email,
+  }: {
+    email: string;
+  }): Promise<UserLoginReturnModel | null> {
     return await database.user.findUnique({
       where: { email },
       include: {

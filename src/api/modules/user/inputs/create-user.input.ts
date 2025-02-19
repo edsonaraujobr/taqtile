@@ -1,5 +1,5 @@
 import { Field, InputType } from "type-graphql";
-import { CreateUserModel } from "../../../../domain/models/user.model.js";
+import { CreateUserModel } from "../../../../domain/models/user.model";
 
 @InputType()
 export class CreateUserInput implements CreateUserModel {
@@ -7,11 +7,11 @@ export class CreateUserInput implements CreateUserModel {
   name?: string;
 
   @Field(() => String)
-  email: string;
+  email!: string;
 
   @Field(() => String)
-  password: string;
+  password!: string;
 
-  @Field(() => String,{ nullable: true })
+  @Field(() => String, { nullable: true })
   birthDate?: string;
 }

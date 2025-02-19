@@ -1,3 +1,3 @@
-export * from "./list-users.type.js";
-export * from "./user-token.type.js";
-export * from "./user.type.js";
+export * from "./list-users.type";
+export * from "./user-token.type";
+export * from "./user.type";

@@ -1,5 +1,5 @@
-import { JwtService } from "./jwt-service.js";
-import { UnauthorizedUser } from "../../domain/errors/index.js";
+import { JwtService } from "./jwt-service";
+import { UnauthorizedUser } from "../../domain/errors/index";
 
 export const authenticate = (token: string) => {
   if (!token || !token.startsWith("Bearer ")) {

@@ -1,9 +1,9 @@
-import { UserDBDataSource } from "../../../data/user/user.db.datasource.js";
-import { NotFoundError } from "../../errors/index.js";
-import { JwtService } from "../../../core/jwt/jwt-service.js";
-import bcrypt from "bcrypt";
+import { UserDBDataSource } from "../../../data/user/user.db.datasource";
+import { NotFoundError } from "../../errors/index";
+import { JwtService } from "../../../core/jwt/jwt-service";
+import bcrypt from "bcryptjs";
 import dayjs from "dayjs";
-import { LoginUserModel, LoginUserInputModel } from "../../models/index.js";
+import { LoginUserModel, LoginUserInputModel } from "../../models/index";
 import { Service } from "typedi";
 
 @Service()
