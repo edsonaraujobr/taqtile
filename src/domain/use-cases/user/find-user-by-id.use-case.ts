@@ -1,12 +1,12 @@
 import dayjs from "dayjs";
 import { NotFoundError } from "../../errors/index.js";
 import { UserModel } from "../../models/index.js";
-import { Inject, Service } from "typedi";
+import { Service } from "typedi";
 import { UserDBDataSource } from "../../../data/user/user.db.datasource.js";
 
 @Service()
 export class FindUserByIDUseCase {
-  constructor(@Inject() private userDataSource: UserDBDataSource) {}
+  constructor(private readonly userDataSource: UserDBDataSource) {}
 
   async run({ id }: { id: string }): Promise<UserModel> {
     const user = await this.userDataSource.findByID({ id });

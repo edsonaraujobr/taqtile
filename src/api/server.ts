@@ -50,7 +50,7 @@ export async function createServer() {
         let user;
         try {
           user = authenticate(token);
-        } catch (err) {
+        } catch (err: unknown) {
           if (err.originalError instanceof CustomError) {
             return {
               code: err.originalError.code,

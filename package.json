@@ -3,14 +3,13 @@
   "version": "1.0.0",
   "description": "The project is named **Dijkstra**, in tribute to Edsger Wybe Dijkstra, a renowned computer scientist, programmer, software engineer, and mathematician. Dijkstra was a Turing Award winner and made significant contributions to computing, including the creation of the famous Dijkstra's algorithm.",
   "main": "index.js",
-  "type": "module",
   "save-exact": true,
+  "type": "module",
   "scripts": {
-    "start": "npx tsx src/api/server.ts",
-    "dev": "npx tsx watch src/api/server.ts",
-    "test": "NODE_ENV=test mocha --require tsx 'src/test/**/*.ts'",
+    "dev": "node --import ts-node/esm ./src/api/server.ts",
+    "test": "NODE_ENV=test mocha --require ts-node 'src/test/**/*.ts'",
     "lint": "eslint . ",
-    "seed": "npx tsx src/data/database/seed.ts"
+    "seed": "ts-node src/data/database/seed.ts"
   },
   "prisma": {
     "schema": "src/data/database/schema.prisma"
@@ -53,8 +52,10 @@
     "eslint-plugin-prettier": "5.2.1",
     "graphql-request": "7.1.2",
     "mocha": "10.7.3",
+    "nodemon": "3.1.9",
     "prettier": "3.3.3",
     "sinon": "19.0.2",
+    "ts-node": "10.9.2",
     "tsx": "4.19.1",
     "typescript": "5.6.2",
     "typescript-eslint": "8.8.0"

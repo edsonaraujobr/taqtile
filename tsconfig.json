@@ -1,17 +1,19 @@
 {
-    "$schema": "https://json.schemastore.org/tsconfig",
-    "_version": "20.1.0",
-  
-    "compilerOptions": {
-      "experimentalDecorators": true,
-      "emitDecoratorMetadata": true,
-      "lib": ["es2023"],
-      "module": "node16",
-      "target": "es2022",
-  
-      "strict": true,
-      "esModuleInterop": true,
-      "skipLibCheck": true,
-      "moduleResolution": "node16"
-    }
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "_version": "20.1.0",
+  "compilerOptions": {
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "lib": ["es2023"],
+    "module": "ESNext",
+    "target": "es2022",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "moduleResolution": "node16",
+    "allowSyntheticDefaultImports": true
+  },
+  "ts-node": {
+    "esm": true,
   }
+}
