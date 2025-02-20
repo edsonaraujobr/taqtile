@@ -4,7 +4,7 @@ import { REMEMBER_ME_EXPIRATION, DEFAULT_EXPIRATION } from "../utils/constants";
 import {
   MissingSecretKeyError,
   UnauthorizedUser,
-} from "../../domain/errors/index";
+} from "../../domain/errors";
 
 dotenv.config();
 const SECRET_KEY = process.env.SECRET_KEY;

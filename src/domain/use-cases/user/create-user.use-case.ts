@@ -7,11 +7,11 @@ import {
   MaximumAgeError,
   DateBirthdayFutureError,
   UserAlreadyExistsError,
-} from "../../errors/index";
+} from "../../errors";
 import { SALT_ROUNDS, MAX_AGE } from "../../../core/utils/constants";
 import { ZodError } from "zod";
 import { userCreateValidator } from "../../../api/modules/user/user.validator";
-import { CreateUserModel, UserModel } from "../../models/index";
+import { CreateUserModel, UserModel } from "../../models";
 import { Service } from "typedi";
 
 @Service()

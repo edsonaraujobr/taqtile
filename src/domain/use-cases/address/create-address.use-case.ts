@@ -2,10 +2,10 @@ import {
   BadInputError,
   InternalServerError,
   NotFoundError,
-} from "../../errors/index";
+} from "../../errors";
 import { addressCreateValidator } from "../../../api/modules/address/address.validator";
 import { ZodError } from "zod";
-import { AddressModel, CreateAddressModel } from "../../models/index";
+import { AddressModel, CreateAddressModel } from "../../models";
 import { Service } from "typedi";
 import { UserDBDataSource } from "../../../data/user/user.db.datasource";
 import { AddressDBDataSource } from "../../../data/address/address.db.datasource";

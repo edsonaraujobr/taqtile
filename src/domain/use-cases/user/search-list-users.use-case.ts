@@ -1,7 +1,7 @@
 import { Service } from "typedi";
 import { QUANTITY_DEFAULT_LIST_USERS } from "../../../core/utils/constants";
-import { BadInputError, NotFoundError } from "../../errors/index";
-import { ListUsersModel } from "../../models/index";
+import { BadInputError, NotFoundError } from "../../errors";
+import { ListUsersModel } from "../../models";
 import { UserDBDataSource } from "../../../data/user/user.db.datasource";
 
 @Service()

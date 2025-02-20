@@ -5,7 +5,7 @@ import { UserResolver } from "./modules/user/user.resolver";
 import { AddressResolver } from "./modules/address/address.resolver";
 import { ApolloServer } from "apollo-server";
 import { authenticate } from "../core/jwt/authenticate-user";
-import { CustomError } from "../domain/errors/index";
+import { CustomError } from "../domain/errors";
 import dotenv from "dotenv";
 const JwtPayload = require("jsonwebtoken");
 

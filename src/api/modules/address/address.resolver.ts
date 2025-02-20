@@ -2,9 +2,9 @@ import { checkAuthentication } from "../../../core/utils/check-authentication";
 import { Context } from "../../context.interface";
 import { CreateAddressUseCase } from "../../../domain/use-cases/address/create-address.use-case";
 import { GetAddressesByUserIDUseCase } from "../../../domain/use-cases/address/get-addresses-by-user-id.use-case";
-import { CustomError } from "../../../domain/errors/index";
-import { AddressInput } from "./inputs/index";
-import { Address } from "./types/index";
+import { CustomError } from "../../../domain/errors";
+import { AddressInput } from "./inputs";
+import { Address } from "./types";
 import { Arg, Resolver, Mutation, Ctx, Query } from "type-graphql";
 import { Service } from "typedi";
 

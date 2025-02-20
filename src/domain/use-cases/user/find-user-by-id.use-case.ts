@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
-import { NotFoundError } from "../../errors/index";
-import { UserModel } from "../../models/index";
+import { NotFoundError } from "../../errors";
+import { UserModel } from "../../models";
 import { Service } from "typedi";
 import { UserDBDataSource } from "../../../data/user/user.db.datasource";
 

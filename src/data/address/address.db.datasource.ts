@@ -1,5 +1,5 @@
 import { Service } from "typedi";
-import { AddressModel, CreateAddressModel } from "../../domain/models/index";
+import { AddressModel, CreateAddressModel } from "../../domain/models";
 import { database } from "../database/database";
 
 @Service()

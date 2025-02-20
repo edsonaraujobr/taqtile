@@ -1,6 +1,6 @@
 import { Service } from "typedi";
-import { NotFoundError } from "../../errors/index";
-import { AddressModel } from "../../models/index";
+import { NotFoundError } from "../../errors";
+import { AddressModel } from "../../models";
 import { UserDBDataSource } from "../../../data/user/user.db.datasource";
 import { AddressDBDataSource } from "../../../data/address/address.db.datasource";
 

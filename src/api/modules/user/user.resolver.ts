@@ -1,14 +1,14 @@
-import { CustomError } from "../../../domain/errors/index";
+import { CustomError } from "../../../domain/errors";
 import { checkAuthentication } from "../../../core/utils/check-authentication";
 import {
   CreateUserUseCase,
   LoginUserUseCase,
   FindUserByIDUseCase,
   SearchListUsersUseCase,
-} from "../../../domain/use-cases/user/index";
+} from "../../../domain/use-cases/user";
 import { Mutation, Query, Resolver, Arg, Ctx, Int } from "type-graphql";
-import { CreateUserInput, LoginUserInput } from "./inputs/index";
-import { ListUsers, UserToken, User } from "./types/index";
+import { CreateUserInput, LoginUserInput } from "./inputs";
+import { ListUsers, UserToken, User } from "./types";
 import { Context } from "../../context.interface";
 import { Service } from "typedi";
 
