@@ -12,7 +12,7 @@ import { ListUsers, UserToken, User } from "./types";
 import { Context } from "../../context.interface";
 import { Service } from "typedi";
 import { GraphQLUpload, FileUpload } from "graphql-upload-ts";
-
+import { UploadFileUseCase } from "../../../domain/use-cases/user/upload-file.use-case";
 
 @Service()
 @Resolver()
