@@ -1,6 +1,6 @@
 import { Field, ObjectType } from "type-graphql";
 import { User } from "./user.type";
-import { LoginUserModel } from "../../../../domain/models/user.model";
+import { LoginUserModel } from "@domain/models/user.model";
 
 @ObjectType()
 export class UserToken implements LoginUserModel {

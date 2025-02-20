@@ -1,10 +1,10 @@
 import jwt, { JwtPayload } from "jsonwebtoken";
 import * as dotenv from "dotenv";
-import { REMEMBER_ME_EXPIRATION, DEFAULT_EXPIRATION } from "../utils/constants";
+import { REMEMBER_ME_EXPIRATION, DEFAULT_EXPIRATION } from "@core/utils/constants";
 import {
   MissingSecretKeyError,
   UnauthorizedUser,
-} from "../../domain/errors";
+} from "@domain/errors";
 
 dotenv.config();
 const SECRET_KEY = process.env.SECRET_KEY;

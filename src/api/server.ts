@@ -6,8 +6,8 @@ import { AddressResolver } from "./modules/address/address.resolver";
 import { ApolloServer } from "apollo-server-express";
 import express from "express";
 import { graphqlUploadExpress } from "graphql-upload-ts";
-import { authenticate } from "../core/jwt/authenticate-user";
-import { CustomError } from "../domain/errors";
+import { authenticate } from "@core/jwt/authenticate-user";
+import { CustomError } from "@domain/errors";
 import dotenv from "dotenv";
 import { JwtPayload } from "jsonwebtoken";
 

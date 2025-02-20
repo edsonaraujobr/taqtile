@@ -1,18 +1,18 @@
-import { CustomError } from "../../../domain/errors";
-import { checkAuthentication } from "../../../core/utils/check-authentication";
+import { CustomError } from "@domain/errors";
+import { checkAuthentication } from "@core/utils/check-authentication";
 import {
   CreateUserUseCase,
   LoginUserUseCase,
   FindUserByIDUseCase,
   SearchListUsersUseCase,
-} from "../../../domain/use-cases/user";
+} from "@domain/use-cases/user";
 import { Mutation, Query, Resolver, Arg, Ctx, Int } from "type-graphql";
 import { CreateUserInput, LoginUserInput } from "./inputs";
 import { ListUsers, UserToken, User } from "./types";
-import { Context } from "../../context.interface";
+import { Context } from "@api/context.interface";
 import { Service } from "typedi";
 import { GraphQLUpload, FileUpload } from "graphql-upload-ts";
-import { UploadFileUseCase } from "../../../domain/use-cases/user/upload-file.use-case";
+import { UploadFileUseCase } from "@domain/use-cases/user/upload-file.use-case";
 
 @Service()
 @Resolver()

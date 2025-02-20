@@ -1,6 +1,6 @@
 import { Service } from "typedi";
-import { AddressModel, CreateAddressModel } from "../../domain/models";
-import { database } from "../database/database";
+import { AddressModel, CreateAddressModel } from "@domain/models";
+import { database } from "@data/database/database";
 
 @Service()
 export class AddressDBDataSource {

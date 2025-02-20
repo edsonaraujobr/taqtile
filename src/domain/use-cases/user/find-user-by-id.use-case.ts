@@ -1,8 +1,8 @@
 import dayjs from "dayjs";
-import { NotFoundError } from "../../errors";
-import { UserModel } from "../../models";
+import { NotFoundError } from "@domain/errors";
+import { UserModel } from "@domain/models";
 import { Service } from "typedi";
-import { UserDBDataSource } from "../../../data/user/user.db.datasource";
+import { UserDBDataSource } from "@data/user/user.db.datasource";
 
 @Service()
 export class FindUserByIDUseCase {

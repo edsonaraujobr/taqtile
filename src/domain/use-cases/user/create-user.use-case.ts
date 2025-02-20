@@ -1,4 +1,4 @@
-import { UserDBDataSource } from "../../../data/user/user.db.datasource";
+import { UserDBDataSource } from "@data/user/user.db.datasource";
 import dayjs from "dayjs";
 import bcrypt from "bcryptjs";
 import {
@@ -7,11 +7,11 @@ import {
   MaximumAgeError,
   DateBirthdayFutureError,
   UserAlreadyExistsError,
-} from "../../errors";
-import { SALT_ROUNDS, MAX_AGE } from "../../../core/utils/constants";
+} from "@domain/errors";
+import { SALT_ROUNDS, MAX_AGE } from "@core/utils/constants";
 import { ZodError } from "zod";
-import { userCreateValidator } from "../../../api/modules/user/user.validator";
-import { CreateUserModel, UserModel } from "../../models";
+import { userCreateValidator } from "@api/modules/user/user.validator";
+import { CreateUserModel, UserModel } from "@domain/models";
 import { Service } from "typedi";
 
 @Service()

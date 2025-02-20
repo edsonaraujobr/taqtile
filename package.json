@@ -6,9 +6,9 @@
   "save-exact": true,
   "type": "commonjs",
   "scripts": {
-    "start": "ts-node ./src/api/server.ts",
-    "dev": "nodemon src/api/server.ts",
-    "test": "NODE_ENV=test mocha --require ts-node/register 'src/test/**/*.ts'",
+    "start": "ts-node -r tsconfig-paths/register ./src/api/server.ts",
+    "dev": "nodemon -r tsconfig-paths/register src/api/server.ts",
+    "test": "NODE_ENV=test mocha --require ts-node/register --require tsconfig-paths/register 'src/test/**/*.ts'",
     "lint": "eslint . ",
     "seed": "ts-node src/data/database/seed.ts"
   },
@@ -62,6 +62,7 @@
     "prettier": "3.3.3",
     "sinon": "19.0.2",
     "ts-node": "10.9.2",
+    "tsconfig-paths": "^4.2.0",
     "typescript": "5.6.2",
     "typescript-eslint": "8.8.0"
   }

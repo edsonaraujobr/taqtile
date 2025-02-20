@@ -1,12 +1,12 @@
 import { expect } from 'chai';
 import axios from 'axios';
-import { connectDB, clearDB } from "../../helpers/db.helper";
+import { connectDB, clearDB } from "@test/helpers/db.helper";
 import {
   createMutationLoginUserTest,
   createUserInDatabaseTest,
-} from "../../helpers/user.helper";
-import { userData } from "../../utils/user.data-utils";
-import { isJwtPayload, JwtService } from "../../../core/jwt/jwt-service";
+} from "@test/helpers/user.helper";
+import { userData } from "@test/utils/user.data-utils";
+import { isJwtPayload, JwtService } from "@core/jwt/jwt-service";
 
 describe("User Mutation - Teste de Login", () => {
   const { validUser } = userData;

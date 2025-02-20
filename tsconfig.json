@@ -12,5 +12,24 @@
     "skipLibCheck": true,
     "strictPropertyInitialization": false,
     "allowSyntheticDefaultImports": true,
+    "baseUrl": "./src",
+    "paths": {
+      "@domain/": ["./domain/"],
+      "@domain/*": ["./domain/*"],
+      "@core/": ["./core/"],
+      "@core/*": ["./core/*"],
+      "@data/": ["./data/"],
+      "@data/*": ["./data/*"],
+      "@api/": ["./api/"],
+      "@api/*": ["./api/*"],
+      "@test/": ["./test/"],
+      "@test/*": ["./test/*"],
+    }
   },
+  "include": ["src/**/*"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "*.test.ts",
+  ]
 }
