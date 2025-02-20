@@ -11,6 +11,8 @@ import { CreateUserInput, LoginUserInput } from "./inputs";
 import { ListUsers, UserToken, User } from "./types";
 import { Context } from "../../context.interface";
 import { Service } from "typedi";
+import { GraphQLUpload, FileUpload } from "graphql-upload-ts";
+
 
 @Service()
 @Resolver()
@@ -20,6 +22,7 @@ export class UserResolver {
     private readonly createUserUseCase: CreateUserUseCase,
     private readonly loginUserUseCase: LoginUserUseCase,
     private readonly searchListUsersUseCase: SearchListUsersUseCase,
+    private readonly uploadFileUseCase: UploadFileUseCase
   ) {}
 
   @Mutation(() => User)
@@ -49,6 +52,21 @@ export class UserResolver {
       return await this.loginUserUseCase.run({
         data,
       });
+    } catch (error: unknown) {
+      if (error instanceof CustomError) {
+        throw error;
+      }
+      throw new CustomError({
+        code: 500,
+        message: "Erro inesperado no servidor.",
+      });
+    }
+  }
+
+  @Mutation(() => String)
+  async uploadFile(@Arg("file", () => GraphQLUpload) file: FileUpload): Promise<String> {
+    try {
+      return await this.uploadFileUseCase.run({ file });
     } catch (error: unknown) {
       if (error instanceof CustomError) {
         throw error;
