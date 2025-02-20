@@ -1,4 +1,4 @@
-const jwt = require("jsonwebtoken");
+import jwt, { JwtPayload } from "jsonwebtoken";
 import * as dotenv from "dotenv";
 import { REMEMBER_ME_EXPIRATION, DEFAULT_EXPIRATION } from "../utils/constants";
 import {
@@ -8,6 +8,10 @@ import {
 
 dotenv.config();
 const SECRET_KEY = process.env.SECRET_KEY;
+
+export function isJwtPayload(decodedToken: any): decodedToken is JwtPayload {
+  return decodedToken && typeof decodedToken === 'object' && 'exp' in decodedToken;
+}
 
 export class JwtService {
   static generateToken(payload: object, rememberMe: boolean = false) {
@@ -19,7 +23,7 @@ export class JwtService {
     });
   }
 
-  static decodeToken(token: string) {
+  static decodeToken(token: string): JwtPayload | string {
     if (!SECRET_KEY) {
       throw new MissingSecretKeyError();
     }

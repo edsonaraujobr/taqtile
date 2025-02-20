@@ -7,13 +7,13 @@ import { ApolloServer } from "apollo-server";
 import { authenticate } from "../core/jwt/authenticate-user";
 import { CustomError } from "../domain/errors";
 import dotenv from "dotenv";
-const JwtPayload = require("jsonwebtoken");
+import { JwtPayload } from "jsonwebtoken";
 
 dotenv.config();
 
 interface Context {
   container: typeof Container;
-  user?: string | typeof JwtPayload;
+  user?: string | JwtPayload;
 }
 
 export async function createServer() {
