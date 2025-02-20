@@ -7,10 +7,10 @@ export class CreateUserInput implements CreateUserModel {
   name?: string;
 
   @Field(() => String)
-  email!: string;
+  email: string;
 
   @Field(() => String)
-  password!: string;
+  password: string;
 
   @Field(() => String, { nullable: true })
   birthDate?: string;

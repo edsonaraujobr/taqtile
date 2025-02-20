@@ -5,13 +5,13 @@ import { UserModel } from "../../../../domain/models/user.model";
 @ObjectType()
 export class User implements UserModel {
   @Field(() => ID)
-  id!: string;
+  id: string;
 
   @Field(() => String, { nullable: true })
   name?: string | null;
 
   @Field(() => String)
-  email!: string;
+  email: string;
 
   @Field(() => String, { nullable: true })
   birthDate?: string | null | Date;

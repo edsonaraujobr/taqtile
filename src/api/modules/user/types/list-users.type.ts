@@ -5,14 +5,14 @@ import { ListUsersModel } from "../../../../domain/models/user.model";
 @ObjectType()
 export class ListUsers implements ListUsersModel {
   @Field(() => [User])
-  users!: User[];
+  users: User[];
 
   @Field(() => Number)
-  totalUsers!: number;
+  totalUsers: number;
 
   @Field(() => Boolean)
-  hasPreviousPage!: boolean;
+  hasPreviousPage: boolean;
 
   @Field(() => Boolean)
-  hasNextPage!: boolean;
+  hasNextPage: boolean;
 }

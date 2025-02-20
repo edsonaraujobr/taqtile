@@ -4,26 +4,26 @@ import { CreateAddressModel } from "../../../../domain/models/address.model";
 @InputType()
 export class AddressInput implements CreateAddressModel {
   @Field(() => String)
-  cep!: string;
+  cep: string;
 
   @Field(() => String)
-  street!: string;
+  street: string;
 
   @Field(() => Number)
-  streetNumber!: number;
+  streetNumber: number;
 
   @Field(() => String, { nullable: true })
   complement?: string | null;
 
   @Field(() => String)
-  neighborhood!: string;
+  neighborhood: string;
 
   @Field(() => String)
-  city!: string;
+  city: string;
 
   @Field(() => String)
-  state!: string;
+  state: string;
 
   @Field(() => String)
-  userId!: string;
+  userId: string;
 }
