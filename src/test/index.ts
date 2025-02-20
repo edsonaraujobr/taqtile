@@ -1,4 +1,4 @@
-import { createServer } from "../api/server.js";
+import { createServer } from "../api/server";
 import dotenv from "dotenv";
 dotenv.config({ path: "../../test.env" });
 

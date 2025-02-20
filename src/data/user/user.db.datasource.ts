@@ -1,17 +1,10 @@
-import { database } from "../database/database.js";
-import { CreateUserModel, UserModel } from "../../domain/models/index.js";
+import { database } from "../database/database";
+import { CreateUserModel, UserLoginReturnModel, UserModel } from "../../domain/models/index";
+import { Service } from "typedi";
 
+@Service()
 export class UserDBDataSource {
-  private static instance: UserDBDataSource;
-
   private constructor() {}
-
-  static getInstance(): UserDBDataSource {
-    if (!UserDBDataSource.instance) {
-      UserDBDataSource.instance = new UserDBDataSource();
-    }
-    return UserDBDataSource.instance;
-  }
 
   async create({ data }: { data: CreateUserModel }): Promise<UserModel> {
     return await database.user.create({
@@ -20,7 +13,11 @@ export class UserDBDataSource {
     });
   }
 
-  async findByEmail({ email }: { email: string }): Promise<UserModel | null> {
+  async findByEmail({
+    email,
+  }: {
+    email: string;
+  }): Promise<UserLoginReturnModel | null> {
     return await database.user.findUnique({
       where: { email },
       include: {

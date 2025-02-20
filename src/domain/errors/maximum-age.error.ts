@@ -1,4 +1,4 @@
-import { CustomError } from "./custom.error.js";
+import { CustomError } from "./custom.error";
 
 export class MaximumAgeError extends CustomError {
   constructor({

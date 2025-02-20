@@ -1,2 +1,2 @@
-export * from "./create-user.input.js";
-export * from "./login-user.input.js";
+export * from "./create-user.input";
+export * from "./login-user.input";

@@ -1,12 +1,12 @@
-import { expect } from "chai";
-import axios from "axios";
-import { connectDB, clearDB } from "../../helpers/db.helper.js";
+import { expect } from 'chai';
+import axios from 'axios';
+import { connectDB, clearDB } from "../../helpers/db.helper";
 import {
   createMutationLoginUserTest,
   createUserInDatabaseTest,
-} from "../../helpers/user.helper.js";
-import { userData } from "../../utils/user.data-utils.js";
-import { JwtService } from "../../../core/jwt/jwt-service.js";
+} from "../../helpers/user.helper";
+import { userData } from "../../utils/user.data-utils";
+import { isJwtPayload, JwtService } from "../../../core/jwt/jwt-service";
 
 describe("User Mutation - Teste de Login", () => {
   const { validUser } = userData;
@@ -58,11 +58,12 @@ describe("User Mutation - Teste de Login", () => {
 
     const dateNowSeconds = Math.floor(Date.now() / 1000);
     const OneHourInSeconds = 60 * 60;
-    expect(decodedToken.exp).to.be.closeTo(
-      dateNowSeconds + OneHourInSeconds,
-      10,
-    );
-
+    if (isJwtPayload(decodedToken)) {
+      expect(decodedToken.exp).to.be.closeTo(
+        dateNowSeconds + OneHourInSeconds,
+        10
+      );
+    }
     const loginUser = responseLogin.data.data.loginUser.user;
     expect(loginUser).to.have.property("id");
     expect(loginUser.name).to.equal(validUser.name);
@@ -110,10 +111,12 @@ describe("User Mutation - Teste de Login", () => {
 
     const dateNowSeconds = Math.floor(Date.now() / 1000);
     const SevenDaysSecond = 7 * 24 * 60 * 60;
-    expect(decodedToken.exp).to.be.closeTo(
-      dateNowSeconds + SevenDaysSecond,
-      10,
-    );
+    if (isJwtPayload(decodedToken)) {
+      expect(decodedToken.exp).to.be.closeTo(
+        dateNowSeconds + SevenDaysSecond,
+        10
+      );
+    }
 
     const loginUser = responseLogin.data.data.loginUser.user;
     expect(loginUser).to.have.property("id");

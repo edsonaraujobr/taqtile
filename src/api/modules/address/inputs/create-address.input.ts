@@ -1,5 +1,5 @@
 import { Field, InputType } from "type-graphql";
-import { CreateAddressModel } from "../../../../domain/models/address.model.js";
+import { CreateAddressModel } from "../../../../domain/models/address.model";
 
 @InputType()
 export class AddressInput implements CreateAddressModel {

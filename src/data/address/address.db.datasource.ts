@@ -1,18 +1,9 @@
-import { AddressModel, CreateAddressModel } from "../../domain/models/index.js";
-import { database } from "../database/database.js";
+import { Service } from "typedi";
+import { AddressModel, CreateAddressModel } from "../../domain/models";
+import { database } from "../database/database";
 
+@Service()
 export class AddressDBDataSource {
-  private static instance: AddressDBDataSource;
-
-  constructor() {}
-
-  static getInstance(): AddressDBDataSource {
-    if (!AddressDBDataSource.instance) {
-      AddressDBDataSource.instance = new AddressDBDataSource();
-    }
-    return AddressDBDataSource.instance;
-  }
-
   async create({ data }: { data: CreateAddressModel }): Promise<AddressModel> {
     return await database.address.create({ data });
   }

@@ -1,1 +1,1 @@
-export * from "./address.type.js";
+export * from "./address.type";

@@ -1,17 +1,17 @@
 import { expect } from "chai";
 import axios from "axios";
-import { connectDB, clearDB } from "../../helpers/db.helper.js";
+import { connectDB, clearDB } from "../../helpers/db.helper";
 import {
   createUserInDatabaseTest,
   createAdminInDatabaseTest,
   createQueryFindUserByIDTest,
   createQueryReturnListUsersTest,
-} from "../../helpers/user.helper.js";
-import { userData } from "../../utils/user.data-utils.js";
-import { createListUsersInDatabaseSeed } from "../../../data/database/seed.js";
-import { addressData } from "../../utils/address.data-utils.js";
-import { createAddressInDatabase } from "../../helpers/address.helper.js";
-import { QUANTITY_DEFAULT_LIST_USERS } from "../../../core/utils/constants.js";
+} from "../../helpers/user.helper";
+import { userData } from "../../utils/user.data-utils";
+import { createListUsersInDatabaseSeed } from "../../../data/database/seed";
+import { addressData } from "../../utils/address.data-utils";
+import { createAddressInDatabase } from "../../helpers/address.helper";
+import { QUANTITY_DEFAULT_LIST_USERS } from "../../../core/utils/constants";
 
 describe("Teste de busca de usuário", () => {
   const { validUser } = userData;

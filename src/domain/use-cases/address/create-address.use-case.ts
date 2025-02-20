@@ -2,27 +2,20 @@ import {
   BadInputError,
   InternalServerError,
   NotFoundError,
-} from "../../errors/index.js";
-import { addressCreateValidator } from "../../../api/modules/address/address.validator.js";
+} from "../../errors";
+import { addressCreateValidator } from "../../../api/modules/address/address.validator";
 import { ZodError } from "zod";
-import {
-  AddressDataSourceModel,
-  AddressModel,
-  CreateAddressModel,
-  UserDataSourceModel,
-} from "../../models/index.js";
+import { AddressModel, CreateAddressModel } from "../../models";
+import { Service } from "typedi";
+import { UserDBDataSource } from "../../../data/user/user.db.datasource";
+import { AddressDBDataSource } from "../../../data/address/address.db.datasource";
 
+@Service()
 export class CreateAddressUseCase {
-  private addressDataSource: AddressDataSourceModel;
-  private userDataSource: UserDataSourceModel;
-
   constructor(
-    userDataSource: UserDataSourceModel,
-    addressDataSource: AddressDataSourceModel,
-  ) {
-    this.addressDataSource = addressDataSource;
-    this.userDataSource = userDataSource;
-  }
+    private readonly userDataSource: UserDBDataSource,
+    private readonly addressDataSource: AddressDBDataSource,
+  ) {}
 
   async run({ data }: { data: CreateAddressModel }): Promise<AddressModel> {
     try {

@@ -1,16 +1,14 @@
-import { UserDBDataSource } from "../../../data/user/user.db.datasource.js";
-import { NotFoundError } from "../../errors/index.js";
-import { JwtService } from "../../../core/jwt/jwt-service.js";
-import bcrypt from "bcrypt";
+import { UserDBDataSource } from "../../../data/user/user.db.datasource";
+import { NotFoundError } from "../../errors";
+import { JwtService } from "../../../core/jwt/jwt-service";
+import bcrypt from "bcryptjs";
 import dayjs from "dayjs";
-import { LoginUserModel, LoginUserInputModel } from "../../models/index.js";
+import { LoginUserModel, LoginUserInputModel } from "../../models";
+import { Service } from "typedi";
 
+@Service()
 export class LoginUserUseCase {
-  private userDBDataSource: UserDBDataSource;
-
-  constructor(userDBDataSource: UserDBDataSource) {
-    this.userDBDataSource = userDBDataSource;
-  }
+  constructor(private readonly userDBDataSource: UserDBDataSource) {}
 
   async run({ data }: { data: LoginUserInputModel }): Promise<LoginUserModel> {
     const user = await this.userDBDataSource.findByEmail({

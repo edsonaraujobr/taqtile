@@ -1,28 +1,22 @@
-import { UserDBDataSource } from "../../../data/user/user.db.datasource.js";
+import { UserDBDataSource } from "../../../data/user/user.db.datasource";
 import dayjs from "dayjs";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import {
   InternalServerError,
   BadInputError,
   MaximumAgeError,
   DateBirthdayFutureError,
   UserAlreadyExistsError,
-} from "../../errors/index.js";
-import { SALT_ROUNDS, MAX_AGE } from "../../../core/utils/constants.js";
+} from "../../errors";
+import { SALT_ROUNDS, MAX_AGE } from "../../../core/utils/constants";
 import { ZodError } from "zod";
-import { userCreateValidator } from "../../../api/modules/user/user.validator.js";
-import {
-  CreateUserModel,
-  UserDataSourceModel,
-  UserModel,
-} from "../../models/index.js";
+import { userCreateValidator } from "../../../api/modules/user/user.validator";
+import { CreateUserModel, UserModel } from "../../models";
+import { Service } from "typedi";
 
+@Service()
 export class CreateUserUseCase {
-  private userDataSource: UserDataSourceModel;
-
-  constructor(userDataSource: UserDataSourceModel) {
-    this.userDataSource = userDataSource;
-  }
+  constructor(private readonly userDataSource: UserDBDataSource) {}
 
   async run({ data }: { data: CreateUserModel }): Promise<UserModel> {
     try {

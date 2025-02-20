@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import z from "zod";
-import { FORMAT_DATE_REGEX } from "../../../core/utils/constants.js";
+import { FORMAT_DATE_REGEX } from "../../../core/utils/constants";
 
 export const userCreateValidator = z.object({
   name: z.string().optional(),

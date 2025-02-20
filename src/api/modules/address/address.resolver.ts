@@ -1,29 +1,20 @@
-import { checkAuthentication } from "../../../core/utils/check-authentication.js";
-import { Context } from "../../context.interface.js";
-import { CreateAddressUseCase } from "../../../domain/use-cases/address/create-address.use-case.js";
-import { GetAddressesByUserIDUseCase } from "../../../domain/use-cases/address/get-addresses-by-user-id.use-case.js";
-import { CustomError } from "../../../domain/errors/index.js";
-import { AddressInput } from "./inputs/index.js";
-import { Address } from "./types/index.js";
+import { checkAuthentication } from "../../../core/utils/check-authentication";
+import { Context } from "../../context.interface";
+import { CreateAddressUseCase } from "../../../domain/use-cases/address/create-address.use-case";
+import { GetAddressesByUserIDUseCase } from "../../../domain/use-cases/address/get-addresses-by-user-id.use-case";
+import { CustomError } from "../../../domain/errors";
+import { AddressInput } from "./inputs";
+import { Address } from "./types";
 import { Arg, Resolver, Mutation, Ctx, Query } from "type-graphql";
-import { UserDBDataSource } from "../../../data/user/user.db.datasource.js";
-import { AddressDBDataSource } from "../../../data/address/address.db.datasource.js";
+import { Service } from "typedi";
 
+@Service()
 @Resolver()
 export class AddressResolver {
-  private getAddressesByUserIDUseCase: GetAddressesByUserIDUseCase;
-  private createAddressUseCase: CreateAddressUseCase;
-
-  constructor() {
-    this.getAddressesByUserIDUseCase = new GetAddressesByUserIDUseCase(
-      UserDBDataSource.getInstance(),
-      AddressDBDataSource.getInstance(),
-    );
-    this.createAddressUseCase = new CreateAddressUseCase(
-      UserDBDataSource.getInstance(),
-      AddressDBDataSource.getInstance(),
-    );
-  }
+  constructor(
+    private readonly getAddressesByUserIDUseCase: GetAddressesByUserIDUseCase,
+    private readonly createAddressUseCase: CreateAddressUseCase,
+  ) {}
 
   @Mutation(() => Address)
   async createAddress(

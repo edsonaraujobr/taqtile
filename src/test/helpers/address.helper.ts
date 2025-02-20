@@ -1,4 +1,4 @@
-import { database } from "../../data/database/database.js";
+import { database } from "../../data/database/database";
 
 export async function createAddressInDatabase({
   cep,

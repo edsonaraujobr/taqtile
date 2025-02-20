@@ -1,16 +1,16 @@
 import { expect } from "chai";
 import axios from "axios";
-import { connectDB, clearDB } from "../../helpers/db.helper.js";
+import { connectDB, clearDB } from "../../helpers/db.helper";
 import {
   createAddressInDatabase,
   createQueryFindAddressesByUserID,
-} from "../../helpers/address.helper.js";
+} from "../../helpers/address.helper";
 import {
   createAdminInDatabaseTest,
   createUserInDatabaseTest,
-} from "../../helpers/user.helper.js";
-import { userData } from "../../utils/user.data-utils.js";
-import { addressData } from "../../utils/address.data-utils.js";
+} from "../../helpers/user.helper";
+import { userData } from "../../utils/user.data-utils";
+import { addressData } from "../../utils/address.data-utils";
 
 describe("Teste de busca de endereço", () => {
   const { validUser } = userData;

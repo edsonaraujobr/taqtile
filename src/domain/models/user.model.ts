@@ -1,4 +1,4 @@
-import { AddressModel } from "./address.model.js";
+import { AddressModel } from "./address.model";
 
 export interface LoginUserModel {
   user: UserModel;
@@ -15,6 +15,15 @@ export interface UserModel {
   id: string;
   name?: string | null;
   email: string;
+  birthDate?: string | Date | null;
+  addresses?: AddressModel[];
+}
+
+export interface UserLoginReturnModel {
+  id: string;
+  name?: string | null;
+  email: string;
+  password: string;
   birthDate?: string | Date | null;
   addresses?: AddressModel[];
 }

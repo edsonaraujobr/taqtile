@@ -1,38 +1,26 @@
-import { CustomError } from "../../../domain/errors/index.js";
-import { checkAuthentication } from "../../../core/utils/check-authentication.js";
+import { CustomError } from "../../../domain/errors";
+import { checkAuthentication } from "../../../core/utils/check-authentication";
 import {
   CreateUserUseCase,
   LoginUserUseCase,
   FindUserByIDUseCase,
   SearchListUsersUseCase,
-} from "../../../domain/use-cases/user/index.js";
+} from "../../../domain/use-cases/user";
 import { Mutation, Query, Resolver, Arg, Ctx, Int } from "type-graphql";
-import { CreateUserInput, LoginUserInput } from "./inputs/index.js";
-import { ListUsers, UserToken, User } from "./types/index.js";
-import { Context } from "../../context.interface.js";
-import { UserDBDataSource } from "../../../data/user/user.db.datasource.js";
+import { CreateUserInput, LoginUserInput } from "./inputs";
+import { ListUsers, UserToken, User } from "./types";
+import { Context } from "../../context.interface";
+import { Service } from "typedi";
 
+@Service()
 @Resolver()
 export class UserResolver {
-  private findUserByIDUseCase: FindUserByIDUseCase;
-  private createUserUseCase: CreateUserUseCase;
-  private loginUserUseCase: LoginUserUseCase;
-  private searchListUsersUseCase: SearchListUsersUseCase;
-
-  constructor() {
-    this.findUserByIDUseCase = new FindUserByIDUseCase(
-      UserDBDataSource.getInstance(),
-    );
-    this.createUserUseCase = new CreateUserUseCase(
-      UserDBDataSource.getInstance(),
-    );
-    this.loginUserUseCase = new LoginUserUseCase(
-      UserDBDataSource.getInstance(),
-    );
-    this.searchListUsersUseCase = new SearchListUsersUseCase(
-      UserDBDataSource.getInstance(),
-    );
-  }
+  constructor(
+    private readonly findUserByIDUseCase: FindUserByIDUseCase,
+    private readonly createUserUseCase: CreateUserUseCase,
+    private readonly loginUserUseCase: LoginUserUseCase,
+    private readonly searchListUsersUseCase: SearchListUsersUseCase,
+  ) {}
 
   @Mutation(() => User)
   async createUser(

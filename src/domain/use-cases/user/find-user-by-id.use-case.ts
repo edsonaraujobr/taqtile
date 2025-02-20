@@ -1,13 +1,12 @@
 import dayjs from "dayjs";
-import { NotFoundError } from "../../errors/index.js";
-import { UserDataSourceModel, UserModel } from "../../models/index.js";
+import { NotFoundError } from "../../errors";
+import { UserModel } from "../../models";
+import { Service } from "typedi";
+import { UserDBDataSource } from "../../../data/user/user.db.datasource";
 
+@Service()
 export class FindUserByIDUseCase {
-  private userDataSource: UserDataSourceModel;
-
-  constructor(userDataSource: UserDataSourceModel) {
-    this.userDataSource = userDataSource;
-  }
+  constructor(private readonly userDataSource: UserDBDataSource) {}
 
   async run({ id }: { id: string }): Promise<UserModel> {
     const user = await this.userDataSource.findByID({ id });

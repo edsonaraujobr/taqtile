@@ -1,16 +1,16 @@
 import { expect } from "chai";
-import axios from "axios";
-import { connectDB, clearDB } from "../../helpers/db.helper.js";
+import axios from "axios"
+import { connectDB, clearDB } from "../../helpers/db.helper";
 import {
   createAddressInDatabase,
   createMutationCreateAddressTest,
-} from "../../helpers/address.helper.js";
-import { addressData } from "../../utils/address.data-utils.js";
+} from "../../helpers/address.helper";
+import { addressData } from "../../utils/address.data-utils";
 import {
   createAdminInDatabaseTest,
   createUserInDatabaseTest,
-} from "../../helpers/user.helper.js";
-import { userData } from "../../utils/user.data-utils.js";
+} from "../../helpers/user.helper";
+import { userData } from "../../utils/user.data-utils";
 
 describe("Teste de criação de endereço", async () => {
   const { validAddress01, validAddress02 } = addressData;
