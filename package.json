@@ -10,7 +10,7 @@
     "dev": "nodemon -r tsconfig-paths/register src/api/server.ts",
     "test": "NODE_ENV=test mocha --require ts-node/register --require tsconfig-paths/register 'src/test/**/*.ts'",
     "lint": "eslint . ",
-    "seed": "ts-node src/data/database/seed.ts"
+    "seed": "ts-node -r tsconfig-paths/register src/data/database/seed.ts"
   },
   "prisma": {
     "schema": "src/data/database/schema.prisma"
@@ -56,9 +56,12 @@
     "eslint": "9.11.1",
     "eslint-config-prettier": "9.1.0",
     "eslint-plugin-prettier": "5.2.1",
+    "form-data": "^4.0.2",
     "graphql-request": "7.1.2",
+    "install": "^0.13.0",
     "mocha": "10.7.3",
     "nodemon": "3.1.9",
+    "npm": "^11.1.0",
     "prettier": "3.3.3",
     "sinon": "19.0.2",
     "ts-node": "10.9.2",

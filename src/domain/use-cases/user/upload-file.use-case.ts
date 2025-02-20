@@ -9,12 +9,18 @@ export class UploadFileUseCase {
 
     const { createReadStream, filename } = file;
 
-    const filePath = path.join(__dirname, "../../uploads", filename);
+    const uploadDir = path.resolve(__dirname, "../../../..", "src/data/uploads");
+
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
+    }
+
+    const filePath = path.join(uploadDir, filename);
     const stream = createReadStream();
     const out = fs.createWriteStream(filePath);
 
     stream.pipe(out);
 
-    return `Arquivo ${filename} enviado com sucesso!`
+    return `Arquivo ${filename} enviado com sucesso!`;
   }
 }
