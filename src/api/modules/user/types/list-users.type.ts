@@ -1,6 +1,6 @@
 import { Field, ObjectType } from "type-graphql";
 import { User } from "./user.type";
-import { ListUsersModel } from "../../../../domain/models/user.model";
+import { ListUsersModel } from "@domain/models/user.model";
 
 @ObjectType()
 export class ListUsers implements ListUsersModel {

@@ -1,3 +1,5 @@
 node_modules/
 .env
 test.env
+src/data/uploads/
+src/test/integration/user/test-files/

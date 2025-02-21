@@ -1,9 +1,10 @@
 import dayjs from "dayjs";
-import { database } from "../../data/database/database";
+import { database } from "@data/database/database";
 import bcrypt from "bcryptjs";
-import { JwtService } from "../../core/jwt/jwt-service";
-import { SALT_ROUNDS } from "../../core/utils/constants";
-import { MissingCredentialsAdminError } from "../../domain/errors";
+import { JwtService } from "@core/jwt/jwt-service";
+import { SALT_ROUNDS } from "@core/utils/constants";
+import { MissingCredentialsAdminError } from "@domain/errors";
+import { ReadStream } from "fs";
 
 export function createMutationLoginUserTest({
   email,
@@ -202,6 +203,21 @@ export function createQueryReturnListUsersTest({
     variables: {
       quantity,
       skip,
+    },
+  };
+}
+
+export function createMutationUploadFileTest( { file }: { file: ReadStream }) {
+  const mutation = `
+  mutation UploadFile($file: Upload!){
+    uploadFile(file: $file) 
+  }
+`;
+
+  return {
+    mutation,
+    variables: {
+      file
     },
   };
 }

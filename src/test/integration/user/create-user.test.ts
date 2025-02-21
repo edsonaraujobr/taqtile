@@ -1,15 +1,15 @@
 import { expect } from 'chai';
 import bcrypt from "bcryptjs";
 import axios from "axios";
-import { database } from "../../../data/database/database";
-import { connectDB, clearDB } from "../../helpers/db.helper";
+import { database } from "@data/database/database";
+import { connectDB, clearDB } from "@test/helpers/db.helper";
 import {
   createAdminInDatabaseTest,
   createMutationCreateUserTest,
   createUserInDatabaseTest,
-} from "../../helpers/user.helper";
-import { userData } from "../../utils/user.data-utils";
-import { MAX_AGE } from "../../../core/utils/constants";
+} from "@test/helpers/user.helper";
+import { userData } from "@test/utils/user.data-utils";
+import { MAX_AGE } from "@core/utils/constants";
 
 describe("User Mutation - Teste de Criação de usuário", () => {
   const {

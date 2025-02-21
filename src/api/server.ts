@@ -3,9 +3,11 @@ import { Container } from "typedi";
 import { buildSchema } from "type-graphql";
 import { UserResolver } from "./modules/user/user.resolver";
 import { AddressResolver } from "./modules/address/address.resolver";
-import { ApolloServer } from "apollo-server";
-import { authenticate } from "../core/jwt/authenticate-user";
-import { CustomError } from "../domain/errors";
+import { ApolloServer } from "apollo-server-express";
+import express from "express";
+import { graphqlUploadExpress } from "graphql-upload-ts";
+import { authenticate } from "@core/jwt/authenticate-user";
+import { CustomError } from "@domain/errors";
 import dotenv from "dotenv";
 import { JwtPayload } from "jsonwebtoken";
 
@@ -21,6 +23,9 @@ export async function createServer() {
     resolvers: [UserResolver, AddressResolver],
     container: Container,
   });
+
+  const app = express();
+  app.use(graphqlUploadExpress());
 
   const server = new ApolloServer({
     schema,
@@ -72,14 +77,17 @@ export async function createServer() {
     },
   });
 
-  return server;
+  await server.start(); 
+  server.applyMiddleware({ app });
+
+  return { app, server };
 }
 
 if (require.main === module) {
   async function startServer() {
-    const server = await createServer();
-    server.listen().then(({ url }) => {
-      console.log(`Servidor pronto em: ${url}`);
+    const { app } = await createServer();
+    app.listen(4000, () => {
+      console.log("Servidor rodando em http://localhost:4000/graphql");
     });
   }
 

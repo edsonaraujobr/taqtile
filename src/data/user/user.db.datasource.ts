@@ -1,5 +1,5 @@
-import { database } from "../database/database";
-import { CreateUserModel, UserLoginReturnModel, UserModel } from "../../domain/models/index";
+import { database } from "@data/database/database";
+import { CreateUserModel, UserLoginReturnModel, UserModel } from "@domain/models/index";
 import { Service } from "typedi";
 
 @Service()

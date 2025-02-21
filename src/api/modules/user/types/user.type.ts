@@ -1,6 +1,6 @@
 import { Field, ID, ObjectType } from "type-graphql";
-import { Address } from "../../address/types/address.type";
-import { UserModel } from "../../../../domain/models/user.model";
+import { Address } from "@api/modules/address/types/address.type";
+import { UserModel } from "@domain/models/user.model";
 
 @ObjectType()
 export class User implements UserModel {

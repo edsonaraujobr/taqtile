@@ -1,5 +1,5 @@
 import { ObjectType, ID, Field } from "type-graphql";
-import { AddressModel } from "../../../../domain/models/address.model";
+import { AddressModel } from "@domain/models/address.model";
 
 @ObjectType()
 export class Address implements AddressModel {
