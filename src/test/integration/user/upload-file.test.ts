@@ -28,7 +28,7 @@ describe("Teste de Upload de arquivos", () => {
     await clearDB();
   });
 
-  it("Deve realizar o upload de arquivo com sucesso", async () => {
+  it("Deve realizar o upload de arquivo com sucesso",  async () => {
 
     const filePath = path.resolve(__dirname, "test-files", "test.csv");
     const fileStream = fs.createReadStream(filePath);
@@ -52,7 +52,7 @@ describe("Teste de Upload de arquivos", () => {
     expect(response.data.data.uploadFile).to.be.equal("Arquivo test.csv enviado com sucesso!");
   })
 
-  it("Deve retornar erro ao tentar criar repositório upload", async () => {
+  it("Deve retornar erro ao tentar criar repositório upload",  async () => {
     sinon.stub(fs, "existsSync").returns(false);
     const mkdirStub = sinon.stub(fs, "mkdirSync").throws(new Error("Permissão negada!"));
 
@@ -80,6 +80,36 @@ describe("Teste de Upload de arquivos", () => {
       "Erro ao criar diretório de uploads",
     );
     expect(mkdirStub.calledOnce).to.be.true;
+  })
+
+  it("Deve retornar erro de formato de arquivo inválido", async () => {
+
+    const testFilePath = path.join(testDir, "test.txt");
+    fs.writeFileSync(testFilePath, "id,nome,email\n1,João,joao@email.com\n2,Maria,maria@email.com");
+
+    const filePath = path.resolve(__dirname, "test-files", "test.txt");
+    const fileStream = fs.createReadStream(filePath);
+
+    const { mutation, variables } = createMutationUploadFileTest({ file: fileStream });
+
+    const formData = new FormData();
+    formData.append("operations", JSON.stringify({
+      query: mutation,
+      variables: { file: null },
+    }));
+    formData.append("map", JSON.stringify({ "0": ["variables.file"] }));
+    formData.append("0", fileStream as any, "test.txt");
+
+    const response = await axios.post("http://localhost:4000/graphql", formData, {
+      headers: {
+        ...formData.getHeaders(),
+      },
+    });
+
+    expect(response.data.errors[0].code).to.equal(400);
+    expect(response.data.errors[0].message).to.equal(
+      "Formato de arquivo inválido",
+    );
   })
 
   afterEach(async () => {

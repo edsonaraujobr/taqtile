@@ -3,11 +3,34 @@ import fs from "fs";
 import path from "path";
 import { FileUpload } from "graphql-upload-ts";
 import { UploadDirectoryError } from "@domain/errors"
-
+import { CSVService } from "@core/upload-files/csv.service";
+import { InvalidCSVError } from "@domain/errors";
+import { EmptyCSVError } from "@domain/errors/empty-csv.error";
+import { FileExtensionError } from "@domain/errors/file-extension.error";
 @Service()
 export class UploadFileUseCase {
+  constructor(private readonly csvService: CSVService) {}
+
   async run ({ file }: { file: FileUpload }): Promise<String> {
 
+    try {
+      const csvValidate = await this.csvService.validate(file);
+
+      if (csvValidate.length === 0) {
+        throw new EmptyCSVError({
+          message: "O arquivo CSV está vazio ou inválido",
+        });
+      }
+    } catch (error) {
+      if(error instanceof FileExtensionError ) {
+        throw error;
+      }
+      throw new InvalidCSVError({
+        message: "Erro na validação do CSV",
+        additionalInfo: error.message,
+      });
+    }
+    
     const { createReadStream, filename } = file;
 
     const uploadDir = path.resolve(__dirname, "../../../..", "src/data/uploads");
