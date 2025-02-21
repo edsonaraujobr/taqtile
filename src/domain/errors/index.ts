@@ -10,4 +10,6 @@ export * from "./maximum-age.error";
 export * from "./invalid-date-format.error";
 export * from "./internal-server.error";
 export * from "./upload-directory.error"
-export * from "./Invalid-csv-error";
+export * from "./invalid-csv-error";
+export * from "./file-extension.error"
+export * from "./empty-csv.error"

@@ -4,9 +4,7 @@ import path from "path";
 import { FileUpload } from "graphql-upload-ts";
 import { UploadDirectoryError } from "@domain/errors"
 import { CSVService } from "@core/upload-files/csv.service";
-import { InvalidCSVError } from "@domain/errors";
-import { EmptyCSVError } from "@domain/errors/empty-csv.error";
-import { FileExtensionError } from "@domain/errors/file-extension.error";
+import { InvalidCSVError, EmptyCSVError, FileExtensionError } from "@domain/errors";
 @Service()
 export class UploadFileUseCase {
   constructor(private readonly csvService: CSVService) {}
@@ -30,7 +28,7 @@ export class UploadFileUseCase {
         additionalInfo: error.message,
       });
     }
-    
+
     const { createReadStream, filename } = file;
 
     const uploadDir = path.resolve(__dirname, "../../../..", "src/data/uploads");
