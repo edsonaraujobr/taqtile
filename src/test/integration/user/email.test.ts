@@ -1,24 +1,68 @@
-import { EmailService } from "@core/email/email.service";
-import { userData } from "@test/utils/user.data-utils"
 import { expect } from "chai";
+import sinon from "sinon";
+import { EmailService } from "@core/email/email.service";
 
 describe("Teste de email", () => {
-  const { emailFull, emailWithoutHTML } = userData;
+  let emailService: EmailService;
+  let resendMock: { emails: { send: sinon.SinonStub } };
 
-  it("Deve enviar um email com HTML com sucesso!", async () => {
-    const emailService: EmailService = new EmailService();
-    const response = await emailService.sendEmail(emailFull);
+  beforeEach(() => {
+    resendMock = {
+      emails: {
+        send: sinon.stub(),
+      },
+    };
 
-    expect(response.status).to.equal("Sucesso!")
-    expect(response.message).to.equal("Email enviado com sucesso!")
-  })
+    emailService = new EmailService();
 
-  it("Deve enviar um email sem HTML com sucesso!", async () => {
-    const emailService: EmailService = new EmailService();
-    const response = await emailService.sendEmail(emailWithoutHTML);
+    (emailService as any).resendClient = resendMock;
+  });
 
-    expect(response.status).to.equal("Sucesso!")
-    expect(response.message).to.equal("Email enviado com sucesso!")
-  })
+  afterEach(() => {
+    sinon.restore();
+  });
 
-})
+  it("Deve enviar um email com sucesso", async () => {
+    (resendMock.emails.send as sinon.SinonStub).resolves({
+      id: "123",
+      error: null,
+    });
+
+    const result = await emailService.sendEmail({
+      from: "no-reply@guina.dev",
+      to: "user@example.com",
+      subject: "Teste",
+      text: "Corpo do e-mail",
+    });
+
+    expect(result.message).to.equal("Email enviado com sucesso!");
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+    expect(resendMock.emails.send.calledOnce).to.be.true;
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+    expect(
+      resendMock.emails.send.calledWithMatch({
+        from: "no-reply@guina.dev",
+        to: "user@example.com",
+        subject: "Teste",
+        text: "Corpo do e-mail",
+      }),
+    ).to.be.true;
+  });
+
+  it("Deve lançar um erro se o email não for enviado", async () => {
+    (resendMock.emails.send as sinon.SinonStub).resolves({
+      id: null,
+      error: "Falha no envio",
+    });
+
+    const response = await emailService.sendEmail({
+      from: "no-reply@guina.dev",
+      to: "user@example.com",
+      subject: "Teste",
+      text: "Corpo do e-mail",
+    });
+
+    expect(response.status).to.equal("Erro");
+    expect(response.message).to.equal("Email não enviado!");
+  });
+});
