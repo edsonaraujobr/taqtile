@@ -51,7 +51,6 @@ describe("Teste de Upload de arquivos", () => {
         ...formData.getHeaders(),
       },
     });
-    console.log(response.data)
     expect(response.data.data.uploadFile).to.be.equal("Arquivo test.csv enviado com sucesso!");
   })
 
