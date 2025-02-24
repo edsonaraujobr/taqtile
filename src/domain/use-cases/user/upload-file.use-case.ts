@@ -3,12 +3,32 @@ import fs from "fs";
 import path from "path";
 import { FileUpload } from "graphql-upload-ts";
 import { UploadDirectoryError } from "@domain/errors"
-
+import { CSVService } from "@core/upload-files/csv.service";
+import { EmptyCSVError, FileExtensionError } from "@domain/errors";
+import { CSVValidator } from "@domain/validators/csv.validator";
 @Service()
 export class UploadFileUseCase {
+  constructor(
+    private readonly csvService: CSVService,
+    private readonly csvValidator: CSVValidator,
+  ) {}
+
   async run ({ file }: { file: FileUpload }): Promise<String> {
 
-    const { createReadStream, filename } = file;
+    const { filename } = file;
+    const fileExtension = path.extname(filename).toLowerCase();
+
+    if (fileExtension !== '.csv') {
+      throw new FileExtensionError({
+        message: "Extensão do arquivo inválido",
+        additionalInfo: `A extensão ${fileExtension} não é permitida. Somente arquivos CSV são aceitos.`,
+      });
+    }
+
+    const csvData = await this.csvService.validate(file);
+    this.csvValidator.validate(csvData);
+
+    const { createReadStream } = file;
 
     const uploadDir = path.resolve(__dirname, "../../../..", "src/data/uploads");
 
