@@ -21,7 +21,10 @@ describe("Teste de Upload de arquivos", () => {
       fs.mkdirSync(testDir, { recursive: true });
     }
 
-    fs.writeFileSync(testFilePath, "id,nome,email\n1,João,joao@email.com\n2,Maria,maria@email.com");
+    fs.writeFileSync(
+      testFilePath, 
+      "name,email,birthDate,zipCode,city,state,neighborhood,street,streetNumber,complement\nJoão,joao@email.com,12-12-2000,4000000,Salvador,Bahia,Liberdade,A,32,Z-32"
+    );
   });
 
   beforeEach(async () => {
@@ -48,7 +51,7 @@ describe("Teste de Upload de arquivos", () => {
         ...formData.getHeaders(),
       },
     });
-
+    console.log(response.data)
     expect(response.data.data.uploadFile).to.be.equal("Arquivo test.csv enviado com sucesso!");
   })
 

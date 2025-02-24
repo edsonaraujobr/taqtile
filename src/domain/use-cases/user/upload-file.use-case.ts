@@ -5,9 +5,13 @@ import { FileUpload } from "graphql-upload-ts";
 import { UploadDirectoryError } from "@domain/errors"
 import { CSVService } from "@core/upload-files/csv.service";
 import { EmptyCSVError, FileExtensionError } from "@domain/errors";
+import { CSVValidator } from "@domain/validators/csv.validator";
 @Service()
 export class UploadFileUseCase {
-  constructor(private readonly csvService: CSVService) {}
+  constructor(
+    private readonly csvService: CSVService,
+    private readonly csvValidator: CSVValidator,
+  ) {}
 
   async run ({ file }: { file: FileUpload }): Promise<String> {
 
@@ -21,13 +25,8 @@ export class UploadFileUseCase {
       });
     }
 
-    const csvValidate = await this.csvService.validate(file);
-
-    if (csvValidate.length === 0) {
-      throw new EmptyCSVError({
-        message: "O arquivo CSV está vazio ou inválido",
-      });
-    }
+    const csvData = await this.csvService.validate(file);
+    this.csvValidator.validate(csvData);
 
     const { createReadStream } = file;
 

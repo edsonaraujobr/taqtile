@@ -3,7 +3,7 @@ import {
   InternalServerError,
   NotFoundError,
 } from "@domain/errors";
-import { addressCreateValidator } from "@api/modules/address/address.validator";
+import { addressCreateValidator } from "@domain/validators/address.validator";
 import { ZodError } from "zod";
 import { AddressModel, CreateAddressModel } from "@domain/models";
 import { Service } from "typedi";

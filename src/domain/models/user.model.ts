@@ -42,6 +42,19 @@ export interface CreateUserModel {
   birthDate?: string;
 }
 
+export interface csvModel {
+  name: string;
+  email: string;
+  birthDate: string;
+  zipCode: number;
+  city: string;
+  state: string;
+  neighborhood: string;
+  street: string;
+  streetNumber: number;
+  complement?: string;
+}
+
 export interface UserDataSourceModel {
   findByID(params: { id: string }): Promise<UserModel | null>;
   findByEmail(params: { email: string }): Promise<UserModel | null>;
