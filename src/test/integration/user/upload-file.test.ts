@@ -82,7 +82,7 @@ describe("Teste de Upload de arquivos", () => {
     expect(mkdirStub.calledOnce).to.be.true;
   })
 
-  it("Deve retornar erro de formato de arquivo inválido", async () => {
+  it("Deve retornar erro de extensão do arquivo inválido", async () => {
 
     const testFilePath = path.join(testDir, "test.txt");
     fs.writeFileSync(testFilePath, "id,nome,email\n1,João,joao@email.com\n2,Maria,maria@email.com");
@@ -108,7 +108,7 @@ describe("Teste de Upload de arquivos", () => {
 
     expect(response.data.errors[0].code).to.equal(400);
     expect(response.data.errors[0].message).to.equal(
-      "Formato de arquivo inválido",
+      "Extensão do arquivo inválido",
     );
   })
 

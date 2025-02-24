@@ -4,32 +4,32 @@ import path from "path";
 import { FileUpload } from "graphql-upload-ts";
 import { UploadDirectoryError } from "@domain/errors"
 import { CSVService } from "@core/upload-files/csv.service";
-import { InvalidCSVError, EmptyCSVError, FileExtensionError } from "@domain/errors";
+import { EmptyCSVError, FileExtensionError } from "@domain/errors";
 @Service()
 export class UploadFileUseCase {
   constructor(private readonly csvService: CSVService) {}
 
   async run ({ file }: { file: FileUpload }): Promise<String> {
 
-    try {
-      const csvValidate = await this.csvService.validate(file);
+    const { filename } = file;
+    const fileExtension = path.extname(filename).toLowerCase();
 
-      if (csvValidate.length === 0) {
-        throw new EmptyCSVError({
-          message: "O arquivo CSV está vazio ou inválido",
-        });
-      }
-    } catch (error) {
-      if(error instanceof FileExtensionError ) {
-        throw error;
-      }
-      throw new InvalidCSVError({
-        message: "Erro na validação do CSV",
-        additionalInfo: error.message,
+    if (fileExtension !== '.csv') {
+      throw new FileExtensionError({
+        message: "Extensão do arquivo inválido",
+        additionalInfo: `A extensão ${fileExtension} não é permitida. Somente arquivos CSV são aceitos.`,
       });
     }
 
-    const { createReadStream, filename } = file;
+    const csvValidate = await this.csvService.validate(file);
+
+    if (csvValidate.length === 0) {
+      throw new EmptyCSVError({
+        message: "O arquivo CSV está vazio ou inválido",
+      });
+    }
+
+    const { createReadStream } = file;
 
     const uploadDir = path.resolve(__dirname, "../../../..", "src/data/uploads");
 
