@@ -38,4 +38,18 @@ export const userData = {
     password: "edson1010",
     birthDate: "10-10-1800",
   },
+  emailFull: {
+    from: "user123@resend.app",
+    to: "user4321@resend.app",
+    subject: "Compra realizada!",
+    text: "Olá, obrigado por comprar conosco.",
+    html: "<h1> Olá, obrigado por comprar conosco. </h1>"
+  },
+  emailWithoutHTML: {
+    from: "user123@resend.app",
+    to: "user4321@resend.app",
+    subject: "Compra realizada!",
+    text: "Olá, obrigado por comprar conosco.",
+    html: "<h1> Olá, obrigado por comprar conosco. </h1>"
+  }
 };
