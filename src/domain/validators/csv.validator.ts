@@ -6,8 +6,10 @@ import { EmptyCSVError, InvalidCSVError } from "@domain/errors";
 import { csvModel } from "@domain/models";
 
 const rowSchema = z.object({
-  name: z.string().min(1, "O campo name é obrigatório e deve ser uma string."),
-  email: z.string().email("Email inválido! Seu email precisa de um @ e um domínio"),
+  name: z
+    .string()
+    .min(1, "O campo name é obrigatório e deve ser uma string."), 
+  email: z.string().email("Email inválido! Seu email precisa de um @ e um domínio."),
   birthDate: z
     .string()
     .optional()
@@ -19,16 +21,38 @@ const rowSchema = z.object({
     ),
   zipCode: z
     .string()
-    .transform((val) => Number(val)) 
+    .refine((val) => val.trim().length > 0, {
+      message: "O campo zipCode é obrigatório e deve ser uma string não vazia.",
+    })
+    .transform((val) => Number(val))
     .refine((val) => !isNaN(val), "O campo zipCode deve ser um número válido."),
-  city: z.string(),
-  state: z.string(),
-  neighborhood: z.string(),
-  street: z.string(),
+  city: z
+    .string()
+    .refine((val) => val.trim().length > 0, {
+      message: "O campo city é obrigatório e deve ser uma string não vazia.",
+    }),
+  state: z
+    .string()
+    .refine((val) => val.trim().length > 0, {
+      message: "O campo state é obrigatório e deve ser uma string não vazia.",
+    }),
+  neighborhood: z
+    .string()
+    .refine((val) => val.trim().length > 0, {
+      message: "O campo neighborhood é obrigatório e deve ser uma string não vazia.",
+    }),
+  street: z
+    .string()
+    .refine((val) => val.trim().length > 0, {
+      message: "O campo street é obrigatório e deve ser uma string não vazia.",
+    }),
   streetNumber: z
     .string()
-    .transform((val) => Number(val)) 
-    .refine((val) => !isNaN(val), "O campo zipCode deve ser um número válido."),
+    .refine((val) => val.trim().length > 0, {
+      message: "O campo streetNumber é obrigatório e deve ser uma string não vazia.",
+    })
+    .transform((val) => Number(val))
+    .refine((val) => !isNaN(val), "O campo streetNumber deve ser um número válido."),
   complement: z.string().optional()
 });
 
@@ -46,7 +70,6 @@ export class CSVValidator {
 
     for (const [index, row] of csvData.entries()) {
       try {
-        console.log("aqui")
         rowSchema.parse(row); 
       } catch (error) {
         if (error instanceof z.ZodError) {
