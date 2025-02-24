@@ -13,3 +13,4 @@ export * from "./upload-directory.error"
 export * from "./invalid-csv-error";
 export * from "./file-extension.error"
 export * from "./empty-csv.error"
+export * from "./email-not-send.error"
