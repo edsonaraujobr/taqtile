@@ -77,7 +77,7 @@ export async function createServer() {
     },
   });
 
-  await server.start(); 
+  await server.start();
   server.applyMiddleware({ app });
 
   return { app, server };

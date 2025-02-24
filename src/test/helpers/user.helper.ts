@@ -207,7 +207,7 @@ export function createQueryReturnListUsersTest({
   };
 }
 
-export function createMutationUploadFileTest( { file }: { file: ReadStream }) {
+export function createMutationUploadFileTest({ file }: { file: ReadStream }) {
   const mutation = `
   mutation UploadFile($file: Upload!){
     uploadFile(file: $file) 
@@ -217,7 +217,7 @@ export function createMutationUploadFileTest( { file }: { file: ReadStream }) {
   return {
     mutation,
     variables: {
-      file
+      file,
     },
   };
 }

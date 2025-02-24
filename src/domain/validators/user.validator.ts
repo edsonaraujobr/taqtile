@@ -18,7 +18,8 @@ export const userCreateValidator = z.object({
     .refine(
       (date) =>
         !date ||
-        (FORMAT_DATE_REGEX.test(date) && dayjs(date, "DD-MM-YYYY", true).isValid()),
+        (FORMAT_DATE_REGEX.test(date) &&
+          dayjs(date, "DD-MM-YYYY", true).isValid()),
       "Formato de data inválido. Use o formato DD-MM-YYYY.",
     ),
 });

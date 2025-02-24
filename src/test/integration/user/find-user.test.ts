@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 import { expect } from "chai";
 import axios from "axios";
 import { connectDB, clearDB } from "@test/helpers/db.helper";
@@ -193,7 +194,9 @@ describe("Teste de busca de usuário", () => {
         },
       },
     );
-    expect(response.data.data.listUsers.users).to.have.lengthOf(quantitySearchUsers);
+    expect(response.data.data.listUsers.users).to.have.lengthOf(
+      quantitySearchUsers,
+    );
     expect(response.data.data.listUsers.hasPreviousPage).to.be.true;
     expect(response.data.data.listUsers.hasNextPage).to.be.true;
   });

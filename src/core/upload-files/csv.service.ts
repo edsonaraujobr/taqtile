@@ -6,7 +6,6 @@ import { InvalidCSVError } from "@domain/errors";
 @Service()
 export class CSVService {
   async validate(file: FileUpload): Promise<any[]> {
-
     const fileStream = file.createReadStream();
     const rows: any[] = [];
 
@@ -18,7 +17,7 @@ export class CSVService {
             new InvalidCSVError({
               message: "Formato de arquivo inválido",
               additionalInfo: error.message,
-            })
+            }),
           );
         })
         .on("data", (data) => {
