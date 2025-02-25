@@ -36,9 +36,7 @@ describe("Teste de email", () => {
     });
 
     expect(result.message).to.equal("Email enviado com sucesso!");
-    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-    expect(resendMock.emails.send.calledOnce).to.be.true;
-    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+    expect(resendMock.emails.send.calledOnce).to.be.equal(true);
     expect(
       resendMock.emails.send.calledWithMatch({
         from: "no-reply@guina.dev",
@@ -46,7 +44,7 @@ describe("Teste de email", () => {
         subject: "Teste",
         text: "Corpo do e-mail",
       }),
-    ).to.be.true;
+    ).to.be.equal(true);
   });
 
   it("Deve lançar um erro se o email não for enviado", async () => {
