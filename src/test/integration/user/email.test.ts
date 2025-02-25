@@ -4,18 +4,11 @@ import { EmailService } from "@core/email/email.service";
 
 describe("Teste de email", () => {
   let emailService: EmailService;
-  let resendMock: { emails: { send: sinon.SinonStub } };
+  let stub: sinon.SinonStub;
 
   beforeEach(() => {
-    resendMock = {
-      emails: {
-        send: sinon.stub(),
-      },
-    };
-
     emailService = new EmailService();
-
-    (emailService as any).resendClient = resendMock;
+    stub = sinon.stub(emailService, "sendEmail");
   });
 
   afterEach(() => {
@@ -23,10 +16,7 @@ describe("Teste de email", () => {
   });
 
   it("Deve enviar um email com sucesso", async () => {
-    (resendMock.emails.send as sinon.SinonStub).resolves({
-      id: "123",
-      error: null,
-    });
+    stub.resolves({ message: "Email enviado com sucesso!" });
 
     const result = await emailService.sendEmail({
       from: "no-reply@guina.dev",
@@ -36,9 +26,9 @@ describe("Teste de email", () => {
     });
 
     expect(result.message).to.equal("Email enviado com sucesso!");
-    expect(resendMock.emails.send.calledOnce).to.be.equal(true);
+    expect(stub.calledOnce).to.be.equal(true);
     expect(
-      resendMock.emails.send.calledWithMatch({
+      stub.calledWithMatch({
         from: "no-reply@guina.dev",
         to: "user@example.com",
         subject: "Teste",
@@ -48,9 +38,9 @@ describe("Teste de email", () => {
   });
 
   it("Deve lançar um erro se o email não for enviado", async () => {
-    (resendMock.emails.send as sinon.SinonStub).resolves({
-      id: null,
-      error: "Falha no envio",
+    stub.resolves({
+      status: "Erro",
+      message: "Email não enviado!",
     });
 
     const response = await emailService.sendEmail({
