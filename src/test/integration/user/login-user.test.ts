@@ -1,5 +1,5 @@
-import { expect } from 'chai';
-import axios from 'axios';
+import { expect } from "chai";
+import axios from "axios";
 import { connectDB, clearDB } from "@test/helpers/db.helper";
 import {
   createMutationLoginUserTest,
@@ -61,7 +61,7 @@ describe("User Mutation - Teste de Login", () => {
     if (isJwtPayload(decodedToken)) {
       expect(decodedToken.exp).to.be.closeTo(
         dateNowSeconds + OneHourInSeconds,
-        10
+        10,
       );
     }
     const loginUser = responseLogin.data.data.loginUser.user;
@@ -114,7 +114,7 @@ describe("User Mutation - Teste de Login", () => {
     if (isJwtPayload(decodedToken)) {
       expect(decodedToken.exp).to.be.closeTo(
         dateNowSeconds + SevenDaysSecond,
-        10
+        10,
       );
     }
 

@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import axios from "axios"
+import axios from "axios";
 import { connectDB, clearDB } from "@test/helpers/db.helper";
 import {
   createAddressInDatabase,

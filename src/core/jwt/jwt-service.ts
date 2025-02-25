@@ -1,16 +1,18 @@
 import jwt, { JwtPayload } from "jsonwebtoken";
 import * as dotenv from "dotenv";
-import { REMEMBER_ME_EXPIRATION, DEFAULT_EXPIRATION } from "@core/utils/constants";
 import {
-  MissingSecretKeyError,
-  UnauthorizedUser,
-} from "@domain/errors";
+  REMEMBER_ME_EXPIRATION,
+  DEFAULT_EXPIRATION,
+} from "@core/utils/constants";
+import { MissingSecretKeyError, UnauthorizedUser } from "@domain/errors";
 
 dotenv.config();
 const SECRET_KEY = process.env.SECRET_KEY;
 
 export function isJwtPayload(decodedToken: any): decodedToken is JwtPayload {
-  return decodedToken && typeof decodedToken === 'object' && 'exp' in decodedToken;
+  return (
+    decodedToken && typeof decodedToken === "object" && "exp" in decodedToken
+  );
 }
 
 export class JwtService {

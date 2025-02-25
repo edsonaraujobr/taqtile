@@ -1,4 +1,4 @@
-import { expect } from 'chai';
+import { expect } from "chai";
 import bcrypt from "bcryptjs";
 import axios from "axios";
 import { database } from "@data/database/database";
@@ -61,7 +61,7 @@ describe("User Mutation - Teste de Criação de usuário", () => {
       where: { email },
     });
 
-    expect(userInDb).to.not.be.null;
+    expect(userInDb).to.not.equal(null);
     expect(userInDb.name).to.equal(validUser.name);
     expect(userInDb.email).to.equal(email);
 
@@ -69,7 +69,7 @@ describe("User Mutation - Teste de Criação de usuário", () => {
       validUser.password,
       userInDb.password,
     );
-    expect(passwordMatch).to.be.true;
+    expect(passwordMatch).to.be.equal(true);
   });
 
   it("Deve criar um novo usuario sem o campo opcional de data de nascimento", async () => {
@@ -101,7 +101,7 @@ describe("User Mutation - Teste de Criação de usuário", () => {
       where: { email: validUserWithoutBirthDate.email },
     });
 
-    expect(userInDb).to.not.be.null;
+    expect(userInDb).to.not.equal(null);
     expect(userInDb.name).to.equal(validUserWithoutBirthDate.name);
     expect(userInDb.email).to.equal(validUserWithoutBirthDate.email);
 
@@ -109,13 +109,14 @@ describe("User Mutation - Teste de Criação de usuário", () => {
       validUserWithoutBirthDate.password,
       userInDb.password,
     );
-    expect(passwordMatch).to.be.true;
+    expect(passwordMatch).to.be.equal(true);
   });
 
   it("Deve retornar erro se o usuário já existir", async () => {
     await createUserInDatabaseTest(duplicateEmailUser);
 
-    const { mutation, variables } = createMutationCreateUserTest(duplicateEmailUser);
+    const { mutation, variables } =
+      createMutationCreateUserTest(duplicateEmailUser);
     const tokenAdmin = await createAdminInDatabaseTest();
 
     const response = await axios.post(
@@ -212,7 +213,8 @@ describe("User Mutation - Teste de Criação de usuário", () => {
   });
 
   it("Deve retornar erro pela idade maxima permitida excedida", async () => {
-    const { mutation, variables } = createMutationCreateUserTest(maxAgeExceededUser);
+    const { mutation, variables } =
+      createMutationCreateUserTest(maxAgeExceededUser);
     const tokenAdmin = await createAdminInDatabaseTest();
 
     try {

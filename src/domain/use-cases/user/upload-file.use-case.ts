@@ -2,9 +2,9 @@ import { Service } from "typedi";
 import fs from "fs";
 import path from "path";
 import { FileUpload } from "graphql-upload-ts";
-import { UploadDirectoryError } from "@domain/errors"
+import { UploadDirectoryError } from "@domain/errors";
 import { CSVService } from "@core/upload-files/csv.service";
-import { EmptyCSVError, FileExtensionError } from "@domain/errors";
+import { FileExtensionError } from "@domain/errors";
 import { CSVValidator } from "@domain/validators/csv.validator";
 @Service()
 export class UploadFileUseCase {
@@ -13,12 +13,11 @@ export class UploadFileUseCase {
     private readonly csvValidator: CSVValidator,
   ) {}
 
-  async run ({ file }: { file: FileUpload }): Promise<String> {
-
+  async run({ file }: { file: FileUpload }): Promise<string> {
     const { filename } = file;
     const fileExtension = path.extname(filename).toLowerCase();
 
-    if (fileExtension !== '.csv') {
+    if (fileExtension !== ".csv") {
       throw new FileExtensionError({
         message: "Extensão do arquivo inválido",
         additionalInfo: `A extensão ${fileExtension} não é permitida. Somente arquivos CSV são aceitos.`,
@@ -30,7 +29,11 @@ export class UploadFileUseCase {
 
     const { createReadStream } = file;
 
-    const uploadDir = path.resolve(__dirname, "../../../..", "src/data/uploads");
+    const uploadDir = path.resolve(
+      __dirname,
+      "../../../..",
+      "src/data/uploads",
+    );
 
     try {
       if (!fs.existsSync(uploadDir)) {

@@ -22,7 +22,7 @@ export class UserResolver {
     private readonly createUserUseCase: CreateUserUseCase,
     private readonly loginUserUseCase: LoginUserUseCase,
     private readonly searchListUsersUseCase: SearchListUsersUseCase,
-    private readonly uploadFileUseCase: UploadFileUseCase
+    private readonly uploadFileUseCase: UploadFileUseCase,
   ) {}
 
   @Mutation(() => User)
@@ -64,7 +64,9 @@ export class UserResolver {
   }
 
   @Mutation(() => String)
-  async uploadFile(@Arg("file", () => GraphQLUpload) file: FileUpload): Promise<String> {
+  async uploadFile(
+    @Arg("file", () => GraphQLUpload) file: FileUpload,
+  ): Promise<string> {
     try {
       return await this.uploadFileUseCase.run({ file });
     } catch (error: unknown) {
