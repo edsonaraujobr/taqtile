@@ -4,7 +4,7 @@ import path from "path";
 import { FileUpload } from "graphql-upload-ts";
 import { UploadDirectoryError } from "@domain/errors";
 import { CSVService } from "@core/upload-files/csv.service";
-import { EmptyCSVError, FileExtensionError } from "@domain/errors";
+import { FileExtensionError } from "@domain/errors";
 import { CSVValidator } from "@domain/validators/csv.validator";
 @Service()
 export class UploadFileUseCase {
