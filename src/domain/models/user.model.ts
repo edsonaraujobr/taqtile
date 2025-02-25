@@ -42,11 +42,11 @@ export interface CreateUserModel {
   birthDate?: string;
 }
 
-export interface csvModel {
+export interface CreateManyUsersModel {
   name: string;
   email: string;
   birthDate: string;
-  zipCode: number;
+  zipCode: string;
   city: string;
   state: string;
   neighborhood: string;

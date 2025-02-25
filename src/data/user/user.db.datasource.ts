@@ -30,6 +30,20 @@ export class UserDBDataSource {
     });
   }
 
+  async findEmails({ emails }: { emails: string[] }): Promise<string[] | null> {
+    const users = await database.user.findMany({
+      where: {
+        email: {
+          in: emails,
+        },
+      },
+      select: {
+        email: true,
+      },
+    });
+    return users.map((user) => user.email);
+  }
+
   async findByID({ id }: { id: string }): Promise<UserModel | null> {
     return await database.user.findUnique({
       where: { id },

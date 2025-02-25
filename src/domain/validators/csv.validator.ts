@@ -3,7 +3,7 @@ import { FORMAT_DATE_REGEX } from "@core/utils/constants";
 import dayjs from "dayjs";
 import { Service } from "typedi";
 import { EmptyCSVError, InvalidCSVError } from "@domain/errors";
-import { csvModel } from "@domain/models";
+import { CreateManyUsersModel } from "@domain/models";
 
 const rowSchema = z.object({
   name: z.string().min(1, "O campo name é obrigatório e deve ser uma string."),
@@ -56,7 +56,7 @@ const rowSchema = z.object({
 
 @Service()
 export class CSVValidator {
-  validate(csvData: csvModel[]): void {
+  validate(csvData: CreateManyUsersModel[]): void {
     if (csvData.length === 0) {
       throw new EmptyCSVError({
         message: "O arquivo CSV está vazio ou inválido",
