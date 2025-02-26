@@ -107,7 +107,7 @@ export class CreateManyUsersCSVUseCase {
         data: newAddress,
       });
 
-      this.emailService.sendEmail({
+      await this.emailService.sendEmail({
         from: "no-reply@guina.com.br",
         to: user.email,
         subject: `Bem vindo, ${user.name}`,
