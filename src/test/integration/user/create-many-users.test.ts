@@ -1,41 +1,41 @@
 import { clearDB, connectDB } from "@test/helpers/db.helper";
-import { createMutationUploadFileTest } from "@test/helpers/user.helper";
+import {
+  createAdminInDatabaseTest,
+  createMutationCreateManyUsersCSVTest,
+} from "@test/helpers/user.helper";
 import axios from "axios";
 import { expect } from "chai";
 import fs from "fs";
 import path from "path";
 import FormData from "form-data";
-import sinon from "sinon";
 
 const testDir = path.resolve(__dirname, "test-files");
 const testFilePath = path.join(testDir, "test.csv");
 
-describe("Teste de Upload de arquivos", () => {
+describe("Teste de criacao de varios usuarios atraves de csv", () => {
   before(async () => {
     await connectDB();
-
-    const testDir = path.resolve(__dirname, "test-files");
-    const testFilePath = path.join(testDir, "test.csv");
 
     if (!fs.existsSync(testDir)) {
       fs.mkdirSync(testDir, { recursive: true });
     }
-
-    fs.writeFileSync(
-      testFilePath,
-      "name,email,birthDate,zipCode,city,state,neighborhood,street,streetNumber,complement\nJoão,joao@email.com,12-12-2000,4000000,Salvador,Bahia,Liberdade,A,32,Z-32",
-    );
   });
 
   beforeEach(async () => {
     await clearDB();
   });
 
-  it("Deve realizar o upload de arquivo com sucesso", async () => {
+  it("Deve criar um usuario atraves de CSV com sucesso", async () => {
     const filePath = path.resolve(__dirname, "test-files", "test.csv");
+    fs.writeFileSync(
+      filePath,
+      "name,email,birthDate,zipCode,city,state,neighborhood,street,streetNumber,complement\nJoão,joao@email.com,12-12-2000,4000000,Salvador,Bahia,Liberdade,A,32,Z-32",
+    );
     const fileStream = fs.createReadStream(filePath);
 
-    const { mutation } = createMutationUploadFileTest({ file: fileStream });
+    const { mutation } = createMutationCreateManyUsersCSVTest({
+      file: fileStream,
+    });
 
     const formData = new FormData();
     formData.append(
@@ -48,30 +48,42 @@ describe("Teste de Upload de arquivos", () => {
     formData.append("map", JSON.stringify({ "0": ["variables.file"] }));
     formData.append("0", fileStream as unknown, "test.csv");
 
+    const tokenAdmin = await createAdminInDatabaseTest();
+
     const response = await axios.post(
       "http://localhost:4000/graphql",
       formData,
       {
         headers: {
           ...formData.getHeaders(),
+          Authorization: `Bearer ${tokenAdmin}`,
         },
       },
     );
-    expect(response.data.data.uploadFile).to.be.equal(
-      "Arquivo test.csv enviado com sucesso!",
+
+    expect(response.data.data.createManyUsersCSV).to.be.equal(
+      "Foram cadastrados 1 usuários.",
     );
   });
 
-  it("Deve retornar erro ao tentar criar repositório upload", async () => {
-    sinon.stub(fs, "existsSync").returns(false);
-    const mkdirStub = sinon
-      .stub(fs, "mkdirSync")
-      .throws(new Error("Permissão negada!"));
+  it("Deve criar cinco usuarios atraves de CSV com sucesso", async () => {
+    const testFilePath = path.join(testDir, "test.csv");
+    fs.writeFileSync(
+      testFilePath,
+      `name,email,birthDate,zipCode,city,state,neighborhood,street,streetNumber,complement
+    João,joao@email.com,12-12-2000,4000000,Salvador,Bahia,Liberdade,Rua A,32,Z-32
+    João,joao12@email.com,12-12-2000,4000000,Salvador,Bahia,Liberdade,Rua A,32,Z-32
+    João,joao123@email.com,12-12-2000,4000000,Salvador,Bahia,Liberdade,Rua A,32,Z-32
+    João,joao1234@email.com,12-12-2000,4000000,Salvador,Bahia,Liberdade,Rua A,32,Z-32
+    João,joao12345@email.com,12-12-2000,4000000,Salvador,Bahia,Liberdade,Rua A,32,Z-32`,
+    );
 
     const filePath = path.resolve(__dirname, "test-files", "test.csv");
     const fileStream = fs.createReadStream(filePath);
 
-    const { mutation } = createMutationUploadFileTest({ file: fileStream });
+    const { mutation } = createMutationCreateManyUsersCSVTest({
+      file: fileStream,
+    });
 
     const formData = new FormData();
     formData.append(
@@ -84,21 +96,67 @@ describe("Teste de Upload de arquivos", () => {
     formData.append("map", JSON.stringify({ "0": ["variables.file"] }));
     formData.append("0", fileStream as unknown, "test.csv");
 
+    const tokenAdmin = await createAdminInDatabaseTest();
+
     const response = await axios.post(
       "http://localhost:4000/graphql",
       formData,
       {
         headers: {
           ...formData.getHeaders(),
+          Authorization: `Bearer ${tokenAdmin}`,
         },
       },
     );
 
-    expect(response.data.errors[0].code).to.equal(500);
-    expect(response.data.errors[0].message).to.equal(
-      "Erro ao criar diretório de uploads",
+    expect(response.data.data.createManyUsersCSV).to.be.equal(
+      "Foram cadastrados 5 usuários.",
     );
-    expect(mkdirStub.calledOnce).to.be.equal(true);
+  });
+
+  it("Deve criar um usuário e avisar que o outro não foi criado pois já existe usuario com este email", async () => {
+    const testFilePath = path.join(testDir, "test.csv");
+    fs.writeFileSync(
+      testFilePath,
+      `name,email,birthDate,zipCode,city,state,neighborhood,street,streetNumber,complement
+    João,joao@email.com,12-12-2000,4000000,Salvador,Bahia,Liberdade,Rua A,32,Z-32
+    Joao Felipe,joao@email.com,12-12-2000,4000000,Salvador,Bahia,Liberdade,Rua A,32,Z-32`,
+    );
+
+    const filePath = path.resolve(__dirname, "test-files", "test.csv");
+    const fileStream = fs.createReadStream(filePath);
+
+    const { mutation } = createMutationCreateManyUsersCSVTest({
+      file: fileStream,
+    });
+
+    const formData = new FormData();
+    formData.append(
+      "operations",
+      JSON.stringify({
+        query: mutation,
+        variables: { file: null },
+      }),
+    );
+    formData.append("map", JSON.stringify({ "0": ["variables.file"] }));
+    formData.append("0", fileStream as unknown, "test.csv");
+
+    const tokenAdmin = await createAdminInDatabaseTest();
+
+    const response = await axios.post(
+      "http://localhost:4000/graphql",
+      formData,
+      {
+        headers: {
+          ...formData.getHeaders(),
+          Authorization: `Bearer ${tokenAdmin}`,
+        },
+      },
+    );
+
+    expect(response.data.data.createManyUsersCSV).to.be.equal(
+      "Foram cadastrados 1 usuários. Os seguintes usuários foram ignorados por já estarem cadastrados: Nome: Joao Felipe, Email: joao@email.com",
+    );
   });
 
   it("Deve retornar erro de extensão do arquivo inválido", async () => {
@@ -111,7 +169,7 @@ describe("Teste de Upload de arquivos", () => {
     const filePath = path.resolve(__dirname, "test-files", "test.txt");
     const fileStream = fs.createReadStream(filePath);
 
-    const { mutation } = createMutationUploadFileTest({
+    const { mutation } = createMutationCreateManyUsersCSVTest({
       file: fileStream,
     });
 
@@ -126,12 +184,15 @@ describe("Teste de Upload de arquivos", () => {
     formData.append("map", JSON.stringify({ "0": ["variables.file"] }));
     formData.append("0", fileStream as unknown, "test.txt");
 
+    const tokenAdmin = await createAdminInDatabaseTest();
+
     const response = await axios.post(
       "http://localhost:4000/graphql",
       formData,
       {
         headers: {
           ...formData.getHeaders(),
+          Authorization: `Bearer ${tokenAdmin}`,
         },
       },
     );
@@ -149,7 +210,7 @@ describe("Teste de Upload de arquivos", () => {
     const filePath = path.resolve(__dirname, "test-files", "test.csv");
     const fileStream = fs.createReadStream(filePath);
 
-    const { mutation } = createMutationUploadFileTest({
+    const { mutation } = createMutationCreateManyUsersCSVTest({
       file: fileStream,
     });
 
@@ -164,12 +225,15 @@ describe("Teste de Upload de arquivos", () => {
     formData.append("map", JSON.stringify({ "0": ["variables.file"] }));
     formData.append("0", fileStream as unknown, "test.csv");
 
+    const tokenAdmin = await createAdminInDatabaseTest();
+
     const response = await axios.post(
       "http://localhost:4000/graphql",
       formData,
       {
         headers: {
           ...formData.getHeaders(),
+          Authorization: `Bearer ${tokenAdmin}`,
         },
       },
     );
@@ -190,7 +254,7 @@ describe("Teste de Upload de arquivos", () => {
     const filePath = path.resolve(__dirname, "test-files", "test.csv");
     const fileStream = fs.createReadStream(filePath);
 
-    const { mutation } = createMutationUploadFileTest({
+    const { mutation } = createMutationCreateManyUsersCSVTest({
       file: fileStream,
     });
 
@@ -205,12 +269,15 @@ describe("Teste de Upload de arquivos", () => {
     formData.append("map", JSON.stringify({ "0": ["variables.file"] }));
     formData.append("0", fileStream as unknown, "test.csv");
 
+    const tokenAdmin = await createAdminInDatabaseTest();
+
     const response = await axios.post(
       "http://localhost:4000/graphql",
       formData,
       {
         headers: {
           ...formData.getHeaders(),
+          Authorization: `Bearer ${tokenAdmin}`,
         },
       },
     );
@@ -231,7 +298,7 @@ describe("Teste de Upload de arquivos", () => {
     const filePath = path.resolve(__dirname, "test-files", "test.csv");
     const fileStream = fs.createReadStream(filePath);
 
-    const { mutation } = createMutationUploadFileTest({
+    const { mutation } = createMutationCreateManyUsersCSVTest({
       file: fileStream,
     });
 
@@ -246,12 +313,15 @@ describe("Teste de Upload de arquivos", () => {
     formData.append("map", JSON.stringify({ "0": ["variables.file"] }));
     formData.append("0", fileStream as unknown, "test.csv");
 
+    const tokenAdmin = await createAdminInDatabaseTest();
+
     const response = await axios.post(
       "http://localhost:4000/graphql",
       formData,
       {
         headers: {
           ...formData.getHeaders(),
+          Authorization: `Bearer ${tokenAdmin}`,
         },
       },
     );
@@ -272,7 +342,7 @@ describe("Teste de Upload de arquivos", () => {
     const filePath = path.resolve(__dirname, "test-files", "test.csv");
     const fileStream = fs.createReadStream(filePath);
 
-    const { mutation } = createMutationUploadFileTest({
+    const { mutation } = createMutationCreateManyUsersCSVTest({
       file: fileStream,
     });
 
@@ -287,12 +357,15 @@ describe("Teste de Upload de arquivos", () => {
     formData.append("map", JSON.stringify({ "0": ["variables.file"] }));
     formData.append("0", fileStream as unknown, "test.csv");
 
+    const tokenAdmin = await createAdminInDatabaseTest();
+
     const response = await axios.post(
       "http://localhost:4000/graphql",
       formData,
       {
         headers: {
           ...formData.getHeaders(),
+          Authorization: `Bearer ${tokenAdmin}`,
         },
       },
     );
@@ -313,7 +386,7 @@ describe("Teste de Upload de arquivos", () => {
     const filePath = path.resolve(__dirname, "test-files", "test.csv");
     const fileStream = fs.createReadStream(filePath);
 
-    const { mutation } = createMutationUploadFileTest({
+    const { mutation } = createMutationCreateManyUsersCSVTest({
       file: fileStream,
     });
 
@@ -328,12 +401,15 @@ describe("Teste de Upload de arquivos", () => {
     formData.append("map", JSON.stringify({ "0": ["variables.file"] }));
     formData.append("0", fileStream as unknown, "test.csv");
 
+    const tokenAdmin = await createAdminInDatabaseTest();
+
     const response = await axios.post(
       "http://localhost:4000/graphql",
       formData,
       {
         headers: {
           ...formData.getHeaders(),
+          Authorization: `Bearer ${tokenAdmin}`,
         },
       },
     );
@@ -354,7 +430,7 @@ describe("Teste de Upload de arquivos", () => {
     const filePath = path.resolve(__dirname, "test-files", "test.csv");
     const fileStream = fs.createReadStream(filePath);
 
-    const { mutation } = createMutationUploadFileTest({
+    const { mutation } = createMutationCreateManyUsersCSVTest({
       file: fileStream,
     });
 
@@ -369,12 +445,15 @@ describe("Teste de Upload de arquivos", () => {
     formData.append("map", JSON.stringify({ "0": ["variables.file"] }));
     formData.append("0", fileStream as unknown, "test.csv");
 
+    const tokenAdmin = await createAdminInDatabaseTest();
+
     const response = await axios.post(
       "http://localhost:4000/graphql",
       formData,
       {
         headers: {
           ...formData.getHeaders(),
+          Authorization: `Bearer ${tokenAdmin}`,
         },
       },
     );
@@ -395,7 +474,7 @@ describe("Teste de Upload de arquivos", () => {
     const filePath = path.resolve(__dirname, "test-files", "test.csv");
     const fileStream = fs.createReadStream(filePath);
 
-    const { mutation } = createMutationUploadFileTest({
+    const { mutation } = createMutationCreateManyUsersCSVTest({
       file: fileStream,
     });
 
@@ -410,12 +489,15 @@ describe("Teste de Upload de arquivos", () => {
     formData.append("map", JSON.stringify({ "0": ["variables.file"] }));
     formData.append("0", fileStream as unknown, "test.csv");
 
+    const tokenAdmin = await createAdminInDatabaseTest();
+
     const response = await axios.post(
       "http://localhost:4000/graphql",
       formData,
       {
         headers: {
           ...formData.getHeaders(),
+          Authorization: `Bearer ${tokenAdmin}`,
         },
       },
     );
@@ -436,7 +518,7 @@ describe("Teste de Upload de arquivos", () => {
     const filePath = path.resolve(__dirname, "test-files", "test.csv");
     const fileStream = fs.createReadStream(filePath);
 
-    const { mutation } = createMutationUploadFileTest({
+    const { mutation } = createMutationCreateManyUsersCSVTest({
       file: fileStream,
     });
 
@@ -451,12 +533,15 @@ describe("Teste de Upload de arquivos", () => {
     formData.append("map", JSON.stringify({ "0": ["variables.file"] }));
     formData.append("0", fileStream as unknown, "test.csv");
 
+    const tokenAdmin = await createAdminInDatabaseTest();
+
     const response = await axios.post(
       "http://localhost:4000/graphql",
       formData,
       {
         headers: {
           ...formData.getHeaders(),
+          Authorization: `Bearer ${tokenAdmin}`,
         },
       },
     );
@@ -477,7 +562,7 @@ describe("Teste de Upload de arquivos", () => {
     const filePath = path.resolve(__dirname, "test-files", "test.csv");
     const fileStream = fs.createReadStream(filePath);
 
-    const { mutation } = createMutationUploadFileTest({
+    const { mutation } = createMutationCreateManyUsersCSVTest({
       file: fileStream,
     });
 
@@ -492,12 +577,15 @@ describe("Teste de Upload de arquivos", () => {
     formData.append("map", JSON.stringify({ "0": ["variables.file"] }));
     formData.append("0", fileStream as unknown, "test.csv");
 
+    const tokenAdmin = await createAdminInDatabaseTest();
+
     const response = await axios.post(
       "http://localhost:4000/graphql",
       formData,
       {
         headers: {
           ...formData.getHeaders(),
+          Authorization: `Bearer ${tokenAdmin}`,
         },
       },
     );
@@ -510,7 +598,9 @@ describe("Teste de Upload de arquivos", () => {
 
   afterEach(async () => {
     await clearDB();
-    sinon.restore();
+    if (fs.existsSync(testFilePath)) {
+      fs.unlinkSync(testFilePath);
+    }
   });
 
   after(async () => {

@@ -30,17 +30,13 @@ export class UserDBDataSource {
     });
   }
 
-  async findEmails({ emails }: { emails: string[] }): Promise<string[] | null> {
+  async findAllEmails(): Promise<string[]> {
     const users = await database.user.findMany({
-      where: {
-        email: {
-          in: emails,
-        },
-      },
       select: {
         email: true,
       },
     });
+
     return users.map((user) => user.email);
   }
 
