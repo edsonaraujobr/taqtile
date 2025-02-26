@@ -61,14 +61,16 @@ export class CreateManyUsersCSVUseCase {
     const createdUsers: CreateManyUsersModel[] = [];
     const skippedUsers: CreateManyUsersModel[] = [];
 
+    const emailsCSV = users.map((user) => user.email);
+
     const existingEmailsSet = new Set(
-      await this.userDataSource.findAllEmails(),
+      await this.userDataSource.findManyByEmail({ emails: emailsCSV }),
     );
 
-    const userPromises = users.map(async (user) => {
+    for (const user of users) {
       if (existingEmailsSet.has(user.email)) {
         skippedUsers.push(user);
-        return;
+        continue;
       }
 
       existingEmailsSet.add(user.email);
@@ -101,23 +103,20 @@ export class CreateManyUsersCSVUseCase {
         complement: user.complement,
       };
 
-      const emailPromise = this.emailService.sendEmail({
+      await this.addressDataSource.create({
+        data: newAddress,
+      });
+
+      this.emailService.sendEmail({
         from: "no-reply@guina.com.br",
         to: user.email,
         subject: `Bem vindo, ${user.name}`,
         text: `A sua senha de acesso é: ${password}`,
       });
 
-      await Promise.all([
-        this.addressDataSource.create({ data: newAddress }),
-        emailPromise,
-      ]);
-
       createdUsers.push(user);
-    });
-
-    await Promise.all(userPromises);
+    }
 
     return { createdUsers, skippedUsers };
-}
+  }
 }
