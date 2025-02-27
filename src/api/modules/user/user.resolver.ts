@@ -5,6 +5,7 @@ import {
   LoginUserUseCase,
   FindUserByIDUseCase,
   SearchListUsersUseCase,
+  CreateManyUsersCSVUseCase,
 } from "@domain/use-cases/user";
 import { Mutation, Query, Resolver, Arg, Ctx, Int } from "type-graphql";
 import { CreateUserInput, LoginUserInput } from "./inputs";
@@ -12,7 +13,6 @@ import { ListUsers, UserToken, User } from "./types";
 import { Context } from "@api/context.interface";
 import { Service } from "typedi";
 import { GraphQLUpload, FileUpload } from "graphql-upload-ts";
-import { UploadFileUseCase } from "@domain/use-cases/user/upload-file.use-case";
 
 @Service()
 @Resolver()
@@ -22,7 +22,7 @@ export class UserResolver {
     private readonly createUserUseCase: CreateUserUseCase,
     private readonly loginUserUseCase: LoginUserUseCase,
     private readonly searchListUsersUseCase: SearchListUsersUseCase,
-    private readonly uploadFileUseCase: UploadFileUseCase,
+    private readonly createManyUsersCSVUseCase: CreateManyUsersCSVUseCase,
   ) {}
 
   @Mutation(() => User)
@@ -64,11 +64,13 @@ export class UserResolver {
   }
 
   @Mutation(() => String)
-  async uploadFile(
+  async createManyUsersCSV(
     @Arg("file", () => GraphQLUpload) file: FileUpload,
+    @Ctx() context: Context,
   ): Promise<string> {
     try {
-      return await this.uploadFileUseCase.run({ file });
+      checkAuthentication({ context });
+      return await this.createManyUsersCSVUseCase.run({ file });
     } catch (error: unknown) {
       if (error instanceof CustomError) {
         throw error;

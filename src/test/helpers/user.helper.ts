@@ -207,10 +207,14 @@ export function createQueryReturnListUsersTest({
   };
 }
 
-export function createMutationUploadFileTest({ file }: { file: ReadStream }) {
+export function createMutationCreateManyUsersCSVTest({
+  file,
+}: {
+  file: ReadStream;
+}) {
   const mutation = `
-  mutation UploadFile($file: Upload!){
-    uploadFile(file: $file) 
+  mutation CreateManyUsersCSV($file: Upload!){
+    createManyUsersCSV(file: $file) 
   }
 `;
 
